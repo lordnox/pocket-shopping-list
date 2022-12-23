@@ -3,10 +3,9 @@ import solid from 'solid-start/vite'
 import vercel from 'solid-start-vercel'
 import { defineConfig } from 'vite'
 import dotenv from 'dotenv'
+dotenv.config()
 
-export default defineConfig(() => {
-  dotenv.config()
-  return {
-    plugins: [solid({ adapter: vercel() })],
-  }
-})
+export default defineConfig(() => ({
+  plugins: [solid({ adapter: vercel() })],
+  envPrefix: 'START_',
+}))

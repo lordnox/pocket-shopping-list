@@ -1,8 +1,7 @@
 import { createServerData$ } from 'solid-start/server'
-import { getSession } from '@solid-auth/next'
-import { solidAuthConfig } from '~/env/solid-auth.config'
+import { sessionFromRequest } from '~/env/solid-auth.config'
 
 export const serverSession: Parameters<typeof createServerData$> = [
-  (_, { request }) => getSession(request, solidAuthConfig),
+  (_, { request }) => sessionFromRequest(request),
   { key: () => ['auth_user'] },
 ]

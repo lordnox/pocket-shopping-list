@@ -11,6 +11,12 @@ import { type Prisma } from '@prisma/client'
 const github = Github({
   clientId: serverEnv.GITHUB_CLIENT_ID,
   clientSecret: serverEnv.GITHUB_CLIENT_SECRET,
+  authorization: {
+    params: {
+      // I wish to request additional permission scopes.
+      scope: 'repo read:user user:email',
+    },
+  },
 
   async profile(profile, tokens) {
     const email = await findGithubEMail(tokens.access_token)
@@ -29,13 +35,14 @@ export const solidAuthConfig: SolidAuthConfig = {
   secret: serverEnv.AUTH_SECRET,
   providers: [github],
   debug: false,
+
   adapter: PrismaAdapter(prisma) as AuthCoreAdapter,
   session: {
     generateSessionToken: () => randomBytes(256).toString('hex'),
   },
 }
 
-export const session = (request: Request) => getSession(request, solidAuthConfig)
+export const sessionFromRequest = (request: Request) => getSession(request, solidAuthConfig)
 
 /**
  * Helper function that retrieves the email address of a github user by access token

@@ -1,5 +1,11 @@
-import { isServer } from 'solid-js/web'
-import { z } from 'zod'
+import { z, type ZodFormattedError } from 'zod'
+
+export const formatErrors = (errors: ZodFormattedError<Map<string, string>, string>) =>
+  Object.entries(errors)
+    .map(([name, value]) => {
+      if (value && '_errors' in value) return `${name}: ${value._errors.join(', ')}\n`
+    })
+    .filter(Boolean)
 
 export const serverScheme = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -22,5 +28,5 @@ export const serverScheme = z.object({
 
 export const clientScheme = z.object({
   MODE: z.enum(['development', 'production', 'test']).default('development'),
-  START_BASE_URL: z.string().optional().default('http://127.0.0.1:3000'),
+  START_BASE_URL: z.string(),
 })

@@ -7,8 +7,28 @@ const login = () => signIn('github')
 const logout = () => signOut()
 
 import { createServerData$ } from 'solid-start/server'
+import { trpc, useQuery } from '~/utils/trpc-client'
+import { createMemo, For, Show } from 'solid-js'
 
 export const routeData = () => createServerData$(...serverSession)
+
+const Repositories = () => {
+  const [repos] = useQuery('repositories')
+  return (
+    <ul>
+      <For each={repos()}>
+        {(repo) => (
+          <li>
+            <a href={repo.html_url} target="_blank">
+              {repo.name}
+            </a>{' '}
+            - {repo.private ? 'PRIVATE' : 'PUBLIC'}
+          </li>
+        )}
+      </For>
+    </ul>
+  )
+}
 
 export default function Home() {
   const user = useRouteData<typeof routeData>()
@@ -44,6 +64,9 @@ export default function Home() {
       <div class="flex flex-col gap-2 items-center">
         <pre>{JSON.stringify(user(), null, 2)}</pre>
       </div>
+      <Show when={user()}>
+        <Repositories />
+      </Show>
     </main>
   )
 }
