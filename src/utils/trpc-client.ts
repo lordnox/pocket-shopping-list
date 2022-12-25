@@ -10,6 +10,13 @@ export const trpc = createTRPCProxyClient<AppRouter>({
   links: [
     httpLink({
       url: `${clientEnv.START_BASE_URL}/api/trpc`,
+      headers: () => {
+        // cache request for 1 day + revalidate once every second
+        const ONE_DAY_IN_SECONDS = 60 * 60 * 24
+        return {
+          'cache-control': `s-maxage=1, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
+        }
+      },
     }),
   ],
 })
@@ -46,3 +53,5 @@ export const useQuery = <TPath extends QueryKeys>(path: TPath, ...params: Proced
   const fetchData = async () => query(...params)
   return createResource(fetchData)
 }
+
+export type QueryResult<Path extends QueryKeys> = inferTransformedProcedureOutput<Queries[Path]>

@@ -1,5 +1,9 @@
 import { createResource, createSignal } from 'solid-js'
+import { createServerData$ } from 'solid-start/server'
 import { trpc, useQuery } from '~/utils/trpc-client'
+import { serverSession } from '~/utils/useSession'
+
+export const routeData = () => createServerData$(...serverSession)
 
 const fetchUser = (name: string) => {
   return trpc.hello.query({ name })
