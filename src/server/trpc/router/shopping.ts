@@ -1,8 +1,8 @@
 import { z } from 'zod'
-import { router, protectedProcedure } from '../utils'
+import { router, protectedProcedure, procedure } from '../utils'
 
 export default router({
-  shoppingItems: protectedProcedure.query(({ ctx: { prisma } }) =>
+  shoppingItems: procedure.query(({ ctx: { prisma } }) =>
     prisma.shoppingItem.findMany({
       include: {
         prices: {
