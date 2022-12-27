@@ -1,9 +1,19 @@
 import { createTRPCProxyClient, httpLink } from '@trpc/client'
-import { createResource } from 'solid-js'
+import { createSignal, onMount } from 'solid-js'
 
-import type { AnyProcedure, AnyRouter, ProcedureArgs, ProcedureType } from '@trpc/server'
+import type {
+  AnyProcedure,
+  AnyRouter,
+  inferRouterInputs,
+  inferRouterOutputs,
+  ProcedureArgs,
+  ProcedureType,
+} from '@trpc/server'
 import type { AppRouter } from '~/server/trpc/router/_app'
 import { inferTransformedProcedureOutput } from '@trpc/server/shared'
+
+export type RouterInput = inferRouterInputs<AppRouter>
+export type RouterOutput = inferRouterOutputs<AppRouter>
 
 export const trpc = createTRPCProxyClient<AppRouter>({
   links: [
@@ -47,10 +57,18 @@ type Resolver<TProcedure extends AnyProcedure> = (
 ) => Promise<inferTransformedProcedureOutput<TProcedure>>
 
 export const useQuery = <TPath extends QueryKeys>(path: TPath, ...params: ProcedureArgs<Queries[TPath]['_def']>) => {
-  // extract query and define the correct type
+  type Data = RouterOutput[TPath]
+  // type Data = inferTransformedProcedureOutput<Queries[TPath]>
+  const [data, setData] = createSignal<Data>()
   const query = trpc[path].query as Resolver<Queries[TPath]>
-  const fetchData = async () => query(...params)
-  return createResource(fetchData)
+
+  const fetch = async () => {
+    const result = await query(...params)
+    setData(() => result as any)
+  }
+
+  onMount(fetch)
+  return [data, fetch] as const
 }
 
 export type QueryResult<Path extends QueryKeys> = inferTransformedProcedureOutput<Queries[Path]>
