@@ -2,7 +2,7 @@ import { Session } from '@auth/core'
 import { createRoot, createSignal } from 'solid-js'
 import { clientEnv } from '~/env/client'
 
-const sessionUrl = `${clientEnv.START_BASE_URL}/api/session`
+const sessionUrl = `/api/session`
 
 type INITIAL_STATE = { state: 'INITIAL' }
 type LOADING_STATE = { state: 'LOADING' }

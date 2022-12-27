@@ -9,7 +9,7 @@ import { clientEnv } from '~/env/client'
 export const trpc = createTRPCProxyClient<AppRouter>({
   links: [
     httpLink({
-      url: `${clientEnv.START_BASE_URL}/api/trpc`,
+      url: `/api/trpc`,
       headers: () => {
         // cache request for 1 day + revalidate once every second
         const ONE_DAY_IN_SECONDS = 60 * 60 * 24
