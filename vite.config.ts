@@ -7,5 +7,5 @@ dotenv.config()
 
 export default defineConfig(() => ({
   plugins: [solid({ adapter: vercel() })],
-  envPrefix: 'START_',
+  envPrefix: ['START_', 'VERCEL'],
 }))
