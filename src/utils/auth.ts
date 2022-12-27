@@ -2,6 +2,8 @@ import { Session } from '@auth/core'
 import { createRoot, createSignal } from 'solid-js'
 import { clientEnv } from '~/env/client'
 
+const sessionUrl = `${clientEnv.START_BASE_URL}/api/session`
+
 type INITIAL_STATE = { state: 'INITIAL' }
 type LOADING_STATE = { state: 'LOADING' }
 export type LOADED_STATE = { state: 'LOADED'; data: Session | null }
@@ -18,12 +20,19 @@ export const useSession = () => {
   const session = currentSession()
   if (session.state === 'INITIAL') {
     setCurrentSession({ state: 'LOADING' })
-    fetch(`${clientEnv.START_BASE_URL}/api/session`).then(async (response) =>
-      setCurrentSession({
-        state: 'LOADED',
-        data: await response.json(),
-      }),
-    )
+    fetch(sessionUrl)
+      .then(async (response) =>
+        setCurrentSession({
+          state: 'LOADED',
+          data: await response.json(),
+        }),
+      )
+      .catch((e) =>
+        setCurrentSession({
+          state: 'LOADED',
+          data: null,
+        }),
+      )
   }
 
   return currentSession
