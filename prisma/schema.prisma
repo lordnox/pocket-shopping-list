@@ -10,10 +10,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Example {
+// defines an item purchasable in a shop
+model ShoppingItem {
   id        String   @id @default(cuid())
+  userId    String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  name      String  
+  prices    ItemPrice[]
+  createdBy User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// contains the price of a shopping item
+model ItemPrice {
+  id        String        @id @default(cuid())
+  itemId    String
+  createdAt DateTime      @default(now())
+  price     Int     
+  item      ShoppingItem  @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
 
 // Necessary for Next auth
@@ -51,6 +64,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  items         ShoppingItem[]
 }
 
 model VerificationToken {

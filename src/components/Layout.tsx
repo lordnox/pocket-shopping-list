@@ -84,6 +84,7 @@ export const Layout: ParentComponent = (props) => {
         <div class="container flex items-center p-3 text-gray-200  w-full m-auto">
           <NavItem href="/" title="Home" />
           <NavItem href="/repos" title="Repositories" />
+          <NavItem href="/shopping" title="Shopping" />
           <NavItem href="/about" title="About" />
 
           <Show when={session().state === 'LOADED'}>
