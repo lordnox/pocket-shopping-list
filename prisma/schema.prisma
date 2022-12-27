@@ -17,6 +17,7 @@ model ShoppingItem {
   createdAt DateTime @default(now())
   name      String  
   prices    ItemPrice[]
+  category  String?  
   createdBy User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 

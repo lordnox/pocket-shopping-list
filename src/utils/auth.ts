@@ -1,6 +1,5 @@
 import { Session } from '@auth/core'
 import { createRoot, createSignal } from 'solid-js'
-import { clientEnv } from '~/env/client'
 
 const sessionUrl = `/api/session`
 

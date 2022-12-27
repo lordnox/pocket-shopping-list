@@ -1,7 +1,7 @@
 import { signIn, signOut } from '@solid-auth/next/client'
 import { Component, createSignal, Match, ParentComponent, Show, Switch } from 'solid-js'
-import { useLocation, A, ErrorBoundary, useIsRouting } from 'solid-start'
-import { LOADED_STATE, useSession, session as sessionData } from '~/utils/auth'
+import { useLocation, A, useIsRouting } from 'solid-start'
+import { useSession, session as sessionData } from '~/utils/auth'
 
 const NavItem: Component<{
   href: string
@@ -9,7 +9,9 @@ const NavItem: Component<{
 }> = (props) => {
   const location = useLocation()
   const active = (path: string) =>
-    path == location.pathname ? 'border-sky-600' : 'border-transparent hover:border-sky-600'
+    path == location.pathname
+      ? 'border-sky-600 dark:text-white'
+      : 'border-transparent dark:text-gray-400 dark:hover:text-white'
 
   return (
     <div class={`border-b-2 ${active(props.href)} mx-1.5 sm:mx-6`}>
@@ -80,8 +82,8 @@ export const Layout: ParentComponent = (props) => {
 
   return (
     <>
-      <nav class="bg-sky-800 z-20 w-screen fixed">
-        <div class="container flex items-center p-3 text-gray-200  w-full m-auto">
+      <nav class="fixed w-full bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900 shadow-lg">
+        <div class="container flex flex-wrap items-center justify-between mx-auto">
           <NavItem href="/" title="Home" />
           <NavItem href="/repos" title="Repositories" />
           <NavItem href="/shopping" title="Shopping" />
