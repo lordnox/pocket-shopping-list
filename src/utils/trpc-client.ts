@@ -4,7 +4,6 @@ import { createResource } from 'solid-js'
 import type { AnyProcedure, AnyRouter, ProcedureArgs, ProcedureType } from '@trpc/server'
 import type { AppRouter } from '~/server/trpc/router/_app'
 import { inferTransformedProcedureOutput } from '@trpc/server/shared'
-import { clientEnv } from '~/env/client'
 
 export const trpc = createTRPCProxyClient<AppRouter>({
   links: [
