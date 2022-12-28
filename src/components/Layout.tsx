@@ -82,8 +82,8 @@ export const Layout: ParentComponent = (props) => {
 
   return (
     <>
-      <nav class="z-20 fixed w-full bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900 shadow-lg">
-        <div class="container p-4  flex flex-wrap items-center justify-between mx-auto">
+      <nav class="z-20 fixed w-full bg-white border-gray-200 px-2 sm:px-4 dark:bg-gray-900 shadow-lg">
+        <div class="container p-4 flex flex-wrap items-center justify-between mx-auto">
           <NavItem href="/" title="Home" />
           <NavItem href="/repos" title="Repositories" />
           <NavItem href="/shopping" title="Shopping" />
@@ -99,7 +99,7 @@ export const Layout: ParentComponent = (props) => {
         </div>
       </nav>
 
-      <div class={`pt-[50px] transition-all ${routingClass()}`}>{props.children}</div>
+      <div class={`pt-[74px] transition-all ${routingClass()}`}>{props.children}</div>
       <div
         class={`transition-all bg-gray-100 z-10 fixed w-screen h-screen top-0 left-0 pointer-events-none grid place-content-center ${loadingClass()}`}
       >
