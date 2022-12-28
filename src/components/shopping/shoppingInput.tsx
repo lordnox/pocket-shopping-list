@@ -1,30 +1,10 @@
 import { Component, createSignal, JSX, ParentComponent, splitProps } from 'solid-js'
 import { ShoppingItemCreate } from '~/types/shopping'
 import { createDiv } from '~/utils/createTag'
-import { ButtonGroup, ButtonGroupItems } from '../ButtonGroup'
+import { ButtonGroupItems } from '../ButtonGroup'
 import { InputField } from '../InputField'
+import { AmountKeys, AmountType, amountTypes, choices } from './amount'
 import { ShoppingTags } from './tags'
-
-interface AmountType {
-  label: string
-  placeholder: string
-}
-
-const choices = {
-  liter: 'l',
-  kilogram: 'kg',
-} as const
-
-const amountTypes: Record<keyof typeof choices, AmountType> = {
-  kilogram: {
-    label: 'Menge (g)',
-    placeholder: 'Menge in g',
-  },
-  liter: {
-    label: 'Volumen (ml)',
-    placeholder: 'Volumen in ml',
-  },
-}
 
 const Row = createDiv(`
   flex
@@ -41,10 +21,10 @@ export const ShoppingInput: Component<{ onEnter: (data: ShoppingItemCreate) => v
   let priceInputElement: HTMLInputElement
   let amountTypeInputElement: HTMLInputElement
 
-  const defaultAmountType: keyof typeof choices = 'kilogram'
+  const defaultAmountType: AmountKeys = 'kilogram'
 
   const [amountType, setAmountType] = createSignal<AmountType>(amountTypes[defaultAmountType])
-  const [tags, setTags] = createSignal<string[]>(['Nudeln', 'Glutenfrei'])
+  const [tags, setTags] = createSignal<string[]>([])
 
   const enterItem: JSX.EventHandlerUnion<HTMLButtonElement, MouseEvent> = async (event) => {
     event.preventDefault()
@@ -55,11 +35,10 @@ export const ShoppingInput: Component<{ onEnter: (data: ShoppingItemCreate) => v
     nameInputElement.value = ''
     priceInputElement.value = ''
     amountTypeInputElement.value = '1000'
-    props.onEnter({ name, price, amount, tags: [] })
+    props.onEnter({ name, price, type: amountType().key, amount, tags: [] })
   }
 
-  const changeType = (val: typeof choices[keyof typeof choices], key: keyof typeof choices) =>
-    setAmountType(amountTypes[key])
+  const changeType = (val: typeof choices[AmountKeys], key: AmountKeys) => setAmountType(amountTypes[key])
 
   return (
     <form class="flex flex-col gap-2 m-2">

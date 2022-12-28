@@ -29,6 +29,7 @@ model ItemPrice {
   createdAt       DateTime     @default(now())
   price           Int
   normalizedPrice Int
+  amount          Int          @default(1000)
   locationId      String?
   location        GeoLocation? @relation(fields: [locationId], references: [id])
   item            ShoppingItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
