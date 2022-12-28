@@ -11,11 +11,6 @@ export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
       <td class="py-4 px-6">
         <div>{(props.item.prices[0].price / 100).toFixed(2)} €</div>
       </td>
-      {/* <td class="py-4 px-6 text-right">
-        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-          Edit
-        </a>
-      </td> */}
     </tr>
   )
 }

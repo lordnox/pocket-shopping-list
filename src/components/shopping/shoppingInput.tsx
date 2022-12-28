@@ -1,5 +1,6 @@
-import { Component, createSignal, JSX } from 'solid-js'
+import { Component, createSignal, JSX, ParentComponent, splitProps } from 'solid-js'
 import { ShoppingItemCreate } from '~/types/shopping'
+import { createDiv } from '~/utils/createTag'
 import { ButtonGroup, ButtonGroupItems } from '../ButtonGroup'
 import { InputField } from '../InputField'
 import { ShoppingTags } from './tags'
@@ -25,6 +26,16 @@ const amountTypes: Record<keyof typeof choices, AmountType> = {
   },
 }
 
+const Row = createDiv(`
+  flex
+  w-full
+  gap-2
+`)
+const Item = createDiv(`
+  place-self-end 
+  w-full
+`)
+
 export const ShoppingInput: Component<{ onEnter: (data: ShoppingItemCreate) => void }> = (props) => {
   let nameInputElement: HTMLInputElement
   let priceInputElement: HTMLInputElement
@@ -47,43 +58,45 @@ export const ShoppingInput: Component<{ onEnter: (data: ShoppingItemCreate) => v
     props.onEnter({ name, price, amount, tags: [] })
   }
 
-  const changeType = (val: typeof choices[keyof typeof choices], key: keyof typeof choices) => {
-    console.log(val)
+  const changeType = (val: typeof choices[keyof typeof choices], key: keyof typeof choices) =>
     setAmountType(amountTypes[key])
-  }
 
   return (
-    <form class="flex gap-2 m-2">
-      <div class="place-self-end">
-        <InputField for="name" label="Name" placeholder="Name" ref={nameInputElement!} required />
-      </div>
-      <div class="place-self-end">
-        <InputField for="price" label="Preis" placeholder="Preis" ref={priceInputElement!} required type="number" />
-      </div>
-      <div class="place-self-end grid" style={`grid-template-columns: 1fr 50px 50px; max-width: 180px;`}>
-        <InputField
-          for="amount"
-          label={amountType().label}
-          placeholder={amountType().placeholder}
-          ref={amountTypeInputElement!}
-          required
-          type="number"
-          value="1000"
-          labelStyle="grid-column-end: span 3;"
-          class="rounded-r-none"
-        />
-        <ButtonGroupItems choices={choices} onChange={changeType} active={defaultAmountType} />
-      </div>
-      <div>
-        <ShoppingTags tags={tags()} />
-      </div>
-      <button
-        class="text-white place-self-end h-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        type="submit"
-        onClick={enterItem}
-      >
-        Eintragen
-      </button>
+    <form class="flex flex-col gap-2 m-2">
+      <Row>
+        <Item class="place-self-end">
+          <InputField for="name" label="Name" placeholder="Name" ref={nameInputElement!} required />
+        </Item>
+        <Item class="place-self-end">
+          <InputField for="price" label="Preis" placeholder="Preis" ref={priceInputElement!} required type="number" />
+        </Item>
+        <Item class="grid" style={`grid-template-columns: 1fr 50px 50px; max-width: 180px;`}>
+          <InputField
+            for="amount"
+            label={amountType().label}
+            placeholder={amountType().placeholder}
+            ref={amountTypeInputElement!}
+            required
+            type="number"
+            value="1000"
+            labelStyle="grid-column-end: span 3;"
+            class="rounded-r-none"
+          />
+          <ButtonGroupItems choices={choices} onChange={changeType} active={defaultAmountType} />
+        </Item>
+      </Row>
+      <Row>
+        <Item>
+          <ShoppingTags tags={tags()} />
+        </Item>
+        <button
+          class="text-white place-self-end h-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          type="submit"
+          onClick={enterItem}
+        >
+          Eintragen
+        </button>
+      </Row>
     </form>
   )
 }
