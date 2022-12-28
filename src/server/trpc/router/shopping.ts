@@ -32,7 +32,7 @@ export default router({
           data: {
             price: input.price,
             itemId: item.id,
-            normalizedPrice: input.price / input.amount * 1000,            
+            normalizedPrice: Math.floor((input.price / input.amount) * 1000),
           },
         })
         return {
@@ -46,7 +46,7 @@ export default router({
           prices: {
             create: {
               price: input.price,
-              normalizedPrice: input.price / input.amount * 1000,            
+              normalizedPrice: Math.floor((input.price / input.amount) * 1000),
             },
           },
         },
