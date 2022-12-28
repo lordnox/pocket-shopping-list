@@ -12,39 +12,51 @@ datasource db {
 
 // defines an item purchasable in a shop
 model ShoppingItem {
-  id        String   @id @default(cuid())
+  id        String            @id @default(cuid())
   userId    String
-  createdAt DateTime @default(now())
-  name      String  
+  createdAt DateTime          @default(now())
+  name      String
+  type      ItemType          @default(kilogram)
   prices    ItemPrice[]
-  category  String?  
-  createdBy User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdBy User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags      ShoppingItemTag[]
 }
 
 // contains the price of a shopping item
 model ItemPrice {
-  id        String        @id @default(cuid())
-  itemId    String
-  createdAt DateTime      @default(now())
-  price     Int     
-  item      ShoppingItem  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  id              String       @id @default(cuid())
+  itemId          String
+  createdAt       DateTime     @default(now())
+  price           Int
+  normalizedPrice Int
+  locationId      String?
+  location        GeoLocation? @relation(fields: [locationId], references: [id])
+  item            ShoppingItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+model ShoppingItemTag {
+  id    String         @id @default(cuid())
+  name  String         @unique
+  items ShoppingItem[]
+
+  @@map("Tag")
 }
 
 // Necessary for Next auth
 model Account {
-  id                String  @id @default(cuid())
+  id                String       @id @default(cuid())
   userId            String
   type              ProviderType
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?      @db.Text
+  access_token      String?      @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?      @db.Text
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -58,9 +70,9 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String    @unique
+  email         String         @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -69,11 +81,18 @@ model User {
 }
 
 model VerificationToken {
-  identifier  String
+  identifier String
   token      String   @unique
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model GeoLocation {
+  id        String      @id @default(cuid())
+  lat       Int
+  long      Int
+  ItemPrice ItemPrice[]
 }
 
 enum ProviderType {
@@ -81,4 +100,9 @@ enum ProviderType {
   oauth
   email
   credentials
+}
+
+enum ItemType {
+  kilogram
+  liter
 }

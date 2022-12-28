@@ -5,6 +5,7 @@ export default router({
   shoppingItems: procedure.query(({ ctx: { prisma } }) =>
     prisma.shoppingItem.findMany({
       include: {
+        tags: true,
         prices: {
           orderBy: {
             createdAt: 'desc',
@@ -19,6 +20,9 @@ export default router({
       z.object({
         name: z.string(),
         price: z.number().int().positive(),
+        // expected to be in ml or g
+        amount: z.number(),
+        tags: z.array(z.string()),
       }),
     )
     .mutation(async ({ input, ctx: { prisma, user } }) => {
@@ -28,6 +32,7 @@ export default router({
           data: {
             price: input.price,
             itemId: item.id,
+            normalizedPrice: input.price / input.amount * 1000,            
           },
         })
         return {
@@ -41,6 +46,7 @@ export default router({
           prices: {
             create: {
               price: input.price,
+              normalizedPrice: input.price / input.amount * 1000,            
             },
           },
         },
