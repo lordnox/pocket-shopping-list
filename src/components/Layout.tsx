@@ -14,7 +14,7 @@ const NavItem: Component<{
       : 'border-transparent dark:text-gray-400 dark:hover:text-white'
 
   return (
-    <div class={`border-b-2 ${active(props.href)} mx-1.5 sm:mx-6`}>
+    <div class={`transition border-b-2 ${active(props.href)} mx-1.5 sm:mx-6`}>
       <A class="w-full h-full block" href={props.href}>
         {props.title}
       </A>
@@ -23,7 +23,7 @@ const NavItem: Component<{
 }
 
 const LoginButton = () => (
-  <button class="ml-auto" onClick={() => signIn()}>
+  <button class="transition mr-4 ml-auto dark:text-gray-400 dark:hover:text-white " onClick={() => signIn()}>
     Login
   </button>
 )
@@ -83,7 +83,7 @@ export const Layout: ParentComponent = (props) => {
   return (
     <>
       <nav class="z-20 fixed w-full bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900 shadow-lg">
-        <div class="container flex flex-wrap items-center justify-between mx-auto">
+        <div class="container p-4  flex flex-wrap items-center justify-between mx-auto">
           <NavItem href="/" title="Home" />
           <NavItem href="/repos" title="Repositories" />
           <NavItem href="/shopping" title="Shopping" />

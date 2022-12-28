@@ -1,12 +1,13 @@
 import { Title } from 'solid-start'
 
 import { trpc, useQuery } from '~/utils/trpc-client'
-import { createSignal } from 'solid-js'
+import { createSignal, Show } from 'solid-js'
 import { ShoppingSearch } from '~/components/shopping/search'
 import { ShoppingInput } from '~/components/shopping/input'
 import { ShoppingItems } from '~/components/shopping/items'
 import { ShoppingItemCreate } from '~/types/shopping'
 import { ShoppingItem as ShoppingItemType } from '~/types/shopping'
+import { session } from '~/utils/auth'
 
 export default () => {
   const upsertItem = trpc.createOrUpdateShoppingItem.mutate
@@ -30,7 +31,9 @@ export default () => {
       <Title>Shopping</Title>
       <h1 class="max-6-xs text-6xl text-sky-700 font-thin uppercase mt-4 mb-8">Shopping</h1>
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
-      <ShoppingInput onEnter={onEnter} />
+      <Show when={session()}>
+        <ShoppingInput onEnter={onEnter} />
+      </Show>
       <ShoppingItems items={filteredItems()} />
     </main>
   )
