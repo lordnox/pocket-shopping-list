@@ -11,7 +11,7 @@ import { session } from '~/utils/auth'
 
 export default () => {
   const upsertItem = trpc.createOrUpdateShoppingItem.mutate
-  const [items, refetch] = useQuery('shoppingItems')
+  const [items, refetch, setItems] = useQuery('shoppingItems')
   const [searchKey, setSearchKey] = createSignal<string>()
 
   const filteredItems = () => {
@@ -21,8 +21,41 @@ export default () => {
     return currentItems.filter((item) => item.name.toLowerCase().includes(key))
   }
 
-  const onEnter = async (data: ShoppingItemCreate) => {
-    await upsertItem(data)
+  const sortedItems = () => {
+    const currentItems = filteredItems() as ShoppingItemType[]
+    if (!currentItems) return currentItems
+    currentItems.sort((a, b) => a.name.localeCompare(b.name))
+    return currentItems
+  }
+
+  const onEnter = async (createItem: ShoppingItemCreate) => {
+    // optimistic update:
+    setItems((data) => {
+      if (!data) return data
+      const index = data.findIndex((entry) => entry.name === createItem.name)
+      const newItem: ShoppingItemType = {
+        ...data[index],
+        optimistic: true,
+        type: createItem.type,
+        name: createItem.name,
+        prices: [
+          {
+            amount: createItem.amount,
+            id: '',
+            createdAt: '',
+            itemId: '',
+
+            price: createItem.price,
+            locationId: null,
+            normalizedPrice: (createItem.price / createItem.amount) * 1000,
+          },
+          ...(data[index]?.prices ?? []),
+        ],
+      }
+
+      return index !== -1 ? [...data.slice(0, index), newItem, ...data.slice(index + 1)] : [...data, newItem]
+    })
+    await upsertItem(createItem)
     await refetch()
   }
 
@@ -34,7 +67,7 @@ export default () => {
       <Show when={session()}>
         <ShoppingInput onEnter={onEnter} />
       </Show>
-      <ShoppingItems items={filteredItems()} />
+      <ShoppingItems items={sortedItems()} />
     </main>
   )
 }

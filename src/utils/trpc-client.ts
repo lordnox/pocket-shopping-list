@@ -68,7 +68,7 @@ export const useQuery = <TPath extends QueryKeys>(path: TPath, ...params: Proced
   }
 
   onMount(fetch)
-  return [data, fetch] as const
+  return [data, fetch, setData] as const
 }
 
 export type QueryResult<Path extends QueryKeys> = inferTransformedProcedureOutput<Queries[Path]>
