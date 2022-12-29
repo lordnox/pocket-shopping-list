@@ -19,35 +19,39 @@ const amountString = (amount: number, type: ItemType) => {
 }
 
 export const Header = () => (
-  <Row
+  <HeaderRow
     class={`
+  `}
+  >
+    <HeaderItem>Produkt</HeaderItem>
+    <HeaderItem>Einheit</HeaderItem>
+    <HeaderItem>Preis</HeaderItem>
+  </HeaderRow>
+)
+
+const rowClass = `
+  transition-color
+  grid
+  grid-cols-[1fr_150px_150px]
+  w-full
+  odd:bg-white
+  border-b
+  first:rounded-t-lg
+  last:rounded-b-lg
+`
+
+const HeaderRow = createDiv(`
+  ${rowClass}
   text-xs
   text-gray-600
   uppercase
   bg-gray-50
   dark:bg-gray-600
   dark:text-gray-300
-  `}
-  >
-    <HeaderItem>Produkt</HeaderItem>
-    <HeaderItem>Einheit</HeaderItem>
-    <HeaderItem>Preis</HeaderItem>
-  </Row>
-)
+`)
 
-const rowClass = `
-transition-color
-grid
-grid-cols-[1fr_150px_150px]
-w-full
-odd:bg-white
-border-b
-first:rounded-t-lg
-last:rounded-b-lg
-`
-
-const Row = createDiv(`
-${rowClass}
+const ItemRow = createDiv(`
+  ${rowClass}
   even:bg-gray-100
   even:dark:bg-gray-700
   odd:dark:bg-gray-800
@@ -58,7 +62,7 @@ ${rowClass}
 
 export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
   return (
-    <Row>
+    <ItemRow>
       <th
         scope="row"
         classList={{
@@ -75,6 +79,6 @@ export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
           <span> @ {amountString(props.item.prices[0].amount, props.item.type)}</span>
         </PriceEntry>
       </td>
-    </Row>
+    </ItemRow>
   )
 }
