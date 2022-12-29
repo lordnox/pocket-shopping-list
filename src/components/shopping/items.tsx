@@ -22,7 +22,7 @@ export const ShoppingItems: Component<{
   // onMount(() => autoAnimate(tableElement))
 
   return (
-    <div class="overflow-x-auto relative shadow-md sm:rounded-lg w-full">
+    <div class="overflow-x-hidden relative shadow-md sm:rounded-lg w-full">
       <TableGrid ref={tableElement!}>
         <Header />
         <For each={props.items}>{(item) => <ShoppingItem item={item} />}</For>

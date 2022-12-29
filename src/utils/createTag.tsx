@@ -24,7 +24,6 @@ export const createTag =
       ...props.classList,
       ...(typeof classOrClassList === 'string' ? { [cleanup(classOrClassList)]: true } : classOrClassList ?? {}),
     }
-    console.log(classList)
     return render({
       ...tagProps,
       classList,
