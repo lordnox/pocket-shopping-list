@@ -12,6 +12,7 @@ specifiers:
   '@trpc/client': ^10.7.0
   '@trpc/server': ^10.7.0
   '@types/node': ^18.11.17
+  '@use-gesture/vanilla': ^10.2.23
   autoprefixer: ^10.4.13
   dotenv: ^16.0.3
   octokit: ^2.0.10
@@ -40,6 +41,7 @@ dependencies:
   '@solidjs/router': 0.6.0_solid-js@1.6.6
   '@trpc/client': 10.7.0_@trpc+server@10.7.0
   '@trpc/server': 10.7.0
+  '@use-gesture/vanilla': 10.2.23
   dotenv: 16.0.3
   octokit: 2.0.10
   solid-js: 1.6.6
@@ -1886,6 +1888,16 @@ packages:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
     dependencies:
       '@types/node': 18.11.17
+
+  /@use-gesture/core/10.2.23:
+    resolution: {integrity: sha512-Ynap/Uh6RX1Vgn3zNmFTyKapapdf7Av+GzAe6h+RsBZaxMF1z3cK6aohHPJP6T1hLrPyH/yehxa7RBqyESG9RA==}
+    dev: false
+
+  /@use-gesture/vanilla/10.2.23:
+    resolution: {integrity: sha512-mhuRwVgYcm28VJqZr7cGFOMOietVweyqJANbLUha40IaeSKXHjZ3rQR6TwwZDzoZI3RWW9i/pQv0wJutTBHL2w==}
+    dependencies:
+      '@use-gesture/core': 10.2.23
+    dev: false
 
   /@vinxi/rollup-plugin-visualizer/5.7.1_rollup@2.79.1:
     resolution: {integrity: sha512-gIwdH6B2rh7EoWgtL80yMW/0AM6riSXwNccM7rwMONG5CTVYzHYDQgnccrl40iWHrQLYZI0rvM66EQ1TRB8REA==}

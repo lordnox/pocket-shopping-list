@@ -19,10 +19,7 @@ const amountString = (amount: number, type: ItemType) => {
 }
 
 export const Header = () => (
-  <HeaderRow
-    class={`
-  `}
-  >
+  <HeaderRow>
     <HeaderItem>Produkt</HeaderItem>
     <HeaderItem>Einheit</HeaderItem>
     <HeaderItem>Preis</HeaderItem>
@@ -34,8 +31,6 @@ const rowClass = `
   grid
   grid-cols-[1fr_150px_150px]
   w-full
-  odd:bg-white
-  border-b
   first:rounded-t-lg
   last:rounded-b-lg
 `
@@ -52,6 +47,7 @@ const HeaderRow = createDiv(`
 
 const ItemRow = createDiv(`
   ${rowClass}
+  border-b
   even:bg-gray-100
   even:dark:bg-gray-700
   odd:dark:bg-gray-800

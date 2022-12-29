@@ -33,6 +33,7 @@
     "@solidjs/router": "^0.6.0",
     "@trpc/client": "^10.7.0",
     "@trpc/server": "^10.7.0",
+    "@use-gesture/vanilla": "^10.2.23",
     "dotenv": "^16.0.3",
     "octokit": "^2.0.10",
     "solid-js": "^1.6.6",

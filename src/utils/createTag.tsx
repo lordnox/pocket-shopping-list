@@ -8,6 +8,8 @@ export interface WithClassOrClassList {
   classList?: ClassList
 }
 
+const cleanup = (str: string) => str.replace(/[\n ]+/g, ' ').trim()
+
 export const createTag =
   <Tag extends keyof JSX.IntrinsicElements>(
     tag: Tag,
@@ -16,13 +18,16 @@ export const createTag =
   ): ParentComponent<JSX.IntrinsicElements[Tag] & WithClassOrClassList> =>
   (props) => {
     const [, tagProps] = splitProps(props, ['class', 'classList'])
+    const classProp = cleanup(props.class ?? '')
+    const classList = {
+      ...(classProp ? { [classProp]: true } : {}),
+      ...props.classList,
+      ...(typeof classOrClassList === 'string' ? { [cleanup(classOrClassList)]: true } : classOrClassList ?? {}),
+    }
+    console.log(classList)
     return render({
       ...tagProps,
-      classList: {
-        [props.class ?? '']: true,
-        ...props.classList,
-        ...(typeof classOrClassList === 'string' ? { [classOrClassList]: true } : classOrClassList ?? {}),
-      },
+      classList,
     })
   }
 
