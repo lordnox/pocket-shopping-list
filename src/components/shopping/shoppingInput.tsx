@@ -49,7 +49,7 @@ export const ShoppingInput: Component<{ onEnter: (data: ShoppingItemCreate) => v
         <Item class="place-self-end">
           <InputField for="price" label="Preis" placeholder="Preis" ref={priceInputElement!} required type="number" />
         </Item>
-        <Item class="grid" style={`grid-template-columns: 1fr 50px 50px; max-width: 180px;`}>
+        <Item class="grid grid-cols-[1fr_50px_50px] min-w-[165px] max-w-[180px]">
           <InputField
             for="amount"
             label={amountType().label}

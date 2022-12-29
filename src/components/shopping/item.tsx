@@ -6,6 +6,10 @@ import { amountTypes } from './amount'
 
 const PriceEntry = createDiv(``)
 
+const HeaderItem = createDiv(`
+  py-3
+  px-6
+`)
 const selectUnit = (amount: number) => (amount >= 1000 ? 1 : 0)
 
 const amountString = (amount: number, type: ItemType) => {
@@ -14,9 +18,47 @@ const amountString = (amount: number, type: ItemType) => {
   return `${number} ${amountTypes[type].unit[unit]}`
 }
 
+export const Header = () => (
+  <Row
+    class={`
+  text-xs
+  text-gray-600
+  uppercase
+  bg-gray-50
+  dark:bg-gray-600
+  dark:text-gray-300
+  `}
+  >
+    <HeaderItem>Produkt</HeaderItem>
+    <HeaderItem>Einheit</HeaderItem>
+    <HeaderItem>Preis</HeaderItem>
+  </Row>
+)
+
+const rowClass = `
+transition-color
+grid
+grid-cols-[1fr_150px_150px]
+w-full
+odd:bg-white
+border-b
+first:rounded-t-lg
+last:rounded-b-lg
+`
+
+const Row = createDiv(`
+${rowClass}
+  even:bg-gray-100
+  even:dark:bg-gray-700
+  odd:dark:bg-gray-800
+  dark:border-gray-700
+  hover:bg-gray-50
+  dark:hover:bg-gray-600
+`)
+
 export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
   return (
-    <tr class="transition-color odd:bg-white border-b even:bg-gray-100 even:dark:bg-gray-700 odd:dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+    <Row>
       <th
         scope="row"
         classList={{
@@ -33,6 +75,6 @@ export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
           <span> @ {amountString(props.item.prices[0].amount, props.item.type)}</span>
         </PriceEntry>
       </td>
-    </tr>
+    </Row>
   )
 }
