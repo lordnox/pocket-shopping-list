@@ -1,5 +1,5 @@
 import { ItemType } from '@prisma/client'
-import { Component, onMount } from 'solid-js'
+import { Component, createSignal, onMount, ParentComponent, Show } from 'solid-js'
 import { ShoppingItem as ShoppingItemType } from '~/types/shopping'
 import { createDiv } from '~/utils/createTag'
 import { amountTypes } from './amount'
@@ -30,7 +30,7 @@ export const Header = () => (
 const rowClass = `
   transition-color
   grid
-  grid-cols-[1fr_150px_150px]
+  grid-cols-[1fr_100px_150px]
   w-full
   group-last:rounded-b-lg
 `
@@ -58,8 +58,25 @@ const ItemRow = createDiv(`
   touch-none
 `)
 
+const Container = createDiv(`
+  w-full
+  h-full
+  top-0
+  left-0 
+  flex
+  absolute
+  pointer-events-none
+  group-last:rounded-b-lg
+  items-center
+  p-2
+  font-bold
+  text-white
+`)
+
 export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
   let element: HTMLDivElement
+
+  const [dragState, setDragState] = createSignal(0)
 
   onMount(() => {
     const gesture = new DragGesture(
@@ -77,6 +94,7 @@ export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
         }
         console.log(delta, movement)
         element.style.transform = `translate(${movement[0]}px)`
+        setDragState(movement[0])
         console.log(element.style.transform)
       },
       {
@@ -104,7 +122,13 @@ export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
   // )
 
   return (
-    <div class="group">
+    <div class="group relative">
+      <Show when={dragState() > 0}>
+        <Container class={`bg-red-300 justify-start`}>Löschen</Container>
+      </Show>
+      <Show when={dragState() < 0}>
+        <Container class={`bg-green-300 justify-end`}>Update</Container>
+      </Show>
       <ItemRow ref={element!}>
         <th
           scope="row"
