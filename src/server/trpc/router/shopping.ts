@@ -28,51 +28,28 @@ export default router({
       }),
     )
     .mutation(async ({ input, ctx: { prisma, user } }) => {
-      const item = await prisma.shoppingItem.findFirst({
-        where: {
-          name: { equals: input.name },
+      const prices = {
+        create: {
+          userId: user.id,
+          price: input.price,
+          amount: input.amount,
+          normalizedPrice: Math.floor((input.price / input.amount) * 1000),
         },
-      })
-      // if (item) {
-      //   await prisma.itemPrice.create({
-      //     data: {
-      //       itemId: item.id,
-      //       price: input.price,
-      //       amount: input.amount,
-      //       normalizedPrice: Math.floor((input.price / input.amount) * 1000),
-      //     },
-      //   })
-      //   return {
-      //     hint: 'updated item',
-      //   }
-      // }
+      }
       const result = await prisma.shoppingItem.upsert({
         create: {
           name: input.name,
           userId: user.id,
           type: input.type,
-          prices: {
-            create: {
-              price: input.price,
-              amount: input.amount,
-              normalizedPrice: Math.floor((input.price / input.amount) * 1000),
-            },
-          },
+          prices,
         },
         where: {
-          id: item?.id,
+          name: input.name,
         },
         update: {
-          name: input.name,
           userId: user.id,
           type: input.type,
-          prices: {
-            create: {
-              price: input.price,
-              amount: input.amount,
-              normalizedPrice: Math.floor((input.price / input.amount) * 1000),
-            },
-          },
+          prices,
         },
       })
       console.log(result)

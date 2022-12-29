@@ -1,21 +1,53 @@
 import { Title } from 'solid-start'
 
 import { trpc, useQuery } from '~/utils/trpc-client'
-import { createSignal, Show } from 'solid-js'
+import { Accessor, createEffect, createSignal, onMount, Show, Signal } from 'solid-js'
 import { ShoppingSearch } from '~/components/shopping/search'
 import { ShoppingInput } from '~/components/shopping/shoppingInput'
 import { ShoppingItems } from '~/components/shopping/items'
 import { ShoppingItemCreate } from '~/types/shopping'
 import { ShoppingItem as ShoppingItemType } from '~/types/shopping'
 import { session } from '~/utils/auth'
+import { isServer } from 'solid-js/web'
+
+const readStorage = (key: string) => {
+  try {
+    return JSON.parse(localStorage.getItem(key) ?? '')
+  } catch (e) {
+    return undefined
+  }
+}
+
+const writeStorage = (key: string, value: any) => {
+  try {
+    return localStorage.setItem(key, JSON.stringify(value))
+  } catch (e) {
+    return undefined
+  }
+}
+
+const cacheDefined = <Type,>(key: string, getter: Accessor<Type>): Accessor<Type> => {
+  if (isServer) return getter
+  const [cache, setCache] = createSignal<Type>(getter())
+  onMount(() => setCache(readStorage(key)))
+  createEffect(() => {
+    const data = getter()
+    // ignore caching undefined values
+    if (typeof data === 'undefined') return
+    setCache(() => data)
+    writeStorage(key, data)
+  })
+  return cache
+}
 
 export default () => {
   const upsertItem = trpc.createOrUpdateShoppingItem.mutate
   const [items, refetch, setItems] = useQuery('shoppingItems')
   const [searchKey, setSearchKey] = createSignal<string>()
 
+  const cacheItems = cacheDefined('products', items)
   const filteredItems = () => {
-    const currentItems = items() as ShoppingItemType[]
+    const currentItems = cacheItems() as ShoppingItemType[]
     const key = searchKey()?.toLowerCase()
     if (!key) return currentItems
     return currentItems.filter((item) => item.name.toLowerCase().includes(key))
@@ -44,10 +76,10 @@ export default () => {
             id: '',
             createdAt: '',
             itemId: '',
-
             price: createItem.price,
             locationId: null,
             normalizedPrice: (createItem.price / createItem.amount) * 1000,
+            userId: data[index].userId,
           },
           ...(data[index]?.prices ?? []),
         ],
