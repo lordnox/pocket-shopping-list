@@ -7,6 +7,8 @@ import { DragGesture } from '@use-gesture/vanilla'
 
 const PriceEntry = createDiv(``)
 
+const WIDTH_FACTOR = 0.3 // 20%
+
 const HeaderItem = createDiv(`
   py-3
   px-6
@@ -58,7 +60,7 @@ const ItemRow = createDiv(`
   touch-none
 `)
 
-const Container = createDiv(`
+const continerCss = `
   w-full
   h-full
   top-0
@@ -71,14 +73,17 @@ const Container = createDiv(`
   p-2
   font-bold
   text-white
-`)
+  transition
+`
 
 export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
   let element: HTMLDivElement
 
   const [dragState, setDragState] = createSignal(0)
+  const [width, setWidth] = createSignal(0)
 
   onMount(() => {
+    setWidth(element.getBoundingClientRect().width * WIDTH_FACTOR)
     const gesture = new DragGesture(
       element,
       ({ delta, movement, first, last }) => {
@@ -92,10 +97,9 @@ export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
           // handle events here
           return
         }
-        console.log(delta, movement)
+        setWidth(element.getBoundingClientRect().width * WIDTH_FACTOR)
         element.style.transform = `translate(${movement[0]}px)`
         setDragState(movement[0])
-        console.log(element.style.transform)
       },
       {
         axis: 'x',
@@ -124,10 +128,28 @@ export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
   return (
     <div class="group relative">
       <Show when={dragState() > 0}>
-        <Container class={`bg-red-300 justify-start`}>Löschen</Container>
+        <div
+          class={continerCss}
+          classList={{
+            ['bg-red-300']: dragState() <= width(),
+            ['bg-red-500']: dragState() > width(),
+            ['justify-start']: true,
+          }}
+        >
+          Löschen
+        </div>
       </Show>
       <Show when={dragState() < 0}>
-        <Container class={`bg-green-300 justify-end`}>Update</Container>
+        <div
+          class={continerCss}
+          classList={{
+            ['bg-green-300']: -dragState() <= width(),
+            ['bg-green-500']: -dragState() > width(),
+            ['justify-end']: true,
+          }}
+        >
+          Update
+        </div>
       </Show>
       <ItemRow ref={element!}>
         <th
