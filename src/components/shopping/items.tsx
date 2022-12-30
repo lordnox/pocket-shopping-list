@@ -19,7 +19,7 @@ export const ShoppingItems: Component<{
 }> = (props) => {
   let tableElement: HTMLTableElement
 
-  // onMount(() => autoAnimate(tableElement))
+  onMount(() => autoAnimate(tableElement))
 
   return (
     <div class="overflow-x-hidden relative shadow-md sm:rounded-lg w-full">

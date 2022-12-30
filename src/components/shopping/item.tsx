@@ -1,9 +1,9 @@
 import { ItemType } from '@prisma/client'
-import { Component, createSignal, onMount, ParentComponent, Show } from 'solid-js'
+import { Component, createSignal, onCleanup, onMount, ParentComponent, Show } from 'solid-js'
 import { ShoppingItem as ShoppingItemType } from '~/types/shopping'
 import { createDiv } from '~/utils/createTag'
 import { amountTypes } from './amount'
-import { DragGesture } from '@use-gesture/vanilla'
+import { DragGesture, Gesture } from '@use-gesture/vanilla'
 
 const PriceEntry = createDiv(``)
 
@@ -57,7 +57,7 @@ const ItemRow = createDiv(`
   dark:border-gray-700
   group-hover:bg-gray-50
   group-hover:dark:bg-gray-600
-  touch-none
+  touch-pan-y
 `)
 
 const continerCss = `
@@ -82,11 +82,13 @@ export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
   const [dragState, setDragState] = createSignal(0)
   const [width, setWidth] = createSignal(0)
 
+  let gesture: DragGesture
+
   onMount(() => {
     setWidth(element.getBoundingClientRect().width * WIDTH_FACTOR)
-    const gesture = new DragGesture(
+    gesture = new DragGesture(
       element,
-      ({ delta, movement, first, last }) => {
+      ({ movement, first, last }) => {
         if (first) {
           element.style.transition = 'none'
           return
@@ -107,23 +109,7 @@ export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
     )
   })
 
-  // const bind = useDrag(
-  //   ({ last, velocity: [, vy], direction: [, dy], movement: [, my], cancel, canceled }) => {
-  //     // if the user drags up passed a threshold, then we cancel
-  //     // the drag so that the sheet resets to its open position
-  //     if (my < -70) cancel()
-
-  //     // when the user releases the sheet, we check whether it passed
-  //     // the threshold for it to close, or if we reset it to its open positino
-  //     if (last) {
-  //       my > height * 0.5 || (vy > 0.5 && dy > 0) ? close(vy) : open({ canceled })
-  //     }
-  //     // when the user keeps dragging, we just move the sheet according to
-  //     // the cursor position
-  //     else api.start({ y: my, immediate: true })
-  //   },
-  //   { from: () => [0, y.get()], filterTaps: true, bounds: { top: 0 }, rubberband: true }
-  // )
+  onCleanup(() => gesture?.destroy())
 
   return (
     <div class="group relative">
