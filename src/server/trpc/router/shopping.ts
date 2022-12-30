@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { router, protectedProcedure, procedure } from '../utils'
 
 export default router({
-  shoppingItems: procedure.query(({ ctx: { prisma } }) =>
+  productList: procedure.query(({ ctx: { prisma } }) =>
     prisma.shoppingItem.findMany({
       include: {
         tags: true,
@@ -16,7 +16,7 @@ export default router({
     }),
   ),
 
-  createOrUpdateShoppingItem: protectedProcedure
+  createOrUpdateProduct: protectedProcedure
     .input(
       z.object({
         name: z.string(),

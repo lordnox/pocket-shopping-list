@@ -1,5 +1,5 @@
-import { Component, createSignal, JSX, ParentComponent, splitProps } from 'solid-js'
-import { ShoppingItemCreate } from '~/types/shopping'
+import { Component, createSignal, JSX } from 'solid-js'
+import { CreateProduct } from '~/types/product-types'
 import { createDiv } from '~/utils/createTag'
 import { ButtonGroupItems } from '../ButtonGroup'
 import { InputField } from '../InputField'
@@ -16,7 +16,7 @@ const Item = createDiv(`
   w-full
 `)
 
-export const ShoppingInput: Component<{ onEnter: (data: ShoppingItemCreate) => void }> = (props) => {
+export const CreateProductInput: Component<{ onEnter: (data: CreateProduct) => void }> = (props) => {
   let nameInputElement: HTMLInputElement
   let priceInputElement: HTMLInputElement
   let amountTypeInputElement: HTMLInputElement

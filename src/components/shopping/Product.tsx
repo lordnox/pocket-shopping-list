@@ -1,6 +1,6 @@
 import { ItemType } from '@prisma/client'
 import { Component, createSignal, onCleanup, onMount, ParentComponent, Show } from 'solid-js'
-import { ShoppingItem as ShoppingItemType } from '~/types/shopping'
+import { Product as ShoppingItemType } from '~/types/shopping'
 import { createDiv } from '~/utils/createTag'
 import { amountTypes } from './amount'
 import { DragGesture, Gesture } from '@use-gesture/vanilla'
@@ -76,7 +76,7 @@ const continerCss = `
   transition
 `
 
-export const ShoppingItem: Component<{ item: ShoppingItemType }> = (props) => {
+export const Product: Component<{ item: ShoppingItemType }> = (props) => {
   let element: HTMLDivElement
 
   const [dragState, setDragState] = createSignal(0)

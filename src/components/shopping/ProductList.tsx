@@ -1,6 +1,6 @@
 import { Component, For, onMount } from 'solid-js'
-import { Header, ShoppingItem } from './item'
-import { ShoppingItem as ShoppingItemType } from '~/types/shopping'
+import { Header, Product } from './Product'
+import { Product as ShoppingItemType } from '~/types/product-types'
 import autoAnimate from '@formkit/auto-animate'
 import { createDiv } from '~/utils/createTag'
 
@@ -14,7 +14,7 @@ const TableGrid = createDiv(`
   dark:text-gray-400
 `)
 
-export const ShoppingItems: Component<{
+export const ProductList: Component<{
   items: ShoppingItemType[]
 }> = (props) => {
   let tableElement: HTMLTableElement
@@ -25,7 +25,7 @@ export const ShoppingItems: Component<{
     <div class="overflow-x-hidden relative shadow-md sm:rounded-lg w-full">
       <TableGrid ref={tableElement!}>
         <Header />
-        <For each={props.items}>{(item) => <ShoppingItem item={item} />}</For>
+        <For each={props.items}>{(item) => <Product item={item} />}</For>
       </TableGrid>
     </div>
   )
