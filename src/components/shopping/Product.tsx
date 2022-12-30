@@ -4,6 +4,7 @@ import { Product as ShoppingItemType } from '~/types/product-types'
 import { createDiv } from '~/utils/createTag'
 import { amountTypes } from './amount'
 import { DragGesture } from '@use-gesture/vanilla'
+import { useSession } from '~/utils/auth'
 
 const PriceEntry = createDiv(``)
 
@@ -81,7 +82,7 @@ const continerCss = `
   transition
 `
 
-export const Product: Component<{ item: ShoppingItemType }> = (props) => {
+export const Product: Component<{ item: ShoppingItemType; hasActions?: boolean }> = (props) => {
   let element: HTMLDivElement
 
   const [dragState, setDragState] = createSignal(0)
@@ -89,32 +90,34 @@ export const Product: Component<{ item: ShoppingItemType }> = (props) => {
 
   let gesture: DragGesture
 
-  onMount(() => {
-    gesture = new DragGesture(
-      element,
-      ({ movement, first, last }) => {
-        if (first) {
-          element.style.transition = 'none'
-          return
-        }
-        if (last) {
-          element.style.transition = 'transform .2s'
-          element.style.transform = 'translate(0px)'
-          // handle events here
-          return
-        }
-        const width = element.getBoundingClientRect().width
-        const locked = Math.abs(movement[0]) > Math.max(Math.min(width * LOCK_IN_FACTOR, LOCK_IN_MIN), LOCK_IN_MAX)
-        const unlocked = Math.abs(movement[0]) < Math.max(Math.min(width * LOCK_OFF_FACTOR, LOCK_OFF_MIN), LOCK_OFF_MAX)
-        setLocked((currentlyLocked) => (currentlyLocked && unlocked ? false : currentlyLocked || locked))
-        element.style.transform = `translate(${movement[0]}px)`
-        setDragState(movement[0])
-      },
-      {
-        axis: 'x',
-      },
-    )
-  })
+  if (props.hasActions)
+    onMount(() => {
+      gesture = new DragGesture(
+        element,
+        ({ movement, first, last }) => {
+          if (first) {
+            element.style.transition = 'none'
+            return
+          }
+          if (last) {
+            element.style.transition = 'transform .2s'
+            element.style.transform = 'translate(0px)'
+            // handle events here
+            return
+          }
+          const width = element.getBoundingClientRect().width
+          const locked = Math.abs(movement[0]) > Math.max(Math.min(width * LOCK_IN_FACTOR, LOCK_IN_MIN), LOCK_IN_MAX)
+          const unlocked =
+            Math.abs(movement[0]) < Math.max(Math.min(width * LOCK_OFF_FACTOR, LOCK_OFF_MIN), LOCK_OFF_MAX)
+          setLocked((currentlyLocked) => (currentlyLocked && unlocked ? false : currentlyLocked || locked))
+          element.style.transform = `translate(${movement[0]}px)`
+          setDragState(movement[0])
+        },
+        {
+          axis: 'x',
+        },
+      )
+    })
 
   onCleanup(() => gesture?.destroy())
 

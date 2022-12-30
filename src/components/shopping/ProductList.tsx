@@ -16,6 +16,7 @@ const TableGrid = createDiv(`
 
 export const ProductList: Component<{
   items: ShoppingItemType[]
+  hasActions?: boolean
 }> = (props) => {
   let tableElement: HTMLTableElement
 
@@ -25,7 +26,7 @@ export const ProductList: Component<{
     <div class="overflow-x-hidden relative shadow-md sm:rounded-lg w-full">
       <TableGrid ref={tableElement!}>
         <Header />
-        <For each={props.items}>{(item) => <Product item={item} />}</For>
+        <For each={props.items}>{(item) => <Product item={item} hasActions={props.hasActions} />}</For>
       </TableGrid>
     </div>
   )

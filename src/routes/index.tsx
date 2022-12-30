@@ -44,6 +44,8 @@ export default () => {
   const [items, refetch, setItems] = useQuery('productList')
   const [searchKey, setSearchKey] = createSignal<string>()
 
+  const hasActions = () => !!session()
+
   const cacheItems = cacheDefined('products', items)
   const filteredItems = () => {
     const currentItems = cacheItems() as ShoppingItemType[]
@@ -98,7 +100,7 @@ export default () => {
       <Show when={session()}>
         <CreateProductInput onEnter={onEnter} />
       </Show>
-      <ProductList items={sortedItems()} />
+      <ProductList items={sortedItems()} hasActions={hasActions()} />
     </main>
   )
 }
