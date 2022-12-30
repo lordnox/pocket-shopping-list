@@ -1,6 +1,6 @@
 import { ItemType } from '@prisma/client'
-import { Component, createSignal, onCleanup, onMount, ParentComponent, Show } from 'solid-js'
-import { Product as ShoppingItemType } from '~/types/shopping'
+import { Component, createSignal, onCleanup, onMount, Show } from 'solid-js'
+import { Product as ShoppingItemType } from '~/types/product-types'
 import { createDiv } from '~/utils/createTag'
 import { amountTypes } from './amount'
 import { DragGesture, Gesture } from '@use-gesture/vanilla'
