@@ -3,11 +3,16 @@ import { Component, createSignal, onCleanup, onMount, Show } from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
 import { createDiv } from '~/utils/createTag'
 import { amountTypes } from './amount'
-import { DragGesture, Gesture } from '@use-gesture/vanilla'
+import { DragGesture } from '@use-gesture/vanilla'
 
 const PriceEntry = createDiv(``)
 
-const WIDTH_FACTOR = 0.3 // 20%
+const LOCK_IN_FACTOR = 0.3
+const LOCK_IN_MIN = 100
+const LOCK_IN_MAX = 150
+const LOCK_OFF_FACTOR = 0.2
+const LOCK_OFF_MIN = 80
+const LOCK_OFF_MAX = 120
 
 const HeaderItem = createDiv(`
   py-3
@@ -80,12 +85,11 @@ export const Product: Component<{ item: ShoppingItemType }> = (props) => {
   let element: HTMLDivElement
 
   const [dragState, setDragState] = createSignal(0)
-  const [width, setWidth] = createSignal(0)
+  const [locked, setLocked] = createSignal(false)
 
   let gesture: DragGesture
 
   onMount(() => {
-    setWidth(element.getBoundingClientRect().width * WIDTH_FACTOR)
     gesture = new DragGesture(
       element,
       ({ movement, first, last }) => {
@@ -99,7 +103,10 @@ export const Product: Component<{ item: ShoppingItemType }> = (props) => {
           // handle events here
           return
         }
-        setWidth(element.getBoundingClientRect().width * WIDTH_FACTOR)
+        const width = element.getBoundingClientRect().width
+        const locked = Math.abs(movement[0]) > Math.max(Math.min(width * LOCK_IN_FACTOR, LOCK_IN_MIN), LOCK_IN_MAX)
+        const unlocked = Math.abs(movement[0]) < Math.max(Math.min(width * LOCK_OFF_FACTOR, LOCK_OFF_MIN), LOCK_OFF_MAX)
+        setLocked((currentlyLocked) => (currentlyLocked && unlocked ? false : currentlyLocked || locked))
         element.style.transform = `translate(${movement[0]}px)`
         setDragState(movement[0])
       },
@@ -112,13 +119,13 @@ export const Product: Component<{ item: ShoppingItemType }> = (props) => {
   onCleanup(() => gesture?.destroy())
 
   return (
-    <div class="group relative">
+    <div class="group relative @container">
       <Show when={dragState() > 0}>
         <div
           class={continerCss}
           classList={{
-            ['bg-red-300']: dragState() <= width(),
-            ['bg-red-500']: dragState() > width(),
+            ['bg-red-300']: !locked(),
+            ['bg-red-500']: locked(),
             ['justify-start']: true,
           }}
         >
@@ -129,8 +136,8 @@ export const Product: Component<{ item: ShoppingItemType }> = (props) => {
         <div
           class={continerCss}
           classList={{
-            ['bg-green-300']: -dragState() <= width(),
-            ['bg-green-500']: -dragState() > width(),
+            ['bg-green-300']: !locked(),
+            ['bg-green-500']: locked(),
             ['justify-end']: true,
           }}
         >
@@ -138,22 +145,21 @@ export const Product: Component<{ item: ShoppingItemType }> = (props) => {
         </div>
       </Show>
       <ItemRow ref={element!}>
-        <th
-          scope="row"
+        <div
           classList={{
             ['py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white']: true,
             italic: props.item.optimistic,
           }}
         >
           {props.item.name}
-        </th>
-        <td class="py-4 px-6">{(props.item.prices[0].normalizedPrice / 100).toFixed(2)} €</td>
-        <td class="py-4 px-6">
+        </div>
+        <div class="py-4 px-6">{(props.item.prices[0].normalizedPrice / 100).toFixed(2)} €</div>
+        <div class="py-4 px-6">
           <PriceEntry>
             <span>{(props.item.prices[0].price / 100).toFixed(2)} €</span>
-            <span> @ {amountString(props.item.prices[0].amount, props.item.type)}</span>
+            <span> @ {amountString(props.item.prices[0].amount, props.item.type)}</span>
           </PriceEntry>
-        </td>
+        </div>
       </ItemRow>
     </div>
   )

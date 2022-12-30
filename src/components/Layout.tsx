@@ -85,8 +85,6 @@ export const Layout: ParentComponent = (props) => {
       <nav class="z-20 fixed w-full bg-white border-gray-200 px-2 sm:px-4 dark:bg-gray-900 shadow-lg">
         <div class="container p-4 flex flex-wrap items-center justify-between mx-auto">
           <NavItem href="/" title="Home" />
-          <NavItem href="/repos" title="Repositories" />
-          <NavItem href="/shopping" title="Shopping" />
           <NavItem href="/about" title="About" />
 
           <Show when={session().state === 'LOADED'}>
