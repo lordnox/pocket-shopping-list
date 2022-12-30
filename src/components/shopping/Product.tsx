@@ -1,12 +1,12 @@
 import { ItemType } from '@prisma/client'
-import { Component, createEffect, createSignal, onCleanup, onMount, Show } from 'solid-js'
+import { Component, createEffect } from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
 import { createDiv } from '~/utils/createTag'
 import { amountTypes } from './amount'
-import { DragGesture } from '@use-gesture/vanilla'
-import { useSession } from '~/utils/auth'
 import { useProductDrag } from './product-drag'
 import { useProductContext } from './ProductContext'
+import { RightActionContainer } from './product-actions/Right-Actions'
+import { LeftActionContainer } from './product-actions/Left-Actions'
 
 const PriceEntry = createDiv(``)
 
@@ -31,6 +31,7 @@ export const Header = () => (
 )
 
 const rowClass = `
+  relative
   transition-color
   grid
   grid-cols-[1fr_100px_150px]
@@ -49,8 +50,9 @@ const HeaderRow = createDiv(`
   dark:text-gray-300
 `)
 
-const ItemRow = createDiv(`
-  ${rowClass}
+const itemRowCss = `
+  ${rowClass}  
+  z-20
   border-b
   group-even:bg-gray-100
   group-even:dark:bg-gray-700
@@ -59,22 +61,6 @@ const ItemRow = createDiv(`
   group-hover:bg-gray-50
   group-hover:dark:bg-gray-600
   touch-pan-y
-`)
-
-const continerCss = `
-  w-full
-  h-full
-  top-0
-  left-0 
-  flex
-  absolute
-  pointer-events-none
-  group-last:rounded-b-lg
-  items-center
-  p-2
-  font-bold
-  text-white
-  transition
 `
 
 interface ProductProps {
@@ -86,38 +72,28 @@ interface ProductProps {
 export const Product: Component<ProductProps> = (props) => {
   let element: HTMLDivElement
 
-  const reset = () => {
-    element.style.transform = 'translate(0px)'
-  }
+  const reset = () => (element.style.transform = '')
 
   const [direction, locked] = useProductDrag(() => element, {
     onFinished: (element, state) => {
       element.style.transition = 'transform .2s'
-      if (!state.locked) return reset()
-      props.onActionPending(props.item.id)
-      element.style.transform = `translate(${state.movement > 0 ? 100 : -100}%)`
+      reset()
+      if (state.locked) props.onActionPending(props.item.id)
     },
   })
 
-  createEffect(() => {
-    if (useProductContext()?.actionPending() !== props.item.id) reset()
-  })
+  const isActive = () => locked() && useProductContext()?.actionPending() === props.item.id
+  const isLeft = () => direction() < 0
+  const isRight = () => direction() > 0
+
+  createEffect(() => !isActive() && reset())
 
   return (
     <div class="group relative @container">
-      <Show when={direction() > 0}>
-        <div
-          class={continerCss}
-          classList={{
-            ['bg-red-300']: !locked(),
-            ['bg-red-500']: locked(),
-            ['justify-start']: true,
-          }}
-        >
-          Löschen
-        </div>
-      </Show>
-      <Show when={direction() < 0}>
+      <RightActionContainer active={isActive()} locked={locked()} visible={isRight()} />
+      <LeftActionContainer active={isActive()} locked={locked()} visible={isLeft()} />
+
+      {/* <Show when={direction() < 0}>
         <div
           class={continerCss}
           classList={{
@@ -128,8 +104,15 @@ export const Product: Component<ProductProps> = (props) => {
         >
           Update
         </div>
-      </Show>
-      <ItemRow ref={element!}>
+      </Show> */}
+      <div
+        ref={element!}
+        class={itemRowCss}
+        classList={{
+          'translate-x-full': isRight() && isActive(),
+          '-translate-x-full': isLeft() && isActive(),
+        }}
+      >
         <div
           classList={{
             ['py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white']: true,
@@ -145,7 +128,7 @@ export const Product: Component<ProductProps> = (props) => {
             <span> @ {amountString(props.item.prices[0].amount, props.item.type)}</span>
           </PriceEntry>
         </div>
-      </ItemRow>
+      </div>
     </div>
   )
 }

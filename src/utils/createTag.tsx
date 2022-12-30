@@ -32,3 +32,6 @@ export const createTag =
 
 export const createDiv = (classOrClassList: ClassOrClassList) =>
   createTag('div', (props) => <div {...props} />, classOrClassList)
+
+export const createButton = (classOrClassList: ClassOrClassList) =>
+  createTag('button', (props) => <button {...props} />, classOrClassList)

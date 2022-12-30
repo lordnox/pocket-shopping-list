@@ -21,7 +21,7 @@ export const ProductList: Component<{
   hasActions?: boolean
 }> = (props) => {
   let tableElement: HTMLTableElement
-  const [actionPending, setActionPending] = createSignal(false)
+  const [actionPending, setActionPending] = createSignal<string>()
 
   onMount(() => autoAnimate(tableElement))
 
