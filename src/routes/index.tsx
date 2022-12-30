@@ -44,7 +44,7 @@ const BottomElement: ParentComponent = (props) => {
   const [open, setOpen] = createSignal(false)
   return (
     <div
-      class="z-20 left-0 border-t-2 border-gray-500 bg-gray-900 fixed w-full bottom-0 transition"
+      class="z-20 left-0 border-t border-gray-500 bg-gray-900 fixed w-full bottom-0 transition"
       classList={{
         'translate-y-[calc(100%-1px)]': !open(),
         'translate-y-0': open(),
