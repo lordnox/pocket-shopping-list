@@ -1,19 +1,14 @@
 import { ItemType } from '@prisma/client'
-import { Component, createSignal, onCleanup, onMount, Show } from 'solid-js'
+import { Component, createEffect, createSignal, onCleanup, onMount, Show } from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
 import { createDiv } from '~/utils/createTag'
 import { amountTypes } from './amount'
 import { DragGesture } from '@use-gesture/vanilla'
 import { useSession } from '~/utils/auth'
+import { useProductDrag } from './product-drag'
+import { useProductContext } from './ProductContext'
 
 const PriceEntry = createDiv(``)
-
-const LOCK_IN_FACTOR = 0.3
-const LOCK_IN_MIN = 100
-const LOCK_IN_MAX = 150
-const LOCK_OFF_FACTOR = 0.2
-const LOCK_OFF_MIN = 80
-const LOCK_OFF_MAX = 120
 
 const HeaderItem = createDiv(`
   py-3
@@ -82,48 +77,35 @@ const continerCss = `
   transition
 `
 
-export const Product: Component<{ item: ShoppingItemType; hasActions?: boolean }> = (props) => {
+interface ProductProps {
+  item: ShoppingItemType
+  hasActions?: boolean
+  onActionPending: (pending: string) => void
+}
+
+export const Product: Component<ProductProps> = (props) => {
   let element: HTMLDivElement
 
-  const [dragState, setDragState] = createSignal(0)
-  const [locked, setLocked] = createSignal(false)
+  const reset = () => {
+    element.style.transform = 'translate(0px)'
+  }
 
-  let gesture: DragGesture
+  const [direction, locked] = useProductDrag(() => element, {
+    onFinished: (element, state) => {
+      element.style.transition = 'transform .2s'
+      if (!state.locked) return reset()
+      props.onActionPending(props.item.id)
+      element.style.transform = `translate(${state.movement > 0 ? 100 : -100}%)`
+    },
+  })
 
-  if (props.hasActions)
-    onMount(() => {
-      gesture = new DragGesture(
-        element,
-        ({ movement, first, last }) => {
-          if (first) {
-            element.style.transition = 'none'
-            return
-          }
-          if (last) {
-            element.style.transition = 'transform .2s'
-            element.style.transform = 'translate(0px)'
-            // handle events here
-            return
-          }
-          const width = element.getBoundingClientRect().width
-          const locked = Math.abs(movement[0]) > Math.max(Math.min(width * LOCK_IN_FACTOR, LOCK_IN_MIN), LOCK_IN_MAX)
-          const unlocked =
-            Math.abs(movement[0]) < Math.max(Math.min(width * LOCK_OFF_FACTOR, LOCK_OFF_MIN), LOCK_OFF_MAX)
-          setLocked((currentlyLocked) => (currentlyLocked && unlocked ? false : currentlyLocked || locked))
-          element.style.transform = `translate(${movement[0]}px)`
-          setDragState(movement[0])
-        },
-        {
-          axis: 'x',
-        },
-      )
-    })
-
-  onCleanup(() => gesture?.destroy())
+  createEffect(() => {
+    if (useProductContext()?.actionPending() !== props.item.id) reset()
+  })
 
   return (
     <div class="group relative @container">
-      <Show when={dragState() > 0}>
+      <Show when={direction() > 0}>
         <div
           class={continerCss}
           classList={{
@@ -135,7 +117,7 @@ export const Product: Component<{ item: ShoppingItemType; hasActions?: boolean }
           Löschen
         </div>
       </Show>
-      <Show when={dragState() < 0}>
+      <Show when={direction() < 0}>
         <div
           class={continerCss}
           classList={{

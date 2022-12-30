@@ -3,6 +3,8 @@ import { Header, Product } from './Product'
 import { Product as ShoppingItemType } from '~/types/product-types'
 import autoAnimate from '@formkit/auto-animate'
 import { createDiv } from '~/utils/createTag'
+import { createSignal } from 'solid-js'
+import { ProductContext } from './ProductContext'
 
 const TableGrid = createDiv(`
   flex
@@ -19,15 +21,26 @@ export const ProductList: Component<{
   hasActions?: boolean
 }> = (props) => {
   let tableElement: HTMLTableElement
+  const [actionPending, setActionPending] = createSignal(false)
 
   onMount(() => autoAnimate(tableElement))
 
   return (
-    <div class="overflow-x-hidden relative shadow-md sm:rounded-lg w-full">
-      <TableGrid ref={tableElement!}>
-        <Header />
-        <For each={props.items}>{(item) => <Product item={item} hasActions={props.hasActions} />}</For>
-      </TableGrid>
-    </div>
+    <ProductContext.Provider value={{ actionPending }}>
+      <div class="overflow-x-hidden relative shadow-md sm:rounded-lg w-full">
+        <TableGrid ref={tableElement!}>
+          <Header />
+          <For each={props.items}>
+            {(item) => (
+              <Product
+                item={item}
+                hasActions={props.hasActions}
+                onActionPending={(pending) => setActionPending(pending)}
+              />
+            )}
+          </For>
+        </TableGrid>
+      </div>
+    </ProductContext.Provider>
   )
 }
