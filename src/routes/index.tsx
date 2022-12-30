@@ -1,13 +1,14 @@
 import { Title } from 'solid-start'
 
 import { trpc, useQuery } from '~/utils/trpc-client'
-import { Accessor, createEffect, createSignal, onMount, Show, Signal } from 'solid-js'
+import { Accessor, createEffect, createSignal, onMount, ParentComponent, Show, Signal } from 'solid-js'
 import { ShoppingSearch } from '~/components/shopping/SearchFilter'
 import { CreateProductInput } from '~/components/shopping/CreateProductInput'
 import { ProductList } from '~/components/shopping/ProductList'
 import { CreateProduct, Product as ShoppingItemType } from '~/types/product-types'
 import { session } from '~/utils/auth'
 import { isServer } from 'solid-js/web'
+import { ChevronUp } from '~/components/icons/chevron-up'
 
 const readStorage = (key: string) => {
   try {
@@ -37,6 +38,36 @@ const cacheDefined = <Type,>(key: string, getter: Accessor<Type>): Accessor<Type
     writeStorage(key, data)
   })
   return cache
+}
+
+const BottomElement: ParentComponent = (props) => {
+  const [open, setOpen] = createSignal(false)
+  return (
+    <div
+      class="z-20 left-0 border-t-2 border-gray-500 bg-gray-900 fixed w-full bottom-0 transition"
+      classList={{
+        'translate-y-[calc(100%-1px)]': !open(),
+        'translate-y-0': open(),
+      }}
+    >
+      <div class="w-full container m-auto">
+        <div class="flex justify-center relative -top-6 h-6">
+          <button
+            class="w-6 h-6 bg-gray-900 rounded-t-full border border-b-0 border-gray-500 text-white absolute"
+            onClick={() => setOpen((open) => !open)}
+          >
+            <ChevronUp
+              class="transition"
+              classList={{
+                'rotate-180': open(),
+              }}
+            />
+          </button>
+        </div>
+        <div class="pb-8">{props.children}</div>
+      </div>
+    </div>
+  )
 }
 
 export default () => {
@@ -97,10 +128,12 @@ export default () => {
       <Title>Shopping</Title>
       <h1 class="max-6-xs text-6xl text-sky-700 font-thin uppercase mt-4 mb-8">Shopping</h1>
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
-      <Show when={session()}>
-        <CreateProductInput onEnter={onEnter} />
-      </Show>
       <ProductList items={sortedItems()} hasActions={hasActions()} />
+      <Show when={session()}>
+        <BottomElement>
+          <CreateProductInput onEnter={onEnter} />
+        </BottomElement>
+      </Show>
     </main>
   )
 }
