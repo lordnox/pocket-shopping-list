@@ -1,6 +1,7 @@
 import autoAnimate from '@formkit/auto-animate'
 import { Component, onMount, Show } from 'solid-js'
 import styles from './action.module.css'
+import buttonStyles from '~/styles/button.module.css'
 
 interface ContainerProps {
   visible: boolean
@@ -8,7 +9,7 @@ interface ContainerProps {
   locked: boolean
 }
 
-const DeleteAction: Component<ContainerProps> = (props) => {
+const RightActionContent: Component<ContainerProps> = (props) => {
   let element: HTMLDivElement
 
   onMount(() => {
@@ -28,8 +29,8 @@ const DeleteAction: Component<ContainerProps> = (props) => {
     >
       <Show when={props.active} fallback={<label>Löschen</label>}>
         <div class={styles.buttonContainer}>
-          <button class={[styles.button, styles.deleteColors].join(' ')}>Löschen</button>
-          <button class={[styles.button, styles.deleteColors].join(' ')}>Abbrechen</button>
+          <button class={[buttonStyles.button, buttonStyles.deleteColors].join(' ')}>Löschen</button>
+          <button class={[buttonStyles.button, buttonStyles.deleteColors].join(' ')}>Abbrechen</button>
         </div>
       </Show>
     </div>
@@ -38,6 +39,6 @@ const DeleteAction: Component<ContainerProps> = (props) => {
 
 export const RightActionContainer: Component<ContainerProps> = (props) => (
   <Show when={props.visible}>
-    <DeleteAction {...props} />
+    <RightActionContent {...props} />
   </Show>
 )

@@ -3,7 +3,7 @@ import { Title } from 'solid-start'
 import { trpc, useQuery } from '~/utils/trpc-client'
 import { Accessor, createEffect, createSignal, onMount, ParentComponent, Show, Signal } from 'solid-js'
 import { ShoppingSearch } from '~/components/shopping/SearchFilter'
-import { CreateProductInput } from '~/components/shopping/CreateProductForm'
+import { CreateProductForm } from '~/components/shopping/CreateProductForm'
 import { ProductList } from '~/components/shopping/ProductList'
 import { CreateProduct, Product as ShoppingItemType } from '~/types/product-types'
 import { session } from '~/utils/auth'
@@ -131,7 +131,7 @@ export default () => {
       <ProductList items={sortedItems()} hasActions={hasActions()} />
       <Show when={session()}>
         <BottomElement>
-          <CreateProductInput onEnter={onEnter} />
+          <CreateProductForm onEnter={onEnter} />
         </BottomElement>
       </Show>
     </main>

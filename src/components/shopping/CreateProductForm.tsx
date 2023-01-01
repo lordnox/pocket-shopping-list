@@ -16,7 +16,7 @@ const Item = createDiv(`
   w-full
 `)
 
-export const CreateProductInput: Component<{ onEnter: (data: CreateProduct) => void }> = (props) => {
+export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => void }> = (props) => {
   let nameInputElement: HTMLInputElement
   let priceInputElement: HTMLInputElement
   let amountTypeInputElement: HTMLInputElement

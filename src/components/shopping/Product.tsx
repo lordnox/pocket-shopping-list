@@ -7,6 +7,11 @@ import { useProductDrag } from './product-drag'
 import { useProductContext } from './ProductContext'
 import { RightActionContainer } from './product-actions/Right-Actions'
 import { LeftActionContainer } from './product-actions/Left-Actions'
+import { UpdateProductForm } from './UpdateProductForm'
+import { StopCircle } from '../icons/stop-circle'
+import { classes } from '~/utils/classes'
+import buttonStyles from '~/styles/button.module.css'
+import styles from './product-actions/action.module.css'
 
 const PriceEntry = createDiv(``)
 
@@ -66,11 +71,13 @@ const itemRowCss = `
 interface ProductProps {
   item: ShoppingItemType
   hasActions?: boolean
-  onActionPending: (pending: string) => void
 }
 
 export const Product: Component<ProductProps> = (props) => {
   let element: HTMLDivElement
+
+  const context = useProductContext()
+  if (!context) throw new ReferenceError('ProductContext')
 
   const reset = () => (element.style.transform = '')
 
@@ -78,33 +85,31 @@ export const Product: Component<ProductProps> = (props) => {
     onFinished: (element, state) => {
       element.style.transition = 'transform .2s'
       reset()
-      if (state.locked) props.onActionPending(props.item.id)
+      console.log(state.locked, useProductContext())
+      if (state.locked) context.setAction(props.item.id)
     },
   })
 
-  const isActive = () => locked() && useProductContext()?.actionPending() === props.item.id
+  const isActive = () => locked() && context.actionPending() === props.item.id
   const isLeft = () => direction() < 0
   const isRight = () => direction() > 0
+
+  console.log(isActive(), isLeft())
 
   createEffect(() => !isActive() && reset())
 
   return (
-    <div class="group relative @container">
+    <div class="group relative">
       <RightActionContainer active={isActive()} locked={locked()} visible={isRight()} />
-      <LeftActionContainer active={isActive()} locked={locked()} visible={isLeft()} />
-
-      {/* <Show when={direction() < 0}>
-        <div
-          class={continerCss}
-          classList={{
-            ['bg-green-300']: !locked(),
-            ['bg-green-500']: locked(),
-            ['justify-end']: true,
-          }}
-        >
-          Update
+      <LeftActionContainer active={isActive()} locked={locked()} visible={isLeft()}>
+        <div class={classes(styles.updateContainer, 'gap-2')}>
+          <UpdateProductForm item={props.item} onEnter={(data) => console.log(data)} />
+          <button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
+            <StopCircle />
+          </button>
         </div>
-      </Show> */}
+      </LeftActionContainer>
+
       <div
         ref={element!}
         class={itemRowCss}

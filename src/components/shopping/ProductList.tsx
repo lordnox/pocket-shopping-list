@@ -21,24 +21,24 @@ export const ProductList: Component<{
   hasActions?: boolean
 }> = (props) => {
   let tableElement: HTMLTableElement
-  const [actionPending, setActionPending] = createSignal<string>()
+  const [actionPending, setActionPending] = createSignal<string | undefined>('clcag1al40008le08k32pzp9x')
 
   onMount(() => autoAnimate(tableElement))
 
   return (
-    <ProductContext.Provider value={{ actionPending }}>
+    <ProductContext.Provider
+      value={{
+        actionPending,
+        cancelAction: () => setActionPending(undefined),
+        isActionPending: (action: string) => actionPending() === action,
+        setAction: setActionPending,
+      }}
+    >
+      <pre>{JSON.stringify(actionPending(), null, 2)}</pre>
       <div class="overflow-x-hidden relative shadow-md sm:rounded-lg w-full">
         <TableGrid ref={tableElement!}>
           <Header />
-          <For each={props.items}>
-            {(item) => (
-              <Product
-                item={item}
-                hasActions={props.hasActions}
-                onActionPending={(pending) => setActionPending(pending)}
-              />
-            )}
-          </For>
+          <For each={props.items}>{(item) => <Product item={item} hasActions={props.hasActions} />}</For>
         </TableGrid>
       </div>
     </ProductContext.Provider>

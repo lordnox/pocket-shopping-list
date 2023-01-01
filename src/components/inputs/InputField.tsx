@@ -1,6 +1,6 @@
 import { Component, JSX, ParentComponent, Ref, splitProps } from 'solid-js'
 import { classes } from '~/utils/classes'
-import styles from './input.module.css'
+import styles from '~/styles/input.module.css'
 
 interface InputFieldProps extends InputProps {
   for: string
@@ -29,10 +29,11 @@ export const Input: Component<InputProps> = (props) => {
       {...inputProps}
       type={props.type ?? 'text'}
       id={props.id}
-      class={[styles.input, props.class].filter(Boolean).join(' ')}
+      class={classes(styles.input, props.class)}
       classList={{
-        'border-l rounded-l-lg': !props.border || ['BOTH', 'LEFT'].includes(props.border),
-        'border-r rounded-r-lg': !props.border || ['BOTH', 'RIGHT'].includes(props.border),
+        'border-l rounded-l-lg': props.border && ['LEFT'].includes(props.border),
+        'border-r rounded-r-lg': props.border && ['RIGHT'].includes(props.border),
+        'border rounded-lg': !props.border || ['BOTH'].includes(props.border),
       }}
     />
   )

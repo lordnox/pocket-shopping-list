@@ -1,0 +1,15 @@
+.row {
+  @apply flex
+  w-full
+  gap-2;
+}
+
+.item {
+  @apply place-self-end 
+  w-full;
+}
+
+.itemHalf {
+  @apply place-self-end 
+  w-[50%];
+}

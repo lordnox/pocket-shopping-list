@@ -1,7 +1,5 @@
 import autoAnimate from '@formkit/auto-animate'
-import { Component, onMount, Show } from 'solid-js'
-import { CheckCircle } from '~/components/icons/check-circle'
-import { StopCircle } from '~/components/icons/stop-circle'
+import { onMount, ParentComponent, Show } from 'solid-js'
 import styles from './action.module.css'
 
 interface ContainerProps {
@@ -10,7 +8,7 @@ interface ContainerProps {
   locked: boolean
 }
 
-const DeleteAction: Component<ContainerProps> = (props) => {
+const LeftActionContent: ParentComponent<ContainerProps> = (props) => {
   let element: HTMLDivElement
 
   onMount(() => {
@@ -30,24 +28,14 @@ const DeleteAction: Component<ContainerProps> = (props) => {
       }}
     >
       <Show when={props.active} fallback={<label>Update</label>}>
-        <div class={styles.updateContainer}>
-          <input />
-          <div class="flex gap-2">
-            <button class={[styles.button, styles.updateColors].join(' ')}>
-              <CheckCircle /> Eintragen
-            </button>
-            <button class={[styles.button, styles.abortColors].join(' ')}>
-              <StopCircle />
-            </button>
-          </div>
-        </div>
+        {props.children}
       </Show>
     </div>
   )
 }
 
-export const LeftActionContainer: Component<ContainerProps> = (props) => (
+export const LeftActionContainer: ParentComponent<ContainerProps> = (props) => (
   <Show when={props.visible}>
-    <DeleteAction {...props} />
+    <LeftActionContent {...props} />
   </Show>
 )

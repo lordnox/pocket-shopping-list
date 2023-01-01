@@ -9,6 +9,7 @@ specifiers:
   '@solid-auth/socials': ^0.0.8
   '@solidjs/meta': ^0.28.2
   '@solidjs/router': ^0.6.0
+  '@tailwindcss/container-queries': ^0.1.0
   '@trpc/client': ^10.7.0
   '@trpc/server': ^10.7.0
   '@types/node': ^18.11.17
@@ -52,6 +53,7 @@ dependencies:
   zod: 3.20.2
 
 devDependencies:
+  '@tailwindcss/container-queries': 0.1.0_tailwindcss@3.2.4
   '@types/node': 18.11.17
   autoprefixer: 10.4.13_postcss@8.4.20
   postcss: 8.4.20
@@ -1841,6 +1843,14 @@ packages:
       solid-js: ^1.5.3
     dependencies:
       solid-js: 1.6.6
+
+  /@tailwindcss/container-queries/0.1.0_tailwindcss@3.2.4:
+    resolution: {integrity: sha512-t1GeJ9P8ual160BvKy6Y1sG7bjChArMaK6iRXm3ZYjZGN2FTzmqb5ztsTDb9AsTSJD4NMHtsnaI2ielrXEk+hw==}
+    peerDependencies:
+      tailwindcss: '>=3.2.0'
+    dependencies:
+      tailwindcss: 3.2.4_postcss@8.4.20
+    dev: true
 
   /@trpc/client/10.7.0_@trpc+server@10.7.0:
     resolution: {integrity: sha512-xCPc2hp37REJst6TXMkJvdc85CHvxpVY6YVdZIjl7uCYoQcrstwy8AWi7ElB3x7e19Cweke+9CAaUXKwAE1AKQ==}
