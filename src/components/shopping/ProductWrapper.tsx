@@ -12,20 +12,12 @@ import { StopCircle } from '../icons/stop-circle'
 import { classes } from '~/utils/classes'
 import buttonStyles from '~/styles/button.module.css'
 import styles from './product-actions/action.module.css'
-
-const PriceEntry = createDiv(``)
+import { Product } from './Product'
 
 const HeaderItem = createDiv(`
   py-3
   px-6
 `)
-const selectUnit = (amount: number) => (amount >= 1000 ? 1 : 0)
-
-const amountString = (amount: number, type: ItemType) => {
-  const unit = selectUnit(amount)
-  const number = unit ? (amount / 1000).toFixed(1) : amount.toString()
-  return `${number} ${amountTypes[type].unit[unit]}`
-}
 
 export const Header = () => (
   <HeaderRow>
@@ -73,7 +65,7 @@ interface ProductProps {
   hasActions?: boolean
 }
 
-export const Product: Component<ProductProps> = (props) => {
+export const ProductWrapper: Component<ProductProps> = (props) => {
   let element: HTMLDivElement
 
   const context = useProductContext()
@@ -85,7 +77,6 @@ export const Product: Component<ProductProps> = (props) => {
     onFinished: (element, state) => {
       element.style.transition = 'transform .2s'
       reset()
-      console.log(state.locked, useProductContext())
       if (state.locked) context.setAction(props.item.id)
     },
   })
@@ -93,8 +84,6 @@ export const Product: Component<ProductProps> = (props) => {
   const isActive = () => locked() && context.actionPending() === props.item.id
   const isLeft = () => direction() < 0
   const isRight = () => direction() > 0
-
-  console.log(isActive(), isLeft())
 
   createEffect(() => !isActive() && reset())
 
@@ -118,21 +107,7 @@ export const Product: Component<ProductProps> = (props) => {
           '-translate-x-full': isLeft() && isActive(),
         }}
       >
-        <div
-          classList={{
-            ['py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white']: true,
-            italic: props.item.optimistic,
-          }}
-        >
-          {props.item.name}
-        </div>
-        <div class="py-4 px-6">{(props.item.prices[0].normalizedPrice / 100).toFixed(2)} €</div>
-        <div class="py-4 px-6">
-          <PriceEntry>
-            <span>{(props.item.prices[0].price / 100).toFixed(2)} €</span>
-            <span> @ {amountString(props.item.prices[0].amount, props.item.type)}</span>
-          </PriceEntry>
-        </div>
+        <Product item={props.item} />
       </div>
     </div>
   )

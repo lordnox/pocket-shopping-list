@@ -1,5 +1,5 @@
 import { Component, For, onMount } from 'solid-js'
-import { Header, Product } from './Product'
+import { Header, ProductWrapper } from './ProductWrapper'
 import { Product as ShoppingItemType } from '~/types/product-types'
 import autoAnimate from '@formkit/auto-animate'
 import { createDiv } from '~/utils/createTag'
@@ -34,11 +34,10 @@ export const ProductList: Component<{
         setAction: setActionPending,
       }}
     >
-      <pre>{JSON.stringify(actionPending(), null, 2)}</pre>
       <div class="overflow-x-hidden relative shadow-md sm:rounded-lg w-full">
         <TableGrid ref={tableElement!}>
           <Header />
-          <For each={props.items}>{(item) => <Product item={item} hasActions={props.hasActions} />}</For>
+          <For each={props.items}>{(item) => <ProductWrapper item={item} hasActions={props.hasActions} />}</For>
         </TableGrid>
       </div>
     </ProductContext.Provider>
