@@ -7,4 +7,8 @@ export const ProductContext = createContext<{
   setAction: (action: string) => void
 }>()
 
-export const useProductContext = () => useContext(ProductContext)
+export const useProductContext = () => {
+  const context = useContext(ProductContext)
+  if (!context) throw new ReferenceError('ProductContext')
+  return context
+}

@@ -1,6 +1,5 @@
 import { Component, createEffect } from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
-import { createDiv } from '~/utils/createTag'
 import { useProductDrag } from './product-drag'
 import { useProductContext } from './ProductContext'
 import { RightActionContainer } from './product-actions/Right-Actions'
@@ -11,20 +10,6 @@ import { classes } from '~/utils/classes'
 import buttonStyles from '~/styles/button.module.css'
 import styles from './product-actions/action.module.css'
 import { Product } from './Product'
-import { vibrate } from '~/utils/vibrate'
-
-const HeaderItem = createDiv(`
-  py-3
-  px-6
-`)
-
-export const Header = () => (
-  <HeaderRow>
-    <HeaderItem>Produkt</HeaderItem>
-    <HeaderItem>Einheit</HeaderItem>
-    <HeaderItem>Preis</HeaderItem>
-  </HeaderRow>
-)
 
 const rowClass = `
   relative
@@ -34,17 +19,6 @@ const rowClass = `
   w-full
   group-last:rounded-b-lg
 `
-
-const HeaderRow = createDiv(`
-  ${rowClass}
-  rounded-t-lg
-  text-xs
-  text-gray-600
-  uppercase
-  bg-gray-50
-  dark:bg-gray-600
-  dark:text-gray-300
-`)
 
 const itemRowCss = `
   ${rowClass}  
@@ -68,7 +42,6 @@ export const ProductWrapper: Component<ProductProps> = (props) => {
   let element: HTMLDivElement
 
   const context = useProductContext()
-  if (!context) throw new ReferenceError('ProductContext')
 
   const reset = () => (element.style.transform = '')
 
