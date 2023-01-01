@@ -2,7 +2,7 @@ import { Component, createSignal, JSX } from 'solid-js'
 import { CreateProduct } from '~/types/product-types'
 import { createDiv } from '~/utils/createTag'
 import { ButtonGroupItems } from '../ButtonGroup'
-import { InputField } from '../InputField'
+import { InputField } from '../inputs/InputField'
 import { AmountKeys, AmountType, amountTypes, choices } from './amount'
 import { ShoppingTags } from './tags'
 
@@ -59,7 +59,7 @@ export const CreateProductInput: Component<{ onEnter: (data: CreateProduct) => v
             type="number"
             value="1000"
             labelStyle="grid-column-end: span 3;"
-            class="rounded-r-none"
+            border="LEFT"
           />
           <ButtonGroupItems choices={choices} onChange={changeType} active={defaultAmountType} />
         </Item>

@@ -2,7 +2,7 @@ import { Component, createSignal, JSX } from 'solid-js'
 import { CreateProduct } from '~/types/product-types'
 import { createDiv } from '~/utils/createTag'
 import { ButtonGroupItems } from '../ButtonGroup'
-import { InputField } from '../InputField'
+import { InputField } from '../inputs/InputField'
 import { AmountKeys, AmountType, amountTypes, choices } from './amount'
 import { ShoppingTags } from './tags'
 

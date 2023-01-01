@@ -41,19 +41,19 @@ const cacheDefined = <Type,>(key: string, getter: Accessor<Type>): Accessor<Type
 }
 
 const BottomElement: ParentComponent = (props) => {
-  const [open, setOpen] = createSignal(false)
+  const [open, setOpen] = createSignal(true)
   return (
     <div
       class="z-20 left-0 border-t border-gray-500 bg-gray-900 fixed w-full bottom-0 transition"
       classList={{
-        'translate-y-[calc(100%-1px)]': !open(),
-        'translate-y-0': open(),
+        'opacity-70 translate-y-[calc(100%-1px)]': !open(),
+        'opacity-100 translate-y-0': open(),
       }}
     >
       <div class="w-full container m-auto">
-        <div class="flex justify-center relative -top-6 h-6">
+        <div class="flex justify-center relative -top-14">
           <button
-            class="w-6 h-6 bg-gray-900 rounded-t-full border border-b-0 border-gray-500 text-white absolute"
+            class="w-16 h-14 p-2 bg-gray-900 rounded-t-full border border-b-0 border-gray-500 text-white absolute"
             onClick={() => setOpen((open) => !open)}
           >
             <ChevronUp
