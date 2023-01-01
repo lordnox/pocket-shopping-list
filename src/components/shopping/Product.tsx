@@ -1,10 +1,8 @@
 import { ItemType } from '@prisma/client'
-import { Component, createEffect } from 'solid-js'
+import { Component } from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
-import { createDiv } from '~/utils/createTag'
 import { amountTypes } from './amount'
-
-const PriceEntry = createDiv(``)
+import styles from './styles.module.css'
 
 const selectUnit = (amount: number) => (amount >= 1000 ? 1 : 0)
 
@@ -23,8 +21,8 @@ export const Product: Component<ProductProps> = (props) => {
   return (
     <>
       <div
+        class={styles.product}
         classList={{
-          ['py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white']: true,
           italic: props.item.optimistic,
         }}
       >
@@ -32,10 +30,10 @@ export const Product: Component<ProductProps> = (props) => {
       </div>
       <div class="py-4 px-6">{(props.item.prices[0].normalizedPrice / 100).toFixed(2)} €</div>
       <div class="py-4 px-6">
-        <PriceEntry>
+        <div>
           <span>{(props.item.prices[0].price / 100).toFixed(2)} €</span>
           <span> @ {amountString(props.item.prices[0].amount, props.item.type)}</span>
-        </PriceEntry>
+        </div>
       </div>
     </>
   )

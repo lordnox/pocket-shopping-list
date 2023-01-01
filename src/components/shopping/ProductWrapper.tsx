@@ -1,8 +1,6 @@
-import { ItemType } from '@prisma/client'
 import { Component, createEffect } from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
 import { createDiv } from '~/utils/createTag'
-import { amountTypes } from './amount'
 import { useProductDrag } from './product-drag'
 import { useProductContext } from './ProductContext'
 import { RightActionContainer } from './product-actions/Right-Actions'
@@ -13,6 +11,7 @@ import { classes } from '~/utils/classes'
 import buttonStyles from '~/styles/button.module.css'
 import styles from './product-actions/action.module.css'
 import { Product } from './Product'
+import { vibrate } from '~/utils/vibrate'
 
 const HeaderItem = createDiv(`
   py-3
@@ -89,7 +88,16 @@ export const ProductWrapper: Component<ProductProps> = (props) => {
 
   return (
     <div class="group relative">
-      <RightActionContainer active={isActive()} locked={locked()} visible={isRight()} />
+      <RightActionContainer active={isActive()} locked={locked()} visible={isRight()}>
+        <div class={styles.buttonContainer}>
+          <div class="w-full flex justify-center">
+            <button class={[buttonStyles.button, buttonStyles.deleteColors].join(' ')}>Löschen</button>
+          </div>
+          <button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
+            <StopCircle />
+          </button>
+        </div>
+      </RightActionContainer>
       <LeftActionContainer active={isActive()} locked={locked()} visible={isLeft()}>
         <div class={classes(styles.updateContainer, 'gap-2')}>
           <UpdateProductForm item={props.item} onEnter={(data) => console.log(data)} />

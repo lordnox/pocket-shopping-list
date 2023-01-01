@@ -1,5 +1,6 @@
 import { DragGesture } from '@use-gesture/vanilla'
 import { createSignal, onMount, onCleanup, Accessor } from 'solid-js'
+import { vibrate } from '~/utils/vibrate'
 
 const LOCK_IN_FACTOR = 0.3
 const LOCK_IN_MIN = 100
@@ -45,7 +46,12 @@ export const useProductDrag = (elementAccessor: Accessor<HTMLDivElement>, { onFi
           Math.abs(movement[0]) > Math.max(Math.min(currentWidth * LOCK_IN_FACTOR, LOCK_IN_MIN), LOCK_IN_MAX)
         const isUnlocked =
           Math.abs(movement[0]) < Math.max(Math.min(currentWidth * LOCK_OFF_FACTOR, LOCK_OFF_MIN), LOCK_OFF_MAX)
-        setLocked((currentlyLocked) => (currentlyLocked && isUnlocked ? false : currentlyLocked || isLocked))
+        setLocked((currentlyLocked) => {
+          if (currentlyLocked) return isUnlocked ? false : currentlyLocked
+          // if we are locking, vibrate shortly
+          if (isLocked) vibrate(200)
+          return isLocked
+        })
         element.style.transform = `translate(${movement[0]}px)`
         setMovement(movement[0])
       },
