@@ -41,7 +41,7 @@ const cacheDefined = <Type,>(key: string, getter: Accessor<Type>): Accessor<Type
 }
 
 const BottomElement: ParentComponent = (props) => {
-  const [open, setOpen] = createSignal(true)
+  const [open, setOpen] = createSignal(false)
   return (
     <div
       class="z-20 left-0 border-t border-gray-500 bg-gray-900 fixed w-full bottom-0 transition"
