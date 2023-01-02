@@ -1,6 +1,6 @@
 import { Title } from 'solid-start'
 
-import { trpc, useQuery } from '~/utils/trpc-client'
+import { RouterOutput, trpc, useQuery } from '~/utils/trpc-client'
 import { Accessor, createEffect, createSignal, onMount, ParentComponent, Show, Signal } from 'solid-js'
 import { ShoppingSearch } from '~/components/shopping/SearchFilter'
 import { CreateProductForm } from '~/components/shopping/CreateProductForm'
@@ -70,6 +70,47 @@ const BottomElement: ParentComponent = (props) => {
   )
 }
 
+type CompareFn<Type> = (a: Type, b: Type) => number
+type Product = RouterOutput['productList'][number]
+const productCompare: CompareFn<Product> = (a, b) => {
+  if (a.id !== b.id) return -1
+  if (a.name !== b.name) return -1
+  if (a.prices.length !== b.prices.length) return -1
+  return 0
+}
+
+const updateCurrentItemList = <Type extends { id: string; name: string }>(
+  currentItemList: Type[],
+  updatedItemList: Type[],
+  compare: (a: Type, b: Type) => number,
+) => {
+  const updateItemIds = new Set(updatedItemList.map((item) => item.id))
+  let index = currentItemList.length
+
+  while (index--) {
+    const currentItem = currentItemList[index]
+    const updatedItem = updatedItemList.find((existingItem) => existingItem.id === currentItem.id)
+    if (!updatedItem) {
+      // remove the currentItem from the currentItemList
+      currentItemList.splice(index, 1)
+      continue
+    }
+    // remove the updated item from the id list
+    updateItemIds.delete(updatedItem.id)
+    // check if there are differences
+    if (!compare(currentItem, updatedItem)) continue
+    // if there are differences, update the item in the current item list
+    currentItemList[index] = updatedItem
+  }
+  // for all remaining updated item ids, update them in the current item list
+  updateItemIds.forEach((id) => {
+    const item = updatedItemList.find((item) => item.id === id)
+    if (item) currentItemList.push(item)
+  })
+
+  return currentItemList
+}
+
 export default () => {
   const upsertItem = trpc.createOrUpdateProduct.mutate
   const [items, refetch, setItems] = useQuery('productList')
@@ -78,8 +119,16 @@ export default () => {
   const hasActions = () => !!session()
 
   const cacheItems = cacheDefined('products', items)
+
+  let lastItems: RouterOutput['productList'] | undefined = undefined
+  const mergedItems = () => {
+    const currentItems = cacheItems()
+    if (!lastItems || !currentItems) return (lastItems = currentItems)
+    return (lastItems = updateCurrentItemList(lastItems, currentItems, productCompare))
+  }
+
   const filteredItems = () => {
-    const currentItems = cacheItems() as ShoppingItemType[]
+    const currentItems = mergedItems() as ShoppingItemType[]
     const key = searchKey()?.toLowerCase()
     if (!key) return currentItems
     return currentItems.filter((item) => item.name.toLowerCase().includes(key))
@@ -128,13 +177,7 @@ export default () => {
       <Title>Shopping</Title>
       <h1 class="max-6-xs text-6xl text-sky-700 font-thin uppercase mt-4 mb-8">Shopping</h1>
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
-      <ProductList
-        items={sortedItems()}
-        hasActions={hasActions()}
-        onUpdate={(data) => {
-          console.log('index', data)
-        }}
-      />
+      <ProductList items={sortedItems()} hasActions={hasActions()} onUpdate={onEnter} />
       <Show when={session()}>
         <BottomElement>
           <CreateProductForm onEnter={onEnter} />

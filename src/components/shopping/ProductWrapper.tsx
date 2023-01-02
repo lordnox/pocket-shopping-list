@@ -9,7 +9,7 @@ import { StopCircle } from '../icons/stop-circle'
 import { classes } from '~/utils/classes'
 import buttonStyles from '~/styles/button.module.css'
 import styles from './product-actions/action.module.css'
-import { Product, ProductProps } from './Product'
+import { Product, ProductProps, ProductState } from './Product'
 import { longPress } from '~/utils/long-press-event'
 import { vibrate } from '~/utils/vibrate'
 
@@ -22,7 +22,7 @@ export const ProductWrapper: Component<
   const context = useProductContext()
 
   const [pressed, setPressed] = createSignal(false)
-  const [active, setActive] = createSignal(false)
+  const [state, setState] = createSignal<ProductState>('mini')
 
   const [element, direction, locked] = useProductDrag<HTMLDivElement>({
     onFinished: (element, state) => {
@@ -50,7 +50,7 @@ export const ProductWrapper: Component<
       () => {
         setPressed(false)
         vibrate(250)
-        setActive(true)
+        setState('maxi')
       },
       {
         onCancel: () => setPressed(false),
@@ -88,6 +88,9 @@ export const ProductWrapper: Component<
 
       <Product
         ref={element}
+        state={state()}
+        onClick={() => setState('midi')}
+        setState={setState}
         classList={{
           'translate-x-full': isRight() && isActive(),
           '-translate-x-full': isLeft() && isActive(),

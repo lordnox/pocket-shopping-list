@@ -3,7 +3,6 @@ import { Component, JSX, splitProps } from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
 import { classes } from '~/utils/classes'
 import { amountTypes } from './amount'
-import styles from './styles.module.css'
 
 const selectUnit = (amount: number) => (amount >= 1000 ? 1 : 0)
 
@@ -13,8 +12,13 @@ const amountString = (amount: number, type: ItemType) => {
   return `${number} ${amountTypes[type].unit[unit]}`
 }
 
+export type ProductState = 'mini' | 'midi' | 'maxi'
+
 export interface ProductProps {
   item: ShoppingItemType
+  state: ProductState
+  onClick: VoidFunction
+  setState: (state: ProductState) => void
 }
 
 export const Product: Component<ProductProps & JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
@@ -34,8 +38,7 @@ export const Product: Component<ProductProps & JSX.HTMLAttributes<HTMLDivElement
         rounded-lg
         z-20
         touch-pan-y
-        `,
-        `
+
         group-even/product:bg-gray-100
         group-even/product:dark:bg-gray-700
         group-odd/product:bg-gray-200
