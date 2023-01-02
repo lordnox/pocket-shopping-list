@@ -5,40 +5,12 @@ import { Accessor, createEffect, createSignal, onMount, ParentComponent, Show, S
 import { ShoppingSearch } from '~/components/shopping/SearchFilter'
 import { CreateProductForm } from '~/components/shopping/CreateProductForm'
 import { ProductList } from '~/components/shopping/ProductList'
-import { CreateProduct, Product as ShoppingItemType } from '~/types/product-types'
+import { CreateProduct, Product, Product as ShoppingItemType } from '~/types/product-types'
 import { session } from '~/utils/auth'
 import { isServer } from 'solid-js/web'
 import { ChevronUp } from '~/components/icons/chevron-up'
-
-const readStorage = (key: string) => {
-  try {
-    return JSON.parse(localStorage.getItem(key) ?? '')
-  } catch (e) {
-    return undefined
-  }
-}
-
-const writeStorage = (key: string, value: any) => {
-  try {
-    return localStorage.setItem(key, JSON.stringify(value))
-  } catch (e) {
-    return undefined
-  }
-}
-
-const cacheDefined = <Type,>(key: string, getter: Accessor<Type>): Accessor<Type> => {
-  if (isServer) return getter
-  const [cache, setCache] = createSignal<Type>(getter())
-  onMount(() => setCache(readStorage(key)))
-  createEffect(() => {
-    const data = getter()
-    // ignore caching undefined values
-    if (typeof data === 'undefined') return
-    setCache(() => data)
-    writeStorage(key, data)
-  })
-  return cache
-}
+import { cacheDefined } from '~/utils/cache-signal'
+import { CompareFn, updateCurrentItemList } from '~/utils/list-comparison'
 
 const BottomElement: ParentComponent = (props) => {
   const [open, setOpen] = createSignal(false)
@@ -70,45 +42,13 @@ const BottomElement: ParentComponent = (props) => {
   )
 }
 
-type CompareFn<Type> = (a: Type, b: Type) => number
-type Product = RouterOutput['productList'][number]
 const productCompare: CompareFn<Product> = (a, b) => {
   if (a.id !== b.id) return -1
   if (a.name !== b.name) return -1
   if (a.prices.length !== b.prices.length) return -1
+  if (a.tags.length !== b.tags.length) return -1
+  if (a.type !== b.type) return -1
   return 0
-}
-
-const updateCurrentItemList = <Type extends { id: string; name: string }>(
-  currentItemList: Type[],
-  updatedItemList: Type[],
-  compare: (a: Type, b: Type) => number,
-) => {
-  const updateItemIds = new Set(updatedItemList.map((item) => item.id))
-  let index = currentItemList.length
-
-  while (index--) {
-    const currentItem = currentItemList[index]
-    const updatedItem = updatedItemList.find((existingItem) => existingItem.id === currentItem.id)
-    if (!updatedItem) {
-      // remove the currentItem from the currentItemList
-      currentItemList.splice(index, 1)
-      continue
-    }
-    // remove the updated item from the id list
-    updateItemIds.delete(updatedItem.id)
-    // check if there are differences
-    if (!compare(currentItem, updatedItem)) continue
-    // if there are differences, update the item in the current item list
-    currentItemList[index] = updatedItem
-  }
-  // for all remaining updated item ids, update them in the current item list
-  updateItemIds.forEach((id) => {
-    const item = updatedItemList.find((item) => item.id === id)
-    if (item) currentItemList.push(item)
-  })
-
-  return currentItemList
 }
 
 export default () => {
