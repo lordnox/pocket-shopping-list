@@ -2,11 +2,11 @@ import { DragGesture } from '@use-gesture/vanilla'
 import { createSignal, onMount, onCleanup, Accessor } from 'solid-js'
 import { vibrate } from '~/utils/vibrate'
 
-const LOCK_IN_FACTOR = 0.3
-const LOCK_IN_MIN = 100
+const LOCK_IN_FACTOR = 0.2
+const LOCK_IN_MIN = 60
 const LOCK_IN_MAX = 150
-const LOCK_OFF_FACTOR = 0.2
-const LOCK_OFF_MIN = 80
+const LOCK_OFF_FACTOR = 0.15
+const LOCK_OFF_MIN = 40
 const LOCK_OFF_MAX = 120
 
 interface DragState {

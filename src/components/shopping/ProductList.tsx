@@ -11,7 +11,7 @@ export const ProductList: Component<{
   hasActions?: boolean
   onUpdate: (data: CreateProduct) => void
 }> = (props) => {
-  const [actionPending, setActionPending] = createSignal<string | undefined>('clcag1al40008le08k32pzp9x')
+  const [actionPending, setActionPending] = createSignal<string | undefined>()
 
   return (
     <ProductContext.Provider

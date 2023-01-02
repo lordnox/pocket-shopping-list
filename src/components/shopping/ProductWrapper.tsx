@@ -13,12 +13,11 @@ import { Product, ProductProps, ProductState } from './Product'
 import { longPress } from '~/utils/long-press-event'
 import { vibrate } from '~/utils/vibrate'
 
-export const ProductWrapper: Component<
-  ProductProps & {
-    onUpdate: (data: CreateProduct) => void
-    hasActions?: boolean
-  }
-> = (props) => {
+export const ProductWrapper: Component<{
+  onUpdate: (data: CreateProduct) => void
+  hasActions?: boolean
+  item: ProductProps['item']
+}> = (props) => {
   const context = useProductContext()
 
   const [pressed, setPressed] = createSignal(false)
@@ -89,7 +88,6 @@ export const ProductWrapper: Component<
       <Product
         ref={element}
         state={state()}
-        onClick={() => setState('midi')}
         setState={setState}
         classList={{
           'translate-x-full': isRight() && isActive(),
