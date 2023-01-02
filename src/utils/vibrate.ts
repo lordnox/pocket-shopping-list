@@ -1,3 +1,1 @@
-export const vibrate = (duration: number = 200) => {
-  navigator.vibrate([duration])
-}
+export const vibrate = (duration: number = 200) => navigator?.vibrate?.([duration])
