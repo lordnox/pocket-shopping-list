@@ -1,4 +1,4 @@
-import { Component, JSX } from 'solid-js'
+import { Component, JSX, onMount } from 'solid-js'
 import { CreateProduct, Product } from '~/types/product-types'
 import { CheckCircle } from '../icons/check-circle'
 import { Input } from '../inputs/InputField'
@@ -17,10 +17,13 @@ export const UpdateProductForm: Component<{ item: Product; onEnter: (data: Creat
     if (!priceInputElement) throw new Error('Could not correctly identify form elements')
     const price = parseInt(priceInputElement.value)
     const amount = parseInt(amountTypeInputElement.value)
-    priceInputElement.value = ''
-    amountTypeInputElement.value = '1000'
     props.onEnter({ ...props.item, price, amount, tags: props.item.tags.map((tag) => tag.name) })
   }
+
+  onMount(() => {
+    priceInputElement.value = '' + props.item.prices[0].price
+    amountTypeInputElement.value = '' + props.item.prices[0].amount
+  })
 
   return (
     <form>

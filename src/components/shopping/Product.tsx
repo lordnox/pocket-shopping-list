@@ -13,13 +13,12 @@ const amountString = (amount: number, type: ItemType) => {
   return `${number} ${amountTypes[type].unit[unit]}`
 }
 
-interface ProductProps {
+export interface ProductProps {
   item: ShoppingItemType
-  hasActions?: boolean
 }
 
 export const Product: Component<ProductProps & JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
-  const [, divProps] = splitProps(props, ['item', 'hasActions', 'ref'])
+  const [, divProps] = splitProps(props, ['item', 'ref'])
 
   return (
     <div

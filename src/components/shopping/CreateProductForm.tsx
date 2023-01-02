@@ -32,9 +32,6 @@ export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => vo
     const name = nameInputElement.value
     const price = parseInt(priceInputElement.value)
     const amount = parseInt(amountTypeInputElement.value)
-    nameInputElement.value = ''
-    priceInputElement.value = ''
-    amountTypeInputElement.value = '1000'
     props.onEnter({ name, price, type: amountType().key, amount, tags: [] })
   }
 

@@ -128,7 +128,13 @@ export default () => {
       <Title>Shopping</Title>
       <h1 class="max-6-xs text-6xl text-sky-700 font-thin uppercase mt-4 mb-8">Shopping</h1>
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
-      <ProductList items={sortedItems()} hasActions={hasActions()} />
+      <ProductList
+        items={sortedItems()}
+        hasActions={hasActions()}
+        onUpdate={(data) => {
+          console.log('index', data)
+        }}
+      />
       <Show when={session()}>
         <BottomElement>
           <CreateProductForm onEnter={onEnter} />

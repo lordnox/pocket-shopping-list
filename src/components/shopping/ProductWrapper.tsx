@@ -1,5 +1,5 @@
 import { Component, createEffect, createSignal, onMount } from 'solid-js'
-import { Product as ShoppingItemType } from '~/types/product-types'
+import { CreateProduct } from '~/types/product-types'
 import { useProductDrag } from './product-drag'
 import { useProductContext } from './ProductContext'
 import { RightActionContainer } from './product-actions/Right-Actions'
@@ -9,16 +9,16 @@ import { StopCircle } from '../icons/stop-circle'
 import { classes } from '~/utils/classes'
 import buttonStyles from '~/styles/button.module.css'
 import styles from './product-actions/action.module.css'
-import { Product } from './Product'
+import { Product, ProductProps } from './Product'
 import { longPress } from '~/utils/long-press-event'
 import { vibrate } from '~/utils/vibrate'
 
-interface ProductProps {
-  item: ShoppingItemType
-  hasActions?: boolean
-}
-
-export const ProductWrapper: Component<ProductProps> = (props) => {
+export const ProductWrapper: Component<
+  ProductProps & {
+    onUpdate: (data: CreateProduct) => void
+    hasActions?: boolean
+  }
+> = (props) => {
   const context = useProductContext()
 
   const [pressed, setPressed] = createSignal(false)
@@ -61,7 +61,7 @@ export const ProductWrapper: Component<ProductProps> = (props) => {
 
   return (
     <div
-      class="group/product relative transition-transform duration-1000"
+      class="group/product relative transition-transform duration-1000 overflow-hidden"
       classList={{
         'scale-[1.05]': pressed(),
         'scale-100': !pressed(),
@@ -79,7 +79,7 @@ export const ProductWrapper: Component<ProductProps> = (props) => {
       </RightActionContainer>
       <LeftActionContainer active={isActive()} locked={locked()} visible={isLeft()}>
         <div class={classes(styles.updateContainer, 'gap-2')}>
-          <UpdateProductForm item={props.item} onEnter={(data) => console.log(data)} />
+          <UpdateProductForm item={props.item} onEnter={props.onUpdate} />
           <button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
             <StopCircle />
           </button>
