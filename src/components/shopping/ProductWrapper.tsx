@@ -1,4 +1,4 @@
-import { Component, createEffect } from 'solid-js'
+import { Component, createEffect, onMount } from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
 import { useProductDrag } from './product-drag'
 import { useProductContext } from './ProductContext'
@@ -10,28 +10,7 @@ import { classes } from '~/utils/classes'
 import buttonStyles from '~/styles/button.module.css'
 import styles from './product-actions/action.module.css'
 import { Product } from './Product'
-
-const rowClass = `
-  relative
-  transition-color
-  grid
-  grid-cols-[1fr_100px_150px]
-  w-full
-  group-last:rounded-b-lg
-`
-
-const itemRowCss = `
-  ${rowClass}  
-  z-20
-  border-b
-  group-even:bg-gray-100
-  group-even:dark:bg-gray-700
-  group-odd:dark:bg-gray-800
-  dark:border-gray-700
-  group-hover:bg-gray-50
-  group-hover:dark:bg-gray-600
-  touch-pan-y
-`
+import { longPress } from '~/utils/long-press-event'
 
 interface ProductProps {
   item: ShoppingItemType
@@ -39,19 +18,20 @@ interface ProductProps {
 }
 
 export const ProductWrapper: Component<ProductProps> = (props) => {
-  let element: HTMLDivElement
-
   const context = useProductContext()
 
-  const reset = () => (element.style.transform = '')
-
-  const [direction, locked] = useProductDrag(() => element, {
+  const [element, direction, locked] = useProductDrag<HTMLDivElement>({
     onFinished: (element, state) => {
-      element.style.transition = 'transform .2s'
+      if (element) element.style.transition = 'transform .2s'
       reset()
       if (state.locked) context.setAction(props.item.id)
     },
   })
+
+  const reset = () => {
+    const currentElement = element()
+    if (currentElement) currentElement.style.transform = ''
+  }
 
   const isActive = () => locked() && context.actionPending() === props.item.id
   const isLeft = () => direction() < 0
@@ -59,8 +39,15 @@ export const ProductWrapper: Component<ProductProps> = (props) => {
 
   createEffect(() => !isActive() && reset())
 
+  onMount(() => {
+    const currentElement = element()
+    longPress(currentElement, (event) => {
+      console.log('long press triggered')
+    })
+  })
+
   return (
-    <div class="group relative">
+    <div class="group/product relative">
       <RightActionContainer active={isActive()} locked={locked()} visible={isRight()}>
         <div class={styles.buttonContainer}>
           <div class="w-full flex justify-center">
@@ -80,16 +67,14 @@ export const ProductWrapper: Component<ProductProps> = (props) => {
         </div>
       </LeftActionContainer>
 
-      <div
-        ref={element!}
-        class={itemRowCss}
+      <Product
+        ref={element}
         classList={{
           'translate-x-full': isRight() && isActive(),
           '-translate-x-full': isLeft() && isActive(),
         }}
-      >
-        <Product item={props.item} />
-      </div>
+        item={props.item}
+      />
     </div>
   )
 }

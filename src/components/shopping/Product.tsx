@@ -1,6 +1,7 @@
 import { ItemType } from '@prisma/client'
-import { Component } from 'solid-js'
+import { Component, JSX, splitProps } from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
+import { classes } from '~/utils/classes'
 import { amountTypes } from './amount'
 import styles from './styles.module.css'
 
@@ -17,24 +18,53 @@ interface ProductProps {
   hasActions?: boolean
 }
 
-export const Product: Component<ProductProps> = (props) => {
+export const Product: Component<ProductProps & JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
+  const [, divProps] = splitProps(props, ['item', 'hasActions', 'ref'])
+
   return (
-    <>
-      <div
-        class={styles.product}
-        classList={{
-          italic: props.item.optimistic,
-        }}
+    <div
+      ref={props.ref}
+      {...divProps}
+      class={classes(
+        `
+        relative
+        transition
+        flex-col
+        w-full
+        p-2
+        rounded-lg
+        z-20
+        touch-pan-y
+        `,
+        `
+        group-even/product:bg-gray-100
+        group-even/product:dark:bg-gray-700
+        group-odd/product:bg-gray-200
+        group-odd/product:dark:bg-gray-800
+        group-hover/product:bg-gray-50
+        group-hover/product:dark:bg-gray-600
+        `,
+      )}
+    >
+      <h4
+        class="trucate text-lg font-bold leading-none text-gray-900 dark:text-white"
+        classList={{ italic: props.item.optimistic }}
       >
         {props.item.name}
-      </div>
-      <div class="py-4 px-6">{(props.item.prices[0].normalizedPrice / 100).toFixed(2)} €</div>
-      <div class="py-4 px-6">
-        <div>
-          <span>{(props.item.prices[0].price / 100).toFixed(2)} €</span>
-          <span> @ {amountString(props.item.prices[0].amount, props.item.type)}</span>
+      </h4>
+      <div class="flex">
+        <div class="w-full text-lg font-mono place-self-end">
+          {(props.item.prices[0].normalizedPrice / 100).toFixed(2)} €
+        </div>
+        <div class="flex-col items-center text-base font-semibold text-gray-900 dark:text-white">
+          <div class="text-sm font-medium text-gray-900 truncate dark:text-white">
+            {(props.item.prices[0].price / 100).toFixed(2)} €
+          </div>
+          <div class="text-xs border-t text-gray-500 truncate dark:text-gray-400">
+            {amountString(props.item.prices[0].amount, props.item.type)}
+          </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

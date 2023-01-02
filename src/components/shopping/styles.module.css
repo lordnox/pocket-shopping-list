@@ -14,13 +14,10 @@
   w-[50%];
 }
 
-.product {
-  @apply py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white;
-}
-
 .productList {
   @apply flex
   flex-col
+  gap-2
   w-full
   text-sm
   text-left

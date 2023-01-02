@@ -14,18 +14,19 @@ interface DragState {
   movement: number
 }
 
-export interface UseProductDragProps {
-  onFinished: (element: HTMLDivElement, state: DragState) => void
+export interface UseProductDragProps<Element extends HTMLElement> {
+  onFinished: (element: Element, state: DragState) => void
 }
 
-export const useProductDrag = (elementAccessor: Accessor<HTMLDivElement>, { onFinished }: UseProductDragProps) => {
+export const useProductDrag = <Element extends HTMLElement>({ onFinished }: UseProductDragProps<Element>) => {
+  let element: Element
+
   const [movement, setMovement] = createSignal(0)
   const [locked, setLocked] = createSignal(false)
 
   let gesture: DragGesture
 
   onMount(() => {
-    const element = elementAccessor()
     gesture = new DragGesture(
       element,
       ({ movement, first, last }) => {
@@ -63,5 +64,5 @@ export const useProductDrag = (elementAccessor: Accessor<HTMLDivElement>, { onFi
 
   onCleanup(() => gesture?.destroy())
 
-  return [movement, locked] as const
+  return [(el?: Element) => (el ? (element = el) : element), movement, locked] as const
 }
