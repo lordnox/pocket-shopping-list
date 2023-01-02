@@ -21,7 +21,7 @@ export const ProductList: Component<{
         setAction: setActionPending,
       }}
     >
-      <div class="overflow-x-hidden relative shadow-md sm:rounded-lg w-full">
+      <div class="relative shadow-md sm:rounded-lg w-full">
         <div class={styles.productList} ref={useAutoAnimate()}>
           <For each={props.items}>{(item) => <ProductWrapper item={item} hasActions={props.hasActions} />}</For>
         </div>

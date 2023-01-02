@@ -6,7 +6,7 @@ const DEFAULT_LONGPRESS_TIMEOUT = 1250
 /**
  * Cancels the current event
  */
-export const cancelEvent = (e: Event) => {
+const cancelEvent = (e: Event) => {
   e.stopImmediatePropagation()
   e.preventDefault()
   e.stopPropagation()
@@ -46,20 +46,34 @@ interface LongPressContext {
   clientY: number
 }
 
-export const longPress = (element: HTMLElement, listener: (event: TouchEvent) => void) => {
+export const longPress = (
+  element: HTMLElement,
+  onFinished: (event: TouchEvent) => void,
+  options: {
+    enabled?: boolean
+    timeout?: number
+    delta?: number
+    onStart?: VoidFunction
+    onCancel?: VoidFunction
+  } = {},
+) => {
   if (isServer) return
 
-  const deltaSquare = 5 * 5
+  const { delta = 5, timeout = DEFAULT_LONGPRESS_TIMEOUT, onCancel = () => {}, onStart = () => {} } = options
+  let { enabled = true } = options
+  const deltaSquare = delta * delta
 
-  let disableTimeout: VoidFunction = () => {}
   let clear: VoidFunction = () => {}
-  let enabled: boolean = true
 
   const finish = (event: TouchEvent) => () => {
-    console.log('finished')
-    event.preventDefault()
+    cancelEvent(event)
     clear()
-    listener(event)
+    onFinished(event)
+  }
+
+  const cancel = () => {
+    clear()
+    onCancel()
   }
 
   const createMoveEvent =
@@ -67,37 +81,38 @@ export const longPress = (element: HTMLElement, listener: (event: TouchEvent) =>
     (moveEvent: TouchEvent) => {
       const dX = Math.abs(moveEvent.touches[0].clientX - clientX)
       const dY = Math.abs(moveEvent.touches[0].clientY - clientY)
-      console.log(dX + dY, deltaSquare)
-      if (dX + dY > deltaSquare) clear()
+      if (dX + dY > deltaSquare) cancel()
     }
 
   const start = (event: TouchEvent) => {
     if (!enabled) return
+    clear()
 
     const context: LongPressContext = {
       clientX: event.touches[0].clientX,
       clientY: event.touches[0].clientY,
     }
     const moveEvent = createMoveEvent(context)
-    clear()
 
-    element.addEventListener('touchend', clear)
-    element.addEventListener('touchcancel', clear)
+    element.addEventListener('touchend', cancel)
+    element.addEventListener('touchcancel', cancel)
     element.addEventListener('contextmenu', cancelEvent)
     element.addEventListener('touchmove', moveEvent)
     const currentUserSelect = element.style.userSelect
     element.style.userSelect = 'none'
 
-    disableTimeout = requestTimeout(finish(event), DEFAULT_LONGPRESS_TIMEOUT)
+    const disableTimeout = requestTimeout(finish(event), DEFAULT_LONGPRESS_TIMEOUT)
 
     clear = () => {
       disableTimeout()
       element.style.userSelect = currentUserSelect
-      element.removeEventListener('touchend', finish)
-      element.removeEventListener('touchcancel', clear)
+      element.removeEventListener('touchend', cancel)
+      element.removeEventListener('touchcancel', cancel)
       element.removeEventListener('contextmenu', cancelEvent)
       element.removeEventListener('touchmove', moveEvent)
     }
+
+    onStart()
   }
   element.addEventListener('touchstart', start)
 

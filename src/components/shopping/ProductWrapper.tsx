@@ -1,4 +1,4 @@
-import { Component, createEffect, onMount } from 'solid-js'
+import { Component, createEffect, createSignal, onMount } from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
 import { useProductDrag } from './product-drag'
 import { useProductContext } from './ProductContext'
@@ -11,6 +11,7 @@ import buttonStyles from '~/styles/button.module.css'
 import styles from './product-actions/action.module.css'
 import { Product } from './Product'
 import { longPress } from '~/utils/long-press-event'
+import { vibrate } from '~/utils/vibrate'
 
 interface ProductProps {
   item: ShoppingItemType
@@ -19,6 +20,9 @@ interface ProductProps {
 
 export const ProductWrapper: Component<ProductProps> = (props) => {
   const context = useProductContext()
+
+  const [pressed, setPressed] = createSignal(false)
+  const [active, setActive] = createSignal(false)
 
   const [element, direction, locked] = useProductDrag<HTMLDivElement>({
     onFinished: (element, state) => {
@@ -41,13 +45,28 @@ export const ProductWrapper: Component<ProductProps> = (props) => {
 
   onMount(() => {
     const currentElement = element()
-    longPress(currentElement, (event) => {
-      console.log('long press triggered')
-    })
+    longPress(
+      currentElement,
+      () => {
+        setPressed(false)
+        vibrate(250)
+        setActive(true)
+      },
+      {
+        onCancel: () => setPressed(false),
+        onStart: () => setPressed(true),
+      },
+    )
   })
 
   return (
-    <div class="group/product relative">
+    <div
+      class="group/product relative transition-transform duration-1000"
+      classList={{
+        'scale-[1.05]': pressed(),
+        'scale-100': !pressed(),
+      }}
+    >
       <RightActionContainer active={isActive()} locked={locked()} visible={isRight()}>
         <div class={styles.buttonContainer}>
           <div class="w-full flex justify-center">
