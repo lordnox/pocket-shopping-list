@@ -2,7 +2,7 @@ import { Component, For } from 'solid-js'
 import { ProductWrapper } from './ProductWrapper'
 import { CreateProduct, Product as ShoppingItemType } from '~/types/product-types'
 import { createSignal } from 'solid-js'
-import { ProductContext } from './ProductContext'
+import { ProductListContext } from './ProductContext'
 import styles from './styles.module.css'
 import { useAutoAnimate } from '~/utils/auto-animate'
 
@@ -14,7 +14,7 @@ export const ProductList: Component<{
   const [actionPending, setActionPending] = createSignal<string | undefined>()
 
   return (
-    <ProductContext.Provider
+    <ProductListContext.Provider
       value={{
         actionPending,
         cancelAction: () => setActionPending(undefined),
@@ -29,6 +29,6 @@ export const ProductList: Component<{
           </For>
         </div>
       </div>
-    </ProductContext.Provider>
+    </ProductListContext.Provider>
   )
 }

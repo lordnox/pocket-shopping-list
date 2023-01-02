@@ -1,7 +1,7 @@
 import { Component, createEffect, createSignal, onMount } from 'solid-js'
 import { CreateProduct } from '~/types/product-types'
 import { useProductDrag } from './product-drag'
-import { useProductContext } from './ProductContext'
+import { ProductContext, ProductState, useProductListContext } from './ProductContext'
 import { RightActionContainer } from './product-actions/Right-Actions'
 import { LeftActionContainer } from './product-actions/Left-Actions'
 import { UpdateProductForm } from './UpdateProductForm'
@@ -9,7 +9,7 @@ import { StopCircle } from '../icons/stop-circle'
 import { classes } from '~/utils/classes'
 import buttonStyles from '~/styles/button.module.css'
 import styles from './product-actions/action.module.css'
-import { Product, ProductProps, ProductState } from './Product'
+import { Product, ProductProps } from './Product'
 import { longPress } from '~/utils/long-press-event'
 import { vibrate } from '~/utils/vibrate'
 
@@ -18,7 +18,7 @@ export const ProductWrapper: Component<{
   hasActions?: boolean
   item: ProductProps['item']
 }> = (props) => {
-  const context = useProductContext()
+  const context = useProductListContext()
 
   const [pressed, setPressed] = createSignal(false)
   const [state, setState] = createSignal<ProductState>('mini')
@@ -59,42 +59,47 @@ export const ProductWrapper: Component<{
   })
 
   return (
-    <div
-      class="group/product relative transition-transform duration-1000 overflow-hidden"
-      classList={{
-        'scale-[1.05]': pressed(),
-        'scale-100': !pressed(),
+    <ProductContext.Provider
+      value={{
+        setState,
+        state,
       }}
     >
-      <RightActionContainer active={isActive()} locked={locked()} visible={isRight()}>
-        <div class={styles.buttonContainer}>
-          <div class="w-full flex justify-center">
-            <button class={[buttonStyles.button, buttonStyles.deleteColors].join(' ')}>Löschen</button>
-          </div>
-          <button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
-            <StopCircle />
-          </button>
-        </div>
-      </RightActionContainer>
-      <LeftActionContainer active={isActive()} locked={locked()} visible={isLeft()}>
-        <div class={classes(styles.updateContainer, 'gap-2')}>
-          <UpdateProductForm item={props.item} onEnter={props.onUpdate} />
-          <button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
-            <StopCircle />
-          </button>
-        </div>
-      </LeftActionContainer>
-
-      <Product
-        ref={element}
-        state={state()}
-        setState={setState}
+      <div
+        class="group/product relative transition-transform duration-1000 overflow-hidden"
         classList={{
-          'translate-x-full': isRight() && isActive(),
-          '-translate-x-full': isLeft() && isActive(),
+          'scale-[1.05]': pressed(),
+          'scale-100': !pressed(),
         }}
-        item={props.item}
-      />
-    </div>
+      >
+        <RightActionContainer active={isActive()} locked={locked()} visible={isRight()}>
+          <div class={styles.buttonContainer}>
+            <div class="w-full flex justify-center">
+              <button class={[buttonStyles.button, buttonStyles.deleteColors].join(' ')}>Löschen</button>
+            </div>
+            <button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
+              <StopCircle />
+            </button>
+          </div>
+        </RightActionContainer>
+        <LeftActionContainer active={isActive()} locked={locked()} visible={isLeft()}>
+          <div class={classes(styles.updateContainer, 'gap-2')}>
+            <UpdateProductForm item={props.item} onEnter={props.onUpdate} />
+            <button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
+              <StopCircle />
+            </button>
+          </div>
+        </LeftActionContainer>
+
+        <Product
+          ref={element}
+          classList={{
+            'translate-x-full': isRight() && isActive(),
+            '-translate-x-full': isLeft() && isActive(),
+          }}
+          item={props.item}
+        />
+      </div>
+    </ProductContext.Provider>
   )
 }
