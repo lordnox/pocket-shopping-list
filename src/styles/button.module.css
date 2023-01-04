@@ -9,7 +9,7 @@
   rounded-lg
   inline-flex
   gap-2
-  py-1 px-2 text-xs font-medium
+  py-0 px-2 text-xs font-medium
   text-center
   items-center;
 }

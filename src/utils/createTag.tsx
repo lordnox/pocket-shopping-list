@@ -1,7 +1,7 @@
 import { JSX, ParentComponent, splitProps } from 'solid-js'
 
-type ClassList = { [k: string]: boolean | undefined }
-type ClassOrClassList = string | ClassList
+export type ClassList = { [k: string]: boolean | undefined }
+export type ClassOrClassList = string | ClassList
 
 export interface WithClassOrClassList {
   class?: string

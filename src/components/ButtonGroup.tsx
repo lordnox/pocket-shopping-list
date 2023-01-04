@@ -7,7 +7,7 @@ interface ButtonGroupProps<Choices extends Record<string, any>> {
 }
 
 const buttonGroupItemCss = `
-  py-2
+  py-1
   px-4
   text-sm
   font-medium

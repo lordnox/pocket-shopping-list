@@ -10,51 +10,105 @@ const LOCK_OFF_MIN = 40
 const LOCK_OFF_MAX = 120
 
 interface DragState {
-  locked: boolean
-  movement: number
+  lockedAt: number
+  displacement: number
 }
+
+type ProductDragHandler<Element extends HTMLElement> = (element: Element, state: DragState) => void
 
 export interface UseProductDragProps<Element extends HTMLElement> {
-  onFinished: (element: Element, state: DragState) => void
+  onStart?: ProductDragHandler<Element>
+  onChange?: ProductDragHandler<Element>
+  onFinished?: ProductDragHandler<Element>
+  onLocked?: ProductDragHandler<Element>
+  onUnlocked?: ProductDragHandler<Element>
+  enabled?: boolean | Accessor<boolean>
 }
 
-export const useProductDrag = <Element extends HTMLElement>({ onFinished }: UseProductDragProps<Element>) => {
+export const useProductDrag = <Element extends HTMLElement>({
+  onStart,
+  onChange,
+  onFinished,
+  onLocked,
+  onUnlocked,
+  enabled: enabledOption = true,
+}: UseProductDragProps<Element>) => {
   let element: Element
+  const enabled = typeof enabledOption === 'function' ? enabledOption : () => enabledOption
 
-  const [movement, setMovement] = createSignal(0)
-  const [locked, setLocked] = createSignal(false)
+  const [context, setContext] = createSignal<DragState>({
+    lockedAt: 0,
+    displacement: 0,
+  })
+
+  let widthState = {
+    width: 0,
+    lockIn: 0,
+    lockOff: 0,
+  }
 
   let gesture: DragGesture
 
+  const setCurrentWidth = () => {
+    const { width } = element.getBoundingClientRect()
+    widthState = {
+      width,
+      lockIn: Math.min(Math.max(width * LOCK_IN_FACTOR, LOCK_IN_MIN), LOCK_IN_MAX),
+      lockOff: Math.min(Math.max(width * LOCK_OFF_FACTOR, LOCK_OFF_MIN), LOCK_OFF_MAX),
+    }
+  }
+
+  const trigger = (context: DragState, handler?: ProductDragHandler<Element>) => {
+    handler?.(element, context)
+    return context
+  }
+
   onMount(() => {
+    setCurrentWidth()
+    element.addEventListener('resize', setCurrentWidth)
+
     gesture = new DragGesture(
       element,
       ({ movement, first, last }) => {
-        if (first) {
-          element.style.transition = 'none'
-          return
-        }
-        if (last) {
-          onFinished(element, {
-            locked: locked(),
-            movement: movement[0],
-          })
-          // handle events here
-          return
-        }
-        const currentWidth = element.getBoundingClientRect().width
-        const isLocked =
-          Math.abs(movement[0]) > Math.max(Math.min(currentWidth * LOCK_IN_FACTOR, LOCK_IN_MIN), LOCK_IN_MAX)
-        const isUnlocked =
-          Math.abs(movement[0]) < Math.max(Math.min(currentWidth * LOCK_OFF_FACTOR, LOCK_OFF_MIN), LOCK_OFF_MAX)
-        setLocked((currentlyLocked) => {
-          if (currentlyLocked) return isUnlocked ? false : currentlyLocked
-          // if we are locking, vibrate shortly
-          if (isLocked) vibrate(200)
-          return isLocked
+        // if not enabled, just reset
+        if (!enabled()) return
+        const displacement = movement[0]
+        if (first) return trigger(context(), onStart)
+
+        if (last) return trigger(context(), onFinished)
+
+        const isLocked = Math.abs(displacement) > widthState.lockIn
+        const isUnlocked = Math.abs(displacement) < widthState.lockOff
+
+        setContext((context) => {
+          // not locked
+          if (context.lockedAt === 0) {
+            // and currently not in locking position
+            if (!isLocked) return { lockedAt: 0, displacement }
+
+            // in locking position
+            return trigger(
+              {
+                lockedAt: displacement,
+                displacement,
+              },
+              onLocked,
+            )
+          }
+          // locked and in unlocking position
+          if (isUnlocked)
+            return trigger(
+              {
+                lockedAt: 0,
+                displacement,
+              },
+              onUnlocked,
+            )
+
+          // locked and not in unlocking position
+          return { lockedAt: context.lockedAt, displacement }
         })
-        element.style.transform = `translate(${movement[0]}px)`
-        setMovement(movement[0])
+        trigger(context(), onChange)
       },
       {
         axis: 'x',
@@ -62,7 +116,10 @@ export const useProductDrag = <Element extends HTMLElement>({ onFinished }: UseP
     )
   })
 
-  onCleanup(() => gesture?.destroy())
+  onCleanup(() => {
+    gesture?.destroy()
+    element?.removeEventListener('resize', setCurrentWidth)
+  })
 
-  return [(el?: Element) => (el ? (element = el) : element), movement, locked] as const
+  return (el?: Element) => (el ? (element = el) : element)
 }

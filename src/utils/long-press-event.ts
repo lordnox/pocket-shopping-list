@@ -1,3 +1,4 @@
+import { Accessor } from 'solid-js'
 import { onCleanup } from 'solid-js'
 import { isServer } from 'solid-js/web'
 
@@ -50,7 +51,7 @@ export const longPress = (
   element: HTMLElement,
   onFinished: (event: TouchEvent) => void,
   options: {
-    enabled?: boolean
+    enabled?: boolean | Accessor<boolean>
     timeout?: number
     delta?: number
     onStart?: VoidFunction
@@ -62,6 +63,7 @@ export const longPress = (
   const { delta = 5, timeout = DEFAULT_LONGPRESS_TIMEOUT, onCancel = () => {}, onStart = () => {} } = options
   let { enabled = true } = options
   const deltaSquare = delta * delta
+  const isEnabled = typeof enabled === 'boolean' ? () => enabled : enabled
 
   let clear: VoidFunction = () => {}
 
@@ -85,7 +87,7 @@ export const longPress = (
     }
 
   const start = (event: TouchEvent) => {
-    if (!enabled) return
+    if (!isEnabled()) return
     clear()
 
     const context: LongPressContext = {
@@ -120,11 +122,4 @@ export const longPress = (
     clear()
     element.removeEventListener('touchstart', start)
   })
-  return {
-    enable: () => (enabled = true),
-    disable: () => (enabled = false),
-    get enabled() {
-      return enabled
-    },
-  }
 }

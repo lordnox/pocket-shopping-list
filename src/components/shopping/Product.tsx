@@ -1,7 +1,8 @@
 import autoAnimate from '@formkit/auto-animate'
 import { ItemType } from '@prisma/client'
-import { Component, JSX, Match, onMount, Ref, Setter, Show, splitProps, Switch } from 'solid-js'
+import { Component, createRenderEffect, JSX, Match, onMount, Ref, Setter, Show, splitProps, Switch } from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
+import { useAutoAnimate } from '~/utils/auto-animate'
 import { classes } from '~/utils/classes'
 import { Button } from '../inputs/Button'
 import { amountTypes } from './amount'
@@ -20,13 +21,45 @@ export interface ProductProps {
   ref: (element: HTMLDivElement) => void
 }
 
+const miniMidiContainer = `
+  relative
+  transition        
+  w-full
+  p-2
+  rounded-lg
+  z-20
+  touch-pan-y
+`
 const miniMidiColors = `
-group-even/product:bg-gray-100
-group-even/product:dark:bg-gray-700
-group-odd/product:bg-gray-200
-group-odd/product:dark:bg-gray-800
-group-hover/product:bg-gray-50
-group-hover/product:dark:bg-gray-600
+  group-even/product:bg-gray-100
+  group-even/product:dark:bg-gray-700
+  group-odd/product:bg-gray-200
+  group-odd/product:dark:bg-gray-800
+  group-hover/product:bg-gray-50
+  group-hover/product:dark:bg-gray-600
+`
+const miniContainer = `
+  ${miniMidiContainer}
+  ${miniMidiColors}
+  flex justify-between
+`
+const midiContainer = `
+  ${miniMidiContainer}
+  ${miniMidiColors}
+  flex-col
+`
+const maxiContainer = `
+  fixed
+  p-2
+  pt-[80px]
+  z-50 
+  left-0
+  top-0
+  w-[100vw]
+  h-[100vh]  
+
+  bg-red-300
+  opacity-50
 `
 
 const ProductMiniHeader: Component<{ item: ShoppingItemType }> = (props) => {
@@ -63,71 +96,97 @@ const ProductMidiContent: Component<{ item: ShoppingItemType }> = (props) => {
 
 export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivElement>, 'ref'>> = (props) => {
   const [, divProps] = splitProps(props, ['item', 'ref'])
-
-  let productElement: HTMLDivElement
   const context = useProductContext()
+  const autoAnimate = useAutoAnimate()
+  let element: HTMLDivElement
+  let shadow: HTMLDivElement
 
+  let lastState: ProductState = context.state()
+  let boundingState: DOMRect
   onMount(() => {
-    autoAnimate(productElement)
+    boundingState = element.getBoundingClientRect()
+  })
+  createRenderEffect(() => {
+    if (!element) return
+    console.log(boundingState.width, boundingState.height)
+    const state = context.state()
+    if (lastState !== state) {
+      console.log(element.getBoundingClientRect())
+      console.log('state change', context.state())
+      switch (state) {
+        case 'maxi': {
+          const { left, top, width, height } = element.getBoundingClientRect()
+          shadow.style.width = `${width}px`
+          shadow.style.height = `${height}px`
+          shadow.style.display = 'block'
+
+          // const deltaX = first.left - last.left;
+          // const deltaY = first.top - last.top;
+          // const deltaW = first.width / last.width;
+          // const deltaH = first.height / last.height;
+          // element.style.transform
+          break
+        }
+        default:
+          boundingState = element.getBoundingClientRect()
+          console.log(boundingState.width, boundingState.height)
+          shadow.style.width = `0px`
+          shadow.style.height = `0px`
+          shadow.style.display = 'none'
+      }
+      lastState = state
+    }
   })
 
   return (
-    <div
-      ref={(element) => {
-        productElement = element
-        props.ref(element)
-      }}
-      {...divProps}
-      class={classes(
-        `
-        
-        relative
-        transition        
-        w-full
-        p-2
-        rounded-lg
-        z-20
-        touch-pan-y
-        `,
-      )}
-      classList={{
-        'flex justify-between': context.state() === 'mini',
-        'flex-col': context.state() === 'midi',
-        [miniMidiColors]: context.state() !== 'maxi',
-        'bg-red-400': context.state() === 'maxi',
-      }}
-    >
-      <header class="w-full flex">
-        <h4
-          class="w-full trucate text-lg font-bold leading-none text-gray-900 dark:text-white"
-          classList={{ italic: props.item.optimistic }}
-          onClick={() =>
-            context.setState((state) => {
-              if (state === 'mini') return 'midi'
-              if (state === 'midi') return 'mini'
-              return state
-            })
-          }
-        >
-          {props.item.name}
-        </h4>
+    <>
+      <div
+        ref={(elementRef) => {
+          element = elementRef
+          autoAnimate(elementRef)
+          props.ref(elementRef)
+        }}
+        {...divProps}
+        classList={{
+          [miniContainer]: context.state() === 'mini',
+          [midiContainer]: context.state() === 'midi',
+          [maxiContainer]: context.state() === 'maxi',
+          ...props.classList,
+        }}
+      >
+        <header class="w-full flex">
+          <h4
+            class="w-full trucate text-lg font-bold leading-none text-gray-900 dark:text-white"
+            classList={{ italic: props.item.optimistic }}
+            onClick={() =>
+              context.setState((state) => {
+                if (state === 'mini') return 'midi'
+                if (state === 'midi') return 'mini'
+                return state
+              })
+            }
+          >
+            {props.item.name} - {useProductContext().state()}
+          </h4>
+          <Switch>
+            <Match when={context.state() === 'mini'}>
+              <ProductMiniHeader item={props.item} />
+            </Match>
+            <Match when={context.state() === 'midi'}>
+              <ProductMidiHeader item={props.item} />
+            </Match>
+            <Match when={context.state() === 'maxi'}>
+              <ProductMaxiHeader item={props.item} />
+            </Match>
+          </Switch>
+        </header>
         <Switch>
-          <Match when={context.state() === 'mini'}>
-            <ProductMiniHeader item={props.item} />
-          </Match>
           <Match when={context.state() === 'midi'}>
-            <ProductMidiHeader item={props.item} />
-          </Match>
-          <Match when={context.state() === 'maxi'}>
-            <ProductMaxiHeader item={props.item} />
+            <ProductMidiContent item={props.item} />
           </Match>
         </Switch>
-      </header>
-      <Switch>
-        <Match when={context.state() === 'midi'}>
-          <ProductMidiContent item={props.item} />
-        </Match>
-      </Switch>
-    </div>
+      </div>
+      <div ref={shadow!}></div>
+    </>
   )
 }

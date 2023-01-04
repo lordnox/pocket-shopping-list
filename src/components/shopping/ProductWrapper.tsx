@@ -2,8 +2,7 @@ import { Component, createEffect, createSignal, onMount } from 'solid-js'
 import { CreateProduct } from '~/types/product-types'
 import { useProductDrag } from './product-drag'
 import { ProductContext, ProductState, useProductListContext } from './ProductContext'
-import { RightActionContainer } from './product-actions/Right-Actions'
-import { LeftActionContainer } from './product-actions/Left-Actions'
+import { LeftActionContainer, RightActionContainer } from './product-actions/Container'
 import { UpdateProductForm } from './UpdateProductForm'
 import { StopCircle } from '../icons/stop-circle'
 import { classes } from '~/utils/classes'
@@ -12,6 +11,8 @@ import styles from './product-actions/action.module.css'
 import { Product, ProductProps } from './Product'
 import { longPress } from '~/utils/long-press-event'
 import { vibrate } from '~/utils/vibrate'
+import { useAutoAnimate } from '~/utils/auto-animate'
+import { Button } from '../inputs/Button'
 
 export const ProductWrapper: Component<{
   onUpdate: (data: CreateProduct) => void
@@ -22,13 +23,30 @@ export const ProductWrapper: Component<{
 
   const [pressed, setPressed] = createSignal(false)
   const [state, setState] = createSignal<ProductState>('mini')
+  const [locked, setLocked] = createSignal(false)
+  const [displacement, setDisplacement] = createSignal(0)
+  const [dragging, setDragging] = createSignal(false)
 
-  const [element, direction, locked] = useProductDrag<HTMLDivElement>({
+  const element = useProductDrag<HTMLDivElement>({
+    onStart: (element) => {
+      console.log('none')
+      element.style.transition = 'none'
+      setDragging(true)
+    },
+    onChange: (element, state) => {
+      console.log(state.displacement)
+      element.style.transform = `translate(${state.displacement}px)`
+      setLocked(() => state.lockedAt !== 0)
+      setDisplacement(state.displacement)
+    },
     onFinished: (element, state) => {
+      setDragging(false)
       if (element) element.style.transition = 'transform .2s'
       reset()
-      if (state.locked) context.setAction(props.item.id)
+      if (state.lockedAt !== 0) context.setAction(props.item.id)
+      else context.setAction('')
     },
+    enabled: () => state() !== 'maxi',
   })
 
   const reset = () => {
@@ -36,9 +54,10 @@ export const ProductWrapper: Component<{
     if (currentElement) currentElement.style.transform = ''
   }
 
-  const isActive = () => locked() && context.actionPending() === props.item.id
-  const isLeft = () => direction() < 0
-  const isRight = () => direction() > 0
+  const isPending = () => context.actionPending() === props.item.id
+  const isActive = () => locked() && isPending()
+  const isLeft = () => (isPending() || dragging()) && displacement() < 0
+  const isRight = () => (isPending() || dragging()) && displacement() > 0
 
   createEffect(() => !isActive() && reset())
 
@@ -49,57 +68,64 @@ export const ProductWrapper: Component<{
       () => {
         setPressed(false)
         vibrate(250)
-        setState('maxi')
+        setTimeout(() => setState('maxi'))
       },
       {
+        // connect to capture the pressed state
         onCancel: () => setPressed(false),
         onStart: () => setPressed(true),
+        // connect to disable to eventhandler when we are in maxi-mode
+        enabled: () => state() !== 'maxi',
       },
     )
   })
 
   return (
-    <ProductContext.Provider
-      value={{
-        setState,
-        state,
-      }}
-    >
-      <div
-        class="group/product relative transition-transform duration-1000 overflow-hidden"
-        classList={{
-          'scale-[1.05]': pressed(),
-          'scale-100': !pressed(),
+    <>
+      <ProductContext.Provider
+        value={{
+          setState,
+          state,
         }}
       >
-        <RightActionContainer active={isActive()} locked={locked()} visible={isRight()}>
-          <div class={styles.buttonContainer}>
-            <div class="w-full flex justify-center">
-              <button class={[buttonStyles.button, buttonStyles.deleteColors].join(' ')}>Löschen</button>
-            </div>
-            <button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
-              <StopCircle />
-            </button>
-          </div>
-        </RightActionContainer>
-        <LeftActionContainer active={isActive()} locked={locked()} visible={isLeft()}>
-          <div class={classes(styles.updateContainer, 'gap-2')}>
-            <UpdateProductForm item={props.item} onEnter={props.onUpdate} />
-            <button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
-              <StopCircle />
-            </button>
-          </div>
-        </LeftActionContainer>
-
-        <Product
-          ref={element}
+        <div
+          class="group/product"
           classList={{
-            'translate-x-full': isRight() && isActive(),
-            '-translate-x-full': isLeft() && isActive(),
+            'scale-[1.05] transition-transform duration-1000': pressed(),
+            'scale-100': state() !== 'maxi' && !pressed(),
+            'duration-0': isPending(),
+            'relative overflow-hidden': state() !== 'maxi',
           }}
-          item={props.item}
-        />
-      </div>
-    </ProductContext.Provider>
+        >
+          <RightActionContainer active={isActive()} locked={locked()} visible={isRight()}>
+            <div class={styles.buttonContainer}>
+              <div class="w-full flex justify-center">
+                <button class={[buttonStyles.button, buttonStyles.deleteColors].join(' ')}>Löschen</button>
+              </div>
+              <Button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
+                <StopCircle />
+              </Button>
+            </div>
+          </RightActionContainer>
+          <LeftActionContainer active={isActive()} locked={locked()} visible={isLeft()}>
+            <div class={classes(styles.updateContainer, 'gap-2')}>
+              <UpdateProductForm item={props.item} onEnter={props.onUpdate} />
+              <Button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
+                <StopCircle />
+              </Button>
+            </div>
+          </LeftActionContainer>
+
+          <Product
+            ref={element}
+            classList={{
+              'translate-x-full': isRight() && isActive(),
+              '-translate-x-full': isLeft() && isActive(),
+            }}
+            item={props.item}
+          />
+        </div>
+      </ProductContext.Provider>
+    </>
   )
 }
