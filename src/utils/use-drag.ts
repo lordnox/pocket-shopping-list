@@ -1,6 +1,5 @@
 import { DragGesture } from '@use-gesture/vanilla'
 import { createSignal, onMount, onCleanup, Accessor } from 'solid-js'
-import { vibrate } from '~/utils/vibrate'
 
 const LOCK_IN_FACTOR = 0.2
 const LOCK_IN_MIN = 60
@@ -14,25 +13,25 @@ interface DragState {
   displacement: number
 }
 
-type ProductDragHandler<Element extends HTMLElement> = (element: Element, state: DragState) => void
+type DragHandler<Element extends HTMLElement> = (element: Element, state: DragState) => void
 
-export interface UseProductDragProps<Element extends HTMLElement> {
-  onStart?: ProductDragHandler<Element>
-  onChange?: ProductDragHandler<Element>
-  onFinished?: ProductDragHandler<Element>
-  onLocked?: ProductDragHandler<Element>
-  onUnlocked?: ProductDragHandler<Element>
+export interface UseDragProps<Element extends HTMLElement> {
+  onStart?: DragHandler<Element>
+  onChange?: DragHandler<Element>
+  onFinished?: DragHandler<Element>
+  onLocked?: DragHandler<Element>
+  onUnlocked?: DragHandler<Element>
   enabled?: boolean | Accessor<boolean>
 }
 
-export const useProductDrag = <Element extends HTMLElement>({
+export const useDrag = <Element extends HTMLElement>({
   onStart,
   onChange,
   onFinished,
   onLocked,
   onUnlocked,
   enabled: enabledOption = true,
-}: UseProductDragProps<Element>) => {
+}: UseDragProps<Element>) => {
   let element: Element
   const enabled = typeof enabledOption === 'function' ? enabledOption : () => enabledOption
 
@@ -58,7 +57,7 @@ export const useProductDrag = <Element extends HTMLElement>({
     }
   }
 
-  const trigger = (context: DragState, handler?: ProductDragHandler<Element>) => {
+  const trigger = (context: DragState, handler?: DragHandler<Element>) => {
     handler?.(element, context)
     return context
   }

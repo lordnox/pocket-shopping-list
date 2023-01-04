@@ -1,6 +1,6 @@
 import { Component, createEffect, createSignal, onMount } from 'solid-js'
 import { CreateProduct } from '~/types/product-types'
-import { useProductDrag } from './product-drag'
+import { useDrag } from '../../utils/use-drag'
 import { ProductContext, ProductState, useProductListContext } from './ProductContext'
 import { LeftActionContainer, RightActionContainer } from './product-actions/Container'
 import { UpdateProductForm } from './UpdateProductForm'
@@ -27,14 +27,18 @@ export const ProductWrapper: Component<{
   const [displacement, setDisplacement] = createSignal(0)
   const [dragging, setDragging] = createSignal(false)
 
-  const element = useProductDrag<HTMLDivElement>({
+  const element = useDrag<HTMLDivElement>({
     onStart: (element) => {
       element.style.transition = 'none'
       setDragging(true)
     },
     onChange: (element, state) => {
       element.style.transform = `translate(${state.displacement}px)`
-      setLocked(() => state.lockedAt !== 0)
+      setLocked((locked) => {
+        const lockedState = state.lockedAt !== 0
+        if (locked !== lockedState && lockedState) vibrate(250)
+        return lockedState
+      })
       setDisplacement(state.displacement)
     },
     onFinished: (element, state) => {
