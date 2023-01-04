@@ -4,11 +4,12 @@ interface ButtonGroupProps<Choices extends Record<string, any>> {
   choices: Choices
   onChange: (choice: Choices[keyof Choices], key: keyof Choices) => void
   active?: keyof Choices
+  class?: string
 }
 
 const buttonGroupItemCss = `
   py-1
-  px-4
+  px-1
   text-sm
   font-medium
   text-gray-900
@@ -60,6 +61,7 @@ export const ButtonGroupItems = <Choices extends Record<string, any>>(props: But
       {(choice: Keys) => (
         <button
           type="button"
+          class={props.class}
           classList={{
             [buttonGroupItemCss]: true,
             [inactiveButtonGroupItemCss]: active() !== choice,

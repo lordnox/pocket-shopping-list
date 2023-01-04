@@ -46,7 +46,7 @@ export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => vo
         <Item class="place-self-end">
           <InputField for="price" label="Preis" placeholder="Preis" ref={priceInputElement!} required type="number" />
         </Item>
-        <Item class="grid grid-cols-[1fr_50px_50px] min-w-[165px] max-w-[180px]">
+        <Item class="grid grid-cols-[1fr_28px_28px_28px] min-w-[165px] max-w-[180px]">
           <InputField
             for="amount"
             label={amountType().label}
@@ -55,7 +55,7 @@ export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => vo
             required
             type="number"
             value="1000"
-            labelStyle="grid-column-end: span 3;"
+            labelStyle="grid-column-end: span 4;"
             border="LEFT"
           />
           <ButtonGroupItems choices={choices} onChange={changeType} active={defaultAmountType} />

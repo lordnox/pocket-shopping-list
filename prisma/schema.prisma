@@ -109,4 +109,5 @@ enum ProviderType {
 enum ItemType {
   kilogram
   liter
+  piece
 }

@@ -22,7 +22,7 @@ export default router({
         price: z.number().int().positive(),
         // expected to be in ml or g
         amount: z.number(),
-        type: z.enum(['kilogram', 'liter']),
+        type: z.enum(['kilogram', 'liter', 'piece']),
         tags: z.array(z.string()),
       }),
     )

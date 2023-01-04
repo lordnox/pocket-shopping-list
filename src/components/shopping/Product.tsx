@@ -1,17 +1,8 @@
 import { Component, createEffect, JSX, Match, onMount, splitProps, Switch } from 'solid-js'
-import { ProductPrice, ProductType } from '~/types/product-types'
 import { useAutoAnimate } from '~/utils/auto-animate'
 import { Button } from '../inputs/Button'
-import { amountTypes } from './amount'
+import { AveragePrice, InputPrice } from './Price'
 import { ProductState, useProductContext } from './ProductContext'
-
-const selectUnit = (amount: number) => (amount >= 1000 ? 1 : 0)
-
-const amountString = (amount: number, type: ProductType) => {
-  const unit = selectUnit(amount)
-  const number = unit ? (amount / 1000).toFixed(1) : amount.toString()
-  return `${number} ${amountTypes[type].unit[unit]}`
-}
 
 export interface ProductProps {
   ref: (element: HTMLDivElement) => void
@@ -71,30 +62,11 @@ const maxiHeadlineCss = `
   font-bold
 `
 
-const AveragePrice: Component<{ price: ProductPrice } & JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
-  const [, divProps] = splitProps(props, ['price'])
-  return <div {...divProps}>{(props.price.normalizedPrice / 100).toFixed(2)} €</div>
-}
-const InputPrice: Component<{ price: ProductPrice; type: ProductType } & JSX.HTMLAttributes<HTMLDivElement>> = (
-  props,
-) => {
-  const [, divProps] = splitProps(props, ['price'])
-  return (
-    <div {...divProps}>
-      <div class="text-sm font-medium text-gray-900 truncate dark:text-white">
-        {(props.price.price / 100).toFixed(2)} €
-      </div>
-      <div class="text-xs border-t text-gray-500 truncate dark:text-gray-400">
-        {amountString(props.price.amount, props.type)}
-      </div>
-    </div>
-  )
-}
-
 const ProductMiniHeader: Component = (props) => {
   const context = useProductContext()
-  return <AveragePrice class="whitespace-nowrap text-xs" price={context.product.prices[0]} />
-  // return <div class="whitespace-nowrap text-xs">{(context.product.prices[0].normalizedPrice / 100).toFixed(2)} €</div>
+  return (
+    <AveragePrice class="whitespace-nowrap text-xs" price={context.product.prices[0]} type={context.product.type} />
+  )
 }
 
 const ProductMidiHeader: Component = (props) => {
