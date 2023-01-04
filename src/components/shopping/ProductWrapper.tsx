@@ -8,7 +8,8 @@ import { StopCircle } from '../icons/stop-circle'
 import { classes } from '~/utils/classes'
 import buttonStyles from '~/styles/button.module.css'
 import styles from './product-actions/action.module.css'
-import { Product, ProductProps } from './Product'
+import { Product as ProductType } from '~/types/product-types'
+import { Product } from './Product'
 import { longPress } from '~/utils/long-press-event'
 import { vibrate } from '~/utils/vibrate'
 import { Button } from '../inputs/Button'
@@ -16,7 +17,7 @@ import { Button } from '../inputs/Button'
 export const ProductWrapper: Component<{
   onUpdate: (data: CreateProduct) => void
   hasActions?: boolean
-  item: ProductProps['item']
+  item: ProductType
 }> = (props) => {
   const context = useProductListContext()
 
@@ -87,6 +88,7 @@ export const ProductWrapper: Component<{
         value={{
           setState,
           state,
+          product: props.item,
         }}
       >
         <div
@@ -124,7 +126,6 @@ export const ProductWrapper: Component<{
               'translate-x-full': isRight() && isActive(),
               '-translate-x-full': isLeft() && isActive(),
             }}
-            item={props.item}
           />
         </div>
       </ProductContext.Provider>

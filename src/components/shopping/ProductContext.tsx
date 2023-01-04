@@ -1,10 +1,12 @@
 import { Accessor, createContext, Setter, useContext } from 'solid-js'
+import { Product } from '~/types/product-types'
 
 export type ProductState = 'mini' | 'midi' | 'maxi'
 
 export const ProductContext = createContext<{
   setState: Setter<ProductState>
   state: Accessor<ProductState>
+  product: Product
 }>()
 
 export const useProductContext = () => {

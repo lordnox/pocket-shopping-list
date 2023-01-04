@@ -1,6 +1,5 @@
-import { ItemType } from '@prisma/client'
 import { Component, createEffect, JSX, Match, onMount, splitProps, Switch } from 'solid-js'
-import { Product as ProductType } from '~/types/product-types'
+import { ProductPrice, ProductType } from '~/types/product-types'
 import { useAutoAnimate } from '~/utils/auto-animate'
 import { Button } from '../inputs/Button'
 import { amountTypes } from './amount'
@@ -8,14 +7,13 @@ import { ProductState, useProductContext } from './ProductContext'
 
 const selectUnit = (amount: number) => (amount >= 1000 ? 1 : 0)
 
-const amountString = (amount: number, type: ItemType) => {
+const amountString = (amount: number, type: ProductType) => {
   const unit = selectUnit(amount)
   const number = unit ? (amount / 1000).toFixed(1) : amount.toString()
   return `${number} ${amountTypes[type].unit[unit]}`
 }
 
 export interface ProductProps {
-  item: ProductType
   ref: (element: HTMLDivElement) => void
 }
 
@@ -73,40 +71,60 @@ const maxiHeadlineCss = `
   font-bold
 `
 
-const ProductMiniHeader: Component<{ item: ProductType }> = (props) => {
-  return <div class="whitespace-nowrap text-xs">{(props.item.prices[0].normalizedPrice / 100).toFixed(2)} €</div>
+const AveragePrice: Component<{ price: ProductPrice } & JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
+  const [, divProps] = splitProps(props, ['price'])
+  return <div {...divProps}>{(props.price.normalizedPrice / 100).toFixed(2)} €</div>
 }
-
-const ProductMidiHeader: Component<{ item: ProductType }> = (props) => {
-  const context = useProductContext()
-  return <Button onClick={() => context.setState('maxi')}>Max</Button>
-}
-
-const ProductMaxiHeader: Component<{ item: ProductType }> = (props) => {
-  const context = useProductContext()
-  return <Button onClick={() => context.setState('mini')}>X</Button>
-}
-
-const ProductMidiContent: Component<{ item: ProductType }> = (props) => {
+const InputPrice: Component<{ price: ProductPrice; type: ProductType } & JSX.HTMLAttributes<HTMLDivElement>> = (
+  props,
+) => {
+  const [, divProps] = splitProps(props, ['price'])
   return (
-    <div class="flex">
-      <div class="w-full text-lg font-mono place-self-end">
-        {(props.item.prices[0].normalizedPrice / 100).toFixed(2)} €
+    <div {...divProps}>
+      <div class="text-sm font-medium text-gray-900 truncate dark:text-white">
+        {(props.price.price / 100).toFixed(2)} €
       </div>
-      <div class="flex-col items-center text-base font-semibold text-gray-900 dark:text-white">
-        <div class="text-sm font-medium text-gray-900 truncate dark:text-white">
-          {(props.item.prices[0].price / 100).toFixed(2)} €
-        </div>
-        <div class="text-xs border-t text-gray-500 truncate dark:text-gray-400">
-          {amountString(props.item.prices[0].amount, props.item.type)}
-        </div>
+      <div class="text-xs border-t text-gray-500 truncate dark:text-gray-400">
+        {amountString(props.price.amount, props.type)}
       </div>
     </div>
   )
 }
 
+const ProductMiniHeader: Component = (props) => {
+  const context = useProductContext()
+  return <AveragePrice class="whitespace-nowrap text-xs" price={context.product.prices[0]} />
+  // return <div class="whitespace-nowrap text-xs">{(context.product.prices[0].normalizedPrice / 100).toFixed(2)} €</div>
+}
+
+const ProductMidiHeader: Component = (props) => {
+  const context = useProductContext()
+  return <Button onClick={() => context.setState('maxi')}>Max</Button>
+}
+
+const ProductMaxiHeader: Component = (props) => {
+  const context = useProductContext()
+  return <Button onClick={() => context.setState('mini')}>X</Button>
+}
+
+const ProductMidiContent: Component = (props) => {
+  const context = useProductContext()
+  return (
+    <div class="flex">
+      <div class="w-full text-lg font-mono place-self-end">
+        {(context.product.prices[0].normalizedPrice / 100).toFixed(2)} €
+      </div>
+      <InputPrice
+        class="flex-col items-center text-base font-semibold text-gray-900 dark:text-white"
+        price={context.product.prices[0]}
+        type={context.product.type}
+      />
+    </div>
+  )
+}
+
 export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivElement>, 'ref'>> = (props) => {
-  const [, divProps] = splitProps(props, ['item', 'ref'])
+  const [, divProps] = splitProps(props, ['ref'])
   const context = useProductContext()
   const autoAnimate = useAutoAnimate()
   let element: HTMLDivElement
@@ -173,30 +191,30 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
           <h4
             class="w-full truncate text-gray-900 dark:text-white"
             classList={{
-              italic: props.item.optimistic,
+              italic: context.product.optimistic,
 
               [miniHeadlineCss]: context.state() === 'mini',
               [midiHeadlineCss]: context.state() === 'midi',
               [maxiHeadlineCss]: context.state() === 'maxi',
             }}
           >
-            {props.item.name}
+            {context.product.name}
           </h4>
           <Switch>
             <Match when={context.state() === 'mini'}>
-              <ProductMiniHeader item={props.item} />
+              <ProductMiniHeader />
             </Match>
             <Match when={context.state() === 'midi'}>
-              <ProductMidiHeader item={props.item} />
+              <ProductMidiHeader />
             </Match>
             <Match when={context.state() === 'maxi'}>
-              <ProductMaxiHeader item={props.item} />
+              <ProductMaxiHeader />
             </Match>
           </Switch>
         </header>
         <Switch>
           <Match when={context.state() === 'midi'}>
-            <ProductMidiContent item={props.item} />
+            <ProductMidiContent />
           </Match>
         </Switch>
       </div>
