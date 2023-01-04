@@ -4,7 +4,7 @@ import { createDiv } from '~/utils/createTag'
 import { ButtonGroupItems } from '../ButtonGroup'
 import { InputField } from '../inputs/InputField'
 import { AmountKeys, AmountType, amountTypes, choices } from '../../types/amount'
-import { ShoppingTags } from './tags'
+import { ShoppingTags } from '../inputs/TagInput'
 import { AmountInput } from '../inputs/AmountInput'
 
 const Row = createDiv(`
@@ -55,10 +55,10 @@ export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => vo
       </Row>
       <Row>
         <Item>
-          <ShoppingTags tags={tags()} />
+          <ShoppingTags for="tags" tags={tags()} setTags={setTags} />
         </Item>
         <button
-          class="text-white place-self-end h-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          class="text-white text-sm place-self-end h-8 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           type="submit"
           onClick={enterItem}
         >

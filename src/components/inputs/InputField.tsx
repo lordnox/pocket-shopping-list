@@ -29,7 +29,14 @@ export const Input: Component<InputProps> = (props) => {
       {...inputProps}
       type={props.type ?? 'text'}
       id={props.id}
-      class={classes(styles.input, props.class)}
+      class={classes(
+        styles.input,
+        styles.inputBgColors,
+        styles.inputBorderColors,
+        styles.inputTextColors,
+        styles.inputFocusColors,
+        props.class,
+      )}
       classList={{
         'border-l rounded-l-lg': props.border && ['LEFT'].includes(props.border),
         'border-r rounded-r-lg': props.border && ['RIGHT'].includes(props.border),
