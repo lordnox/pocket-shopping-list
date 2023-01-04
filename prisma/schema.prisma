@@ -11,19 +11,19 @@ datasource db {
 }
 
 // defines an item purchasable in a shop
-model ShoppingItem {
-  id        String            @id @default(cuid())
+model Product {
+  id        String         @id @default(cuid())
   userId    String
-  createdAt DateTime          @default(now())
-  name      String            @unique()
-  type      ItemType          @default(kilogram)
-  prices    ItemPrice[]
-  createdBy User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tags      ShoppingItemTag[]
+  createdAt DateTime       @default(now())
+  name      String         @unique()
+  type      ItemType       @default(kilogram)
+  prices    ProductPrice[]
+  createdBy User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags      ProductTag[]
 }
 
 // contains the price of a shopping item
-model ItemPrice {
+model ProductPrice {
   id              String       @id @default(cuid())
   userId          String
   itemId          String
@@ -33,14 +33,14 @@ model ItemPrice {
   amount          Int          @default(1000)
   locationId      String?
   location        GeoLocation? @relation(fields: [locationId], references: [id])
-  item            ShoppingItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  item            Product      @relation(fields: [itemId], references: [id], onDelete: Cascade)
   createdBy       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model ShoppingItemTag {
-  id    String         @id @default(cuid())
-  name  String         @unique
-  items ShoppingItem[]
+model ProductTag {
+  id    String    @id @default(cuid())
+  name  String    @unique
+  items Product[]
 
   @@map("Tag")
 }
@@ -80,8 +80,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  items         ShoppingItem[]
-  ItemPrice     ItemPrice[]
+  items         Product[]
+  ProductPrice  ProductPrice[]
 }
 
 model VerificationToken {
@@ -93,10 +93,10 @@ model VerificationToken {
 }
 
 model GeoLocation {
-  id        String      @id @default(cuid())
+  id        String         @id @default(cuid())
   lat       Int
   long      Int
-  ItemPrice ItemPrice[]
+  ItemPrice ProductPrice[]
 }
 
 enum ProviderType {

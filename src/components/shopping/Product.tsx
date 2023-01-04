@@ -1,24 +1,10 @@
-import autoAnimate from '@formkit/auto-animate'
 import { ItemType } from '@prisma/client'
-import {
-  Component,
-  createEffect,
-  createRenderEffect,
-  JSX,
-  Match,
-  onMount,
-  Ref,
-  Setter,
-  Show,
-  splitProps,
-  Switch,
-} from 'solid-js'
-import { Product as ShoppingItemType } from '~/types/product-types'
+import { Component, createEffect, JSX, Match, onMount, splitProps, Switch } from 'solid-js'
+import { Product as ProductType } from '~/types/product-types'
 import { useAutoAnimate } from '~/utils/auto-animate'
-import { classes } from '~/utils/classes'
 import { Button } from '../inputs/Button'
 import { amountTypes } from './amount'
-import { ProductState, useProductContext, useProductListContext } from './ProductContext'
+import { ProductState, useProductContext } from './ProductContext'
 
 const selectUnit = (amount: number) => (amount >= 1000 ? 1 : 0)
 
@@ -29,7 +15,7 @@ const amountString = (amount: number, type: ItemType) => {
 }
 
 export interface ProductProps {
-  item: ShoppingItemType
+  item: ProductType
   ref: (element: HTMLDivElement) => void
 }
 
@@ -87,21 +73,21 @@ const maxiHeadlineCss = `
   font-bold
 `
 
-const ProductMiniHeader: Component<{ item: ShoppingItemType }> = (props) => {
+const ProductMiniHeader: Component<{ item: ProductType }> = (props) => {
   return <div class="whitespace-nowrap text-xs">{(props.item.prices[0].normalizedPrice / 100).toFixed(2)} €</div>
 }
 
-const ProductMidiHeader: Component<{ item: ShoppingItemType }> = (props) => {
+const ProductMidiHeader: Component<{ item: ProductType }> = (props) => {
   const context = useProductContext()
   return <Button onClick={() => context.setState('maxi')}>Max</Button>
 }
 
-const ProductMaxiHeader: Component<{ item: ShoppingItemType }> = (props) => {
+const ProductMaxiHeader: Component<{ item: ProductType }> = (props) => {
   const context = useProductContext()
   return <Button onClick={() => context.setState('mini')}>X</Button>
 }
 
-const ProductMidiContent: Component<{ item: ShoppingItemType }> = (props) => {
+const ProductMidiContent: Component<{ item: ProductType }> = (props) => {
   return (
     <div class="flex">
       <div class="w-full text-lg font-mono place-self-end">

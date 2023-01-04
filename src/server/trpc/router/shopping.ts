@@ -1,10 +1,9 @@
-import { ItemType } from '@prisma/client'
 import { z } from 'zod'
 import { router, protectedProcedure, procedure } from '../utils'
 
 export default router({
   productList: procedure.query(({ ctx: { prisma } }) =>
-    prisma.shoppingItem.findMany({
+    prisma.product.findMany({
       include: {
         tags: true,
         prices: {
@@ -36,7 +35,7 @@ export default router({
           normalizedPrice: Math.floor((input.price / input.amount) * 1000),
         },
       }
-      const result = await prisma.shoppingItem.upsert({
+      await prisma.product.upsert({
         create: {
           name: input.name,
           userId: user.id,
@@ -52,7 +51,6 @@ export default router({
           prices,
         },
       })
-      console.log(result)
       return {
         hint: 'created item',
       }
