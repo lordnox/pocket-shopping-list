@@ -158,6 +158,10 @@ export default () => {
           },
           ...(data[index]?.prices ?? []),
         ],
+        tags: createItem.tags.map((tag) => ({
+          id: '',
+          name: tag,
+        })),
       }
 
       return index !== -1 ? [...data.slice(0, index), newItem, ...data.slice(index + 1)] : [...data, newItem]

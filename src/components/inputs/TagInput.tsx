@@ -56,7 +56,7 @@ export const TagInput: Component<{ for: string; tags: string[]; setTags: Setter<
       <For each={props.tags}>
         {(tag) => (
           <div class="inline-flex select-none flex-nowrap items-center whitespace-nowrap rounded-full bg-gray-800 py-1 px-2 text-[10px] font-normal text-gray-200">
-            {tag}
+            {UCase(tag)}
             <StopCircle role="button" class="ml-1 h-4 w-4 stroke-red-400" onClick={removeTag(tag)} />
           </div>
         )}

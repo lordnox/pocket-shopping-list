@@ -6,7 +6,7 @@ import { Button } from '../inputs/Button'
 import { TagInput } from '../inputs/TagInput'
 
 export const TagsProductForm: Component<{ item: Product; onEnter: (data: CreateProduct) => void }> = (props) => {
-  const [tags, setTags] = createSignal<string[]>([])
+  const [tags, setTags] = createSignal<string[]>(props.item.tags.map((tag) => tag.name))
 
   const enterItem: JSX.EventHandlerUnion<HTMLButtonElement, MouseEvent> = async (event) => {
     event.preventDefault()

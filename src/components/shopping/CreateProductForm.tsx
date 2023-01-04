@@ -47,7 +47,7 @@ export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => vo
         </Item>
         <Item class="grid min-w-[165px] max-w-[180px] grid-cols-[1fr_28px_28px_28px]">
           <AmountInput
-            amountType={amountType}
+            amountType={amountType()}
             setAmountType={setAmountType}
             ref={(element) => (amountTypeInputElement = element)}
           />
