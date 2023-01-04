@@ -50,6 +50,9 @@ export const ProductWrapper: Component<{
       })
     },
     enabled: () => state() !== 'maxi',
+    config: {
+      axis: 'x',
+    },
   })
 
   const reset = () => {

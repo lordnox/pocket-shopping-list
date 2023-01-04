@@ -1,36 +1,90 @@
 import { Title } from 'solid-start'
 
 import { RouterOutput, trpc, useQuery } from '~/utils/trpc-client'
-import { Accessor, createEffect, createSignal, onMount, ParentComponent, Show, Signal } from 'solid-js'
+import { createSignal, ParentComponent, Show } from 'solid-js'
 import { ShoppingSearch } from '~/components/shopping/SearchFilter'
 import { CreateProductForm } from '~/components/shopping/CreateProductForm'
 import { ProductList } from '~/components/shopping/ProductList'
 import { CreateProduct, Product, Product as ShoppingItemType } from '~/types/product-types'
 import { session } from '~/utils/auth'
-import { isServer } from 'solid-js/web'
 import { ChevronUp } from '~/components/icons/chevron-up'
 import { cacheDefined } from '~/utils/cache-signal'
 import { CompareFn, updateCurrentItemList } from '~/utils/list-comparison'
+import { useDrag } from '~/utils/use-drag'
 
 const BottomElement: ParentComponent = (props) => {
+  let containerElement: HTMLDivElement
+  let svgElement: SVGSVGElement
+
   const [open, setOpen] = createSignal(false)
+  const [dragging, setDragging] = createSignal(false)
+
+  const calculateDisplacement = (value: number) => {
+    const height = containerElement.getBoundingClientRect().height
+    const displacement = open()
+      ? Math.max(0, Math.min(value, height))
+      : Math.min(height, Math.max(value + height - 1, 0))
+    return [displacement, displacement / height] as const
+  }
+
+  const dragElement = useDrag({
+    onStart: (element, state) => {
+      setDragging(true)
+      console.log('onStart')
+    },
+    onChange(element, state) {
+      const [displacement, rotate] = calculateDisplacement(state.displacement)
+      containerElement.style.transform = `translateY(${displacement}px)`
+      svgElement.style.transform = `rotate(${180 - rotate * 180}deg)`
+    },
+    onFinished(element, state) {
+      setDragging(false)
+      console.log('onFinished', state)
+      containerElement.style.transform = ''
+      svgElement.style.transform = ''
+      state.lockedAt && setOpen((open) => !open)
+    },
+    onLocked(element, state) {
+      console.log('onLocked')
+    },
+    onUnlocked(element, state) {
+      console.log('onUnlocked')
+    },
+    config: {
+      axis: 'y',
+      factors: {
+        lockInFactor: 0.5,
+        lockInMin: 10,
+        lockInMax: 1000,
+        lockOffFactor: 0.5,
+        lockOffMin: 10,
+        lockOffMax: 1000,
+      },
+    },
+    getElementMaxDistance: () => containerElement.getBoundingClientRect().height,
+  })
+
   return (
     <div
-      class="fixed left-0 bottom-0 z-20 w-full border-t border-gray-500 bg-gray-900 transition"
+      ref={containerElement!}
+      class="fixed left-0 bottom-0 z-20 w-full border-t border-gray-500 bg-gray-900"
       classList={{
+        transition: !dragging(),
         'opacity-70 translate-y-[calc(100%-1px)]': !open(),
         'opacity-100 translate-y-0': open(),
       }}
     >
       <div class="container m-auto w-full">
-        <div class="relative -top-14 flex justify-center">
+        <div class="relative -top-14 flex justify-center" ref={dragElement}>
           <button
-            class="absolute h-14 w-16 rounded-t-full border border-b-0 border-gray-500 bg-gray-900 p-2 text-white"
-            onClick={() => setOpen((open) => !open)}
+            class="absolute  h-14 w-16 touch-none rounded-t-full border border-b-0 border-gray-500 bg-gray-900 p-2 text-white"
+            onClick={() => !dragging() && setOpen((open) => !open)}
           >
             <ChevronUp
-              class="transition"
+              ref={svgElement!}
+              class="pointer-events-none"
               classList={{
+                transition: !dragging(),
                 'rotate-180': open(),
               }}
             />

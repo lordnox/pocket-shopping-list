@@ -1,4 +1,4 @@
-import { DragGesture } from '@use-gesture/vanilla'
+import { DragGesture, UserDragConfig } from '@use-gesture/vanilla'
 import { createSignal, onMount, onCleanup, Accessor } from 'solid-js'
 
 const LOCK_IN_FACTOR = 0.2
@@ -7,6 +7,24 @@ const LOCK_IN_MAX = 150
 const LOCK_OFF_FACTOR = 0.15
 const LOCK_OFF_MIN = 40
 const LOCK_OFF_MAX = 120
+
+interface Factors {
+  lockInFactor: number
+  lockInMin: number
+  lockInMax: number
+  lockOffFactor: number
+  lockOffMin: number
+  lockOffMax: number
+}
+
+const defaultFactors: Factors = {
+  lockInFactor: LOCK_IN_FACTOR,
+  lockInMin: LOCK_IN_MIN,
+  lockInMax: LOCK_IN_MAX,
+  lockOffFactor: LOCK_OFF_FACTOR,
+  lockOffMin: LOCK_OFF_MIN,
+  lockOffMax: LOCK_OFF_MAX,
+}
 
 interface DragState {
   lockedAt: number
@@ -22,7 +40,12 @@ export interface UseDragProps<Element extends HTMLElement> {
   onLocked?: DragHandler<Element>
   onUnlocked?: DragHandler<Element>
   enabled?: boolean | Accessor<boolean>
+  config: UserDragConfig & { axis: UserDragConfig['axis']; factors?: Partial<Factors> }
+  getElementMaxDistance?: (element: Element) => number
 }
+
+const getElementMaxWidth = (element: HTMLElement) => element.getBoundingClientRect().width
+const getElementMaxHeight = (element: HTMLElement) => element.getBoundingClientRect().height
 
 export const useDrag = <Element extends HTMLElement>({
   onStart,
@@ -31,8 +54,14 @@ export const useDrag = <Element extends HTMLElement>({
   onLocked,
   onUnlocked,
   enabled: enabledOption = true,
+  config,
+  getElementMaxDistance = config.axis === 'x' ? getElementMaxWidth : getElementMaxHeight,
 }: UseDragProps<Element>) => {
   let element: Element
+  const factors = {
+    ...defaultFactors,
+    ...config.factors,
+  }
   const enabled = typeof enabledOption === 'function' ? enabledOption : () => enabledOption
 
   const [context, setContext] = createSignal<DragState>({
@@ -40,20 +69,20 @@ export const useDrag = <Element extends HTMLElement>({
     displacement: 0,
   })
 
-  let widthState = {
-    width: 0,
+  let state = {
+    distance: 0,
     lockIn: 0,
     lockOff: 0,
   }
 
   let gesture: DragGesture
 
-  const setCurrentWidth = () => {
-    const { width } = element.getBoundingClientRect()
-    widthState = {
-      width,
-      lockIn: Math.min(Math.max(width * LOCK_IN_FACTOR, LOCK_IN_MIN), LOCK_IN_MAX),
-      lockOff: Math.min(Math.max(width * LOCK_OFF_FACTOR, LOCK_OFF_MIN), LOCK_OFF_MAX),
+  const setCurrentState = () => {
+    const distance = getElementMaxDistance(element)
+    state = {
+      distance,
+      lockIn: Math.min(Math.max(distance * factors.lockInFactor, factors.lockInMin), factors.lockInMax),
+      lockOff: Math.min(Math.max(distance * factors.lockOffFactor, factors.lockOffMin), factors.lockOffMax),
     }
   }
 
@@ -63,21 +92,21 @@ export const useDrag = <Element extends HTMLElement>({
   }
 
   onMount(() => {
-    setCurrentWidth()
-    element.addEventListener('resize', setCurrentWidth)
+    setCurrentState()
+    element.addEventListener('resize', setCurrentState)
 
     gesture = new DragGesture(
       element,
       ({ movement, first, last }) => {
         // if not enabled, just reset
         if (!enabled()) return
-        const displacement = movement[0]
+        const displacement = movement[config.axis === 'x' ? 0 : 1]
         if (first) return trigger(context(), onStart)
 
         if (last) return trigger(context(), onFinished)
 
-        const isLocked = Math.abs(displacement) > widthState.lockIn
-        const isUnlocked = Math.abs(displacement) < widthState.lockOff
+        const isLocked = Math.abs(displacement) > state.lockIn
+        const isUnlocked = Math.abs(displacement) < state.lockOff
 
         setContext((context) => {
           // not locked
@@ -109,15 +138,13 @@ export const useDrag = <Element extends HTMLElement>({
         })
         trigger(context(), onChange)
       },
-      {
-        axis: 'x',
-      },
+      config,
     )
   })
 
   onCleanup(() => {
     gesture?.destroy()
-    element?.removeEventListener('resize', setCurrentWidth)
+    element?.removeEventListener('resize', setCurrentState)
   })
 
   return (el?: Element) => (el ? (element = el) : element)
