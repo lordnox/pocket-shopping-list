@@ -17,7 +17,7 @@ export const ProductListContext = createContext<{
   actionPending: Accessor<string | undefined>
   cancelAction: () => void
   isActionPending: (action: string) => boolean
-  setAction: (action: string) => void
+  setAction: Setter<string>
 }>()
 
 export const useProductListContext = () => {

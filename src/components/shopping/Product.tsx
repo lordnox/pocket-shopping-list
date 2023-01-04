@@ -1,6 +1,18 @@
 import autoAnimate from '@formkit/auto-animate'
 import { ItemType } from '@prisma/client'
-import { Component, createRenderEffect, JSX, Match, onMount, Ref, Setter, Show, splitProps, Switch } from 'solid-js'
+import {
+  Component,
+  createEffect,
+  createRenderEffect,
+  JSX,
+  Match,
+  onMount,
+  Ref,
+  Setter,
+  Show,
+  splitProps,
+  Switch,
+} from 'solid-js'
 import { Product as ShoppingItemType } from '~/types/product-types'
 import { useAutoAnimate } from '~/utils/auto-animate'
 import { classes } from '~/utils/classes'
@@ -25,7 +37,6 @@ const miniMidiContainer = `
   relative
   transition        
   w-full
-  p-2
   rounded-lg
   z-20
   touch-pan-y
@@ -41,29 +52,43 @@ const miniMidiColors = `
 const miniContainer = `
   ${miniMidiContainer}
   ${miniMidiColors}
+  p-1
   flex justify-between
 `
 const midiContainer = `
   ${miniMidiContainer}
   ${miniMidiColors}
+  p-2
   flex-col
 `
 const maxiContainer = `
   fixed
-  p-2
-  pt-[80px]
   z-50 
   left-0
-  top-0
-  w-[100vw]
-  h-[100vh]  
+  top-[80px]
+  w-[calc(100vw-1rem)]
+  h-[calc(100vh-80px-1rem)]  
+  rounded-lg
+  m-2
+  p-4
 
-  bg-red-300
-  opacity-50
+  bg-gray-700
+`
+
+const miniHeadlineCss = `
+  text-xs
+`
+const midiHeadlineCss = `
+  text-md
+  font-bold
+`
+const maxiHeadlineCss = `
+  text-lg 
+  font-bold
 `
 
 const ProductMiniHeader: Component<{ item: ShoppingItemType }> = (props) => {
-  return <div class="whitespace-nowrap">{(props.item.prices[0].normalizedPrice / 100).toFixed(2)} €</div>
+  return <div class="whitespace-nowrap text-xs">{(props.item.prices[0].normalizedPrice / 100).toFixed(2)} €</div>
 }
 
 const ProductMidiHeader: Component<{ item: ShoppingItemType }> = (props) => {
@@ -106,7 +131,8 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
   onMount(() => {
     boundingState = element.getBoundingClientRect()
   })
-  createRenderEffect(() => {
+  createEffect(() => {
+    console.log('render effect', context.state())
     if (!element) return
     console.log(boundingState.width, boundingState.height)
     const state = context.state()
@@ -115,16 +141,10 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
       console.log('state change', context.state())
       switch (state) {
         case 'maxi': {
-          const { left, top, width, height } = element.getBoundingClientRect()
+          const { width, height } = boundingState
           shadow.style.width = `${width}px`
           shadow.style.height = `${height}px`
           shadow.style.display = 'block'
-
-          // const deltaX = first.left - last.left;
-          // const deltaY = first.top - last.top;
-          // const deltaW = first.width / last.width;
-          // const deltaH = first.height / last.height;
-          // element.style.transform
           break
         }
         default:
@@ -154,19 +174,27 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
           ...props.classList,
         }}
       >
-        <header class="w-full flex">
+        <header
+          class="w-full flex"
+          onClick={() =>
+            context.setState((state) => {
+              if (state === 'mini') return 'midi'
+              if (state === 'midi') return 'mini'
+              return state
+            })
+          }
+        >
           <h4
-            class="w-full trucate text-lg font-bold leading-none text-gray-900 dark:text-white"
-            classList={{ italic: props.item.optimistic }}
-            onClick={() =>
-              context.setState((state) => {
-                if (state === 'mini') return 'midi'
-                if (state === 'midi') return 'mini'
-                return state
-              })
-            }
+            class="w-full truncate text-gray-900 dark:text-white"
+            classList={{
+              italic: props.item.optimistic,
+
+              [miniHeadlineCss]: context.state() === 'mini',
+              [midiHeadlineCss]: context.state() === 'midi',
+              [maxiHeadlineCss]: context.state() === 'maxi',
+            }}
           >
-            {props.item.name} - {useProductContext().state()}
+            {props.item.name}
           </h4>
           <Switch>
             <Match when={context.state() === 'mini'}>

@@ -11,7 +11,6 @@ import styles from './product-actions/action.module.css'
 import { Product, ProductProps } from './Product'
 import { longPress } from '~/utils/long-press-event'
 import { vibrate } from '~/utils/vibrate'
-import { useAutoAnimate } from '~/utils/auto-animate'
 import { Button } from '../inputs/Button'
 
 export const ProductWrapper: Component<{
@@ -29,12 +28,10 @@ export const ProductWrapper: Component<{
 
   const element = useProductDrag<HTMLDivElement>({
     onStart: (element) => {
-      console.log('none')
       element.style.transition = 'none'
       setDragging(true)
     },
     onChange: (element, state) => {
-      console.log(state.displacement)
       element.style.transform = `translate(${state.displacement}px)`
       setLocked(() => state.lockedAt !== 0)
       setDisplacement(state.displacement)
@@ -43,8 +40,12 @@ export const ProductWrapper: Component<{
       setDragging(false)
       if (element) element.style.transition = 'transform .2s'
       reset()
-      if (state.lockedAt !== 0) context.setAction(props.item.id)
-      else context.setAction('')
+
+      context.setAction((action) => {
+        if (state.lockedAt !== 0) return props.item.id
+        if (action === props.item.id) return ''
+        return action
+      })
     },
     enabled: () => state() !== 'maxi',
   })
@@ -54,7 +55,7 @@ export const ProductWrapper: Component<{
     if (currentElement) currentElement.style.transform = ''
   }
 
-  const isPending = () => context.actionPending() === props.item.id
+  const isPending = () => context.isActionPending(props.item.id)
   const isActive = () => locked() && isPending()
   const isLeft = () => (isPending() || dragging()) && displacement() < 0
   const isRight = () => (isPending() || dragging()) && displacement() > 0
@@ -95,6 +96,7 @@ export const ProductWrapper: Component<{
             'scale-100': state() !== 'maxi' && !pressed(),
             'duration-0': isPending(),
             'relative overflow-hidden': state() !== 'maxi',
+            'min-h-[50px]': isActive(),
           }}
         >
           <RightActionContainer active={isActive()} locked={locked()} visible={isRight()}>

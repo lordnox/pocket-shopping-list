@@ -1,7 +1,7 @@
-import { ParentComponent, Show, splitProps } from 'solid-js'
+import { createSignal } from 'solid-js'
+import { onMount, ParentComponent, Show, splitProps } from 'solid-js'
 import { JSX } from 'solid-js/web/types/jsx'
-import { ClassList, WithClassOrClassList } from '~/utils/createTag'
-import styles from './action.module.css'
+import { ClassList } from '~/utils/createTag'
 
 interface ContentProps {
   active: boolean
@@ -19,10 +19,44 @@ interface ContainerProps extends ContentProps {
 
 export type TransientContainerProps = Omit<ContainerProps, 'bgColor' | 'bgLockedColor' | 'bgActiveColor' | 'fallback'>
 
+const Children: ParentComponent = (props) => {
+  const [init, setInit] = createSignal(false)
+  onMount(() => setTimeout(() => setInit(true), 1))
+  return (
+    <div
+      class={`
+        transition
+        origin-top
+        w-full
+      `}
+      classList={{
+        'scale-y-0': !init(),
+        'scale-100': init(),
+      }}
+    >
+      {props.children}
+    </div>
+  )
+}
+
 const Content: ParentComponent<ContentProps> = (props) => {
   return (
     <div
-      class={styles.container}
+      class={`
+        z-10
+        w-full
+        h-full
+        top-0
+        left-0 
+        flex
+        rounded-lg
+        absolute  
+        group-last:rounded-b-lg
+        items-center
+        p-2
+        font-bold
+        text-white
+      `}
       classList={{
         [props.bgColor]: !props.active && !props.locked,
         [props.bgLockedColor]: !props.active && props.locked,
@@ -32,7 +66,7 @@ const Content: ParentComponent<ContentProps> = (props) => {
       }}
     >
       <Show when={props.active} fallback={props.fallback}>
-        {props.children}
+        <Children>{props.children}</Children>
       </Show>
     </div>
   )
@@ -40,6 +74,7 @@ const Content: ParentComponent<ContentProps> = (props) => {
 
 export const Container: ParentComponent<ContainerProps> = (props) => {
   const [, contentProps] = splitProps(props, ['visible'])
+
   return (
     <Show when={props.visible}>
       <Content {...contentProps} />
