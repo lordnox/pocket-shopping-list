@@ -32,13 +32,10 @@ export const ProductWrapper: Component<{
       element.style.transition = 'none'
       setDragging(true)
     },
+    onLocked: () => vibrate(250),
     onChange: (element, state) => {
       element.style.transform = `translate(${state.displacement}px)`
-      setLocked((locked) => {
-        const lockedState = state.lockedAt !== 0
-        if (locked !== lockedState && lockedState) vibrate(250)
-        return lockedState
-      })
+      setLocked(() => state.lockedAt !== 0)
       setDisplacement(state.displacement)
     },
     onFinished: (element, state) => {
