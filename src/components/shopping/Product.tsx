@@ -62,32 +62,34 @@ const maxiHeadlineCss = `
   font-bold
 `
 
-const ProductMiniHeader: Component = (props) => {
+const ProductMiniHeader: Component = () => {
   const context = useProductContext()
   return (
     <AveragePrice class="whitespace-nowrap text-xs" price={context.product.prices[0]} type={context.product.type} />
   )
 }
 
-const ProductMidiHeader: Component = (props) => {
+const ProductMidiHeader: Component = () => {
   const context = useProductContext()
   return <Button onClick={() => context.setState('maxi')}>Max</Button>
 }
 
-const ProductMaxiHeader: Component = (props) => {
+const ProductMaxiHeader: Component = () => {
   const context = useProductContext()
   return <Button onClick={() => context.setState('mini')}>X</Button>
 }
 
-const ProductMidiContent: Component = (props) => {
+const ProductMidiContent: Component = () => {
   const context = useProductContext()
   return (
-    <div class="flex">
-      <div class="w-full text-lg font-mono place-self-end">
-        {(context.product.prices[0].normalizedPrice / 100).toFixed(2)} €
-      </div>
+    <div class="flex justify-between">
       <InputPrice
-        class="flex-col items-center text-base font-semibold text-gray-900 dark:text-white"
+        class="font-mono items-center text-base font-semibold text-gray-900 dark:text-white"
+        price={context.product.prices[0]}
+        type={context.product.type}
+      />
+      <AveragePrice
+        class="text-lg font-mono place-self-end"
         price={context.product.prices[0]}
         type={context.product.type}
       />

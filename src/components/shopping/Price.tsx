@@ -1,6 +1,6 @@
 import { Component, JSX, splitProps } from 'solid-js'
 import { ProductType, ProductPrice } from '~/types/product-types'
-import { amountString, priceString } from './amount'
+import { amountString, priceString } from '../../types/amount'
 
 export const AveragePrice: Component<
   { price: ProductPrice; type: ProductType } & JSX.HTMLAttributes<HTMLDivElement>

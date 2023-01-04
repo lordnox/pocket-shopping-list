@@ -3,8 +3,9 @@ import { CreateProduct } from '~/types/product-types'
 import { createDiv } from '~/utils/createTag'
 import { ButtonGroupItems } from '../ButtonGroup'
 import { InputField } from '../inputs/InputField'
-import { AmountKeys, AmountType, amountTypes, choices } from './amount'
+import { AmountKeys, AmountType, amountTypes, choices } from '../../types/amount'
 import { ShoppingTags } from './tags'
+import { AmountInput } from '../inputs/AmountInput'
 
 const Row = createDiv(`
   flex
@@ -35,8 +36,6 @@ export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => vo
     props.onEnter({ name, price, type: amountType().key, amount, tags: [] })
   }
 
-  const changeType = (val: typeof choices[AmountKeys], key: AmountKeys) => setAmountType(amountTypes[key])
-
   return (
     <form class="flex flex-col gap-2 m-2">
       <Row>
@@ -47,18 +46,11 @@ export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => vo
           <InputField for="price" label="Preis" placeholder="Preis" ref={priceInputElement!} required type="number" />
         </Item>
         <Item class="grid grid-cols-[1fr_28px_28px_28px] min-w-[165px] max-w-[180px]">
-          <InputField
-            for="amount"
-            label={amountType().label}
-            placeholder={amountType().placeholder}
-            ref={amountTypeInputElement!}
-            required
-            type="number"
-            value="1000"
-            labelStyle="grid-column-end: span 4;"
-            border="LEFT"
+          <AmountInput
+            amountType={amountType}
+            setAmountType={setAmountType}
+            ref={(element) => (amountTypeInputElement = element)}
           />
-          <ButtonGroupItems choices={choices} onChange={changeType} active={defaultAmountType} />
         </Item>
       </Row>
       <Row>

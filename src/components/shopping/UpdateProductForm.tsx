@@ -2,7 +2,7 @@ import { Component, JSX, onMount } from 'solid-js'
 import { CreateProduct, Product } from '~/types/product-types'
 import { CheckCircle } from '../icons/check-circle'
 import { Input } from '../inputs/InputField'
-import { AmountKeys, amountTypes } from './amount'
+import { AmountKeys, amountTypes } from '../../types/amount'
 import styles from './styles.module.css'
 import { Button } from '../inputs/Button'
 
@@ -25,6 +25,8 @@ export const UpdateProductForm: Component<{ item: Product; onEnter: (data: Creat
     amountTypeInputElement.value = '' + props.item.prices[0].amount
   })
 
+  const amountType = amountTypes[props.item.type]
+
   return (
     <form>
       <div class={styles.row}>
@@ -35,7 +37,7 @@ export const UpdateProductForm: Component<{ item: Product; onEnter: (data: Creat
           ref={amountTypeInputElement!}
           required
           type="number"
-          value="1000"
+          value={amountType.defaultValue}
         />
         <Button onClick={enterItem}>
           <CheckCircle />

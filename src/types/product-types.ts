@@ -1,3 +1,4 @@
+import { ItemType } from '@prisma/client'
 import { RouterInput, RouterOutput } from '~/utils/trpc-client'
 
 export type Product = RouterOutput['productList'][number] & {
@@ -5,6 +6,6 @@ export type Product = RouterOutput['productList'][number] & {
 }
 
 export type ProductPrice = RouterOutput['productList'][number]['prices'][number]
-export type ProductType = RouterOutput['productList'][number]['type']
+export type ProductType = ItemType
 
 export type CreateProduct = RouterInput['createOrUpdateProduct']

@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { router, protectedProcedure, procedure } from '../utils'
+import { amountTypes } from '~/types/amount'
 
 export default router({
   productList: procedure.query(({ ctx: { prisma } }) =>
@@ -32,7 +33,7 @@ export default router({
           userId: user.id,
           price: input.price,
           amount: input.amount,
-          normalizedPrice: Math.floor((input.price / input.amount) * 1000),
+          normalizedPrice: Math.floor((input.price / input.amount) * amountTypes[input.type].defaultValue),
         },
       }
       await prisma.product.upsert({
