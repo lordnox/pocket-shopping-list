@@ -13,6 +13,7 @@ import { Product } from './Product'
 import { longPress } from '~/utils/long-press-event'
 import { vibrate } from '~/utils/vibrate'
 import { Button } from '../inputs/Button'
+import { TagsProductForm } from './TagsProductForm'
 
 export const ProductWrapper: Component<{
   onUpdate: (data: CreateProduct) => void
@@ -105,17 +106,25 @@ export const ProductWrapper: Component<{
             'min-h-[50px]': isActive(),
           }}
         >
-          <RightActionContainer active={isActive()} locked={locked()} visible={isRight()}>
-            <div class={styles.buttonContainer}>
-              <div class="flex w-full justify-center">
-                <button class={[buttonStyles.button, buttonStyles.deleteColors].join(' ')}>Löschen</button>
-              </div>
+          <RightActionContainer
+            active={isActive()}
+            locked={locked()}
+            visible={isRight()}
+            fallback={<label>Tags</label>}
+          >
+            <div class={classes(styles.updateContainer, 'gap-2')}>
+              <TagsProductForm item={props.item} onEnter={props.onUpdate} />
               <Button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
                 <StopCircle />
               </Button>
             </div>
           </RightActionContainer>
-          <LeftActionContainer active={isActive()} locked={locked()} visible={isLeft()}>
+          <LeftActionContainer
+            active={isActive()}
+            locked={locked()}
+            visible={isLeft()}
+            fallback={<label>Update</label>}
+          >
             <div class={classes(styles.updateContainer, 'gap-2')}>
               <UpdateProductForm item={props.item} onEnter={props.onUpdate} />
               <Button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>

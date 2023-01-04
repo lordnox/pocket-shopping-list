@@ -36,12 +36,33 @@ export default router({
           normalizedPrice: Math.floor((input.price / input.amount) * amountTypes[input.type].defaultValue),
         },
       }
-      await prisma.product.upsert({
+
+      const uppercasedTags = input.tags.map((tag) => tag.toLocaleUpperCase())
+      const tags = {
+        connectOrCreate: uppercasedTags.map((tag) => ({
+          create: {
+            name: tag,
+          },
+          where: {
+            name: tag,
+          },
+        })),
+      }
+
+      await prisma.productTag.createMany({
+        data: uppercasedTags.map((tag) => ({
+          name: tag,
+        })),
+        skipDuplicates: true,
+      })
+
+      const upsert: Parameters<typeof prisma.product.upsert>[0] = {
         create: {
           name: input.name,
           userId: user.id,
           type: input.type,
           prices,
+          tags,
         },
         where: {
           name: input.name,
@@ -50,8 +71,11 @@ export default router({
           userId: user.id,
           type: input.type,
           prices,
+          tags,
         },
-      })
+      }
+      const product = await prisma.product.upsert(upsert)
+
       return {
         hint: 'created item',
       }

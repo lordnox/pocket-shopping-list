@@ -10,6 +10,7 @@ interface ContentProps {
   bgLockedColor: string
   bgActiveColor: string
   fallback: JSX.Element
+  class?: string
   classList?: ClassList
 }
 
@@ -17,7 +18,7 @@ interface ContainerProps extends ContentProps {
   visible: boolean
 }
 
-export type TransientContainerProps = Omit<ContainerProps, 'bgColor' | 'bgLockedColor' | 'bgActiveColor' | 'fallback'>
+export type TransientContainerProps = Omit<ContainerProps, 'bgColor' | 'bgLockedColor' | 'bgActiveColor'>
 
 const Children: ParentComponent = (props) => {
   const [init, setInit] = createSignal(false)
@@ -56,6 +57,7 @@ const Content: ParentComponent<ContentProps> = (props) => {
         font-bold
         text-white
         group-last:rounded-b-lg
+        ${props.class}
       `}
       classList={{
         [props.bgColor]: !props.active && !props.locked,
@@ -85,20 +87,13 @@ export const Container: ParentComponent<ContainerProps> = (props) => {
 export const LeftActionContainer: ParentComponent<TransientContainerProps> = (props) => (
   <Container
     {...props}
-    classList={{ ['justify-end']: true }}
+    class="justify-end"
     bgColor="bg-green-300"
     bgLockedColor="bg-green-500"
     bgActiveColor="bg-gray-900"
-    fallback={<label>Update</label>}
   />
 )
 
 export const RightActionContainer: ParentComponent<TransientContainerProps> = (props) => (
-  <Container
-    {...props}
-    bgColor="bg-red-300"
-    bgLockedColor="bg-red-500"
-    bgActiveColor="bg-gray-900"
-    fallback={<label>Löschen</label>}
-  />
+  <Container {...props} bgColor="bg-orange-300" bgLockedColor="bg-orange-500" bgActiveColor="bg-gray-900" />
 )
