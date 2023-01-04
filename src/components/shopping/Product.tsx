@@ -128,20 +128,20 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
 
   let lastState: ProductState = context.state()
   let boundingState: DOMRect
+
   onMount(() => {
     boundingState = element.getBoundingClientRect()
   })
+
   createEffect(() => {
-    console.log('render effect', context.state())
     if (!element) return
-    console.log(boundingState.width, boundingState.height)
+
     const state = context.state()
     if (lastState !== state) {
-      console.log(element.getBoundingClientRect())
-      console.log('state change', context.state())
       switch (state) {
         case 'maxi': {
           const { width, height } = boundingState
+
           shadow.style.width = `${width}px`
           shadow.style.height = `${height}px`
           shadow.style.display = 'block'
@@ -149,7 +149,7 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
         }
         default:
           boundingState = element.getBoundingClientRect()
-          console.log(boundingState.width, boundingState.height)
+
           shadow.style.width = `0px`
           shadow.style.height = `0px`
           shadow.style.display = 'none'
