@@ -1,7 +1,7 @@
 .label {
-  @apply text-left
+  @apply mb-1
   block
-  mb-1
+  text-left
   text-sm
   font-medium
   text-gray-900
@@ -21,22 +21,22 @@
 .inputTextColors {
   @apply text-gray-900
   placeholder-gray-400
-  dark:placeholder-gray-400
-  dark:text-white;
+  dark:text-white
+  dark:placeholder-gray-400;
 }
 
 .inputFocusColors {
-  @apply focus:ring-blue-500
-  focus:border-blue-500
-  dark:focus:ring-blue-500
-  dark:focus:border-blue-500;
+  @apply focus:border-blue-500
+  focus:ring-blue-500
+  dark:focus:border-blue-500
+  dark:focus:ring-blue-500;
 }
 
 .input {
-  @apply text-sm
-  border-y
-  block
+  @apply block
+  h-8
   w-full
+  border-y
   p-2
-  h-8;
+  text-sm;
 }

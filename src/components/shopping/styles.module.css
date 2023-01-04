@@ -5,22 +5,22 @@
 }
 
 .item {
-  @apply place-self-end 
-  w-full;
+  @apply w-full 
+  place-self-end;
 }
 
 .itemHalf {
-  @apply place-self-end 
-  w-[50%];
+  @apply w-[50%] 
+  place-self-end;
 }
 
 .productList {
   @apply flex
+  w-full
   flex-col
   gap-2
-  w-full
-  text-sm
   text-left
+  text-sm
   text-gray-500
   dark:text-gray-400;
 }

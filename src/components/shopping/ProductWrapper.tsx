@@ -103,7 +103,7 @@ export const ProductWrapper: Component<{
         >
           <RightActionContainer active={isActive()} locked={locked()} visible={isRight()}>
             <div class={styles.buttonContainer}>
-              <div class="w-full flex justify-center">
+              <div class="flex w-full justify-center">
                 <button class={[buttonStyles.button, buttonStyles.deleteColors].join(' ')}>Löschen</button>
               </div>
               <Button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>

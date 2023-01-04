@@ -25,9 +25,9 @@ const Children: ParentComponent = (props) => {
   return (
     <div
       class={`
-        transition
-        origin-top
         w-full
+        origin-top
+        transition
       `}
       classList={{
         'scale-y-0': !init(),
@@ -43,19 +43,19 @@ const Content: ParentComponent<ContentProps> = (props) => {
   return (
     <div
       class={`
-        z-10
-        w-full
-        h-full
+        absolute
         top-0
-        left-0 
-        flex
+        left-0
+        z-10
+        flex 
+        h-full
+        w-full
+        items-center  
         rounded-lg
-        absolute  
-        group-last:rounded-b-lg
-        items-center
         p-2
         font-bold
         text-white
+        group-last:rounded-b-lg
       `}
       classList={{
         [props.bgColor]: !props.active && !props.locked,

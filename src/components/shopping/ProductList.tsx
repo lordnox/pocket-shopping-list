@@ -22,7 +22,7 @@ export const ProductList: Component<{
         setAction: setActionPending,
       }}
     >
-      <div class="relative shadow-md sm:rounded-lg w-full">
+      <div class="relative w-full shadow-md sm:rounded-lg">
         <div class={styles.productList} ref={useAutoAnimate()}>
           <For each={props.items}>
             {(item) => <ProductWrapper item={item} hasActions={props.hasActions} onUpdate={props.onUpdate} />}

@@ -44,7 +44,7 @@ export const ShoppingTags: Component<{ for: string; tags: string[]; setTags: Set
       ref={label!}
       for={props.for}
       class={classes(
-        `flex items-center border rounded-lg pl-1 w-full gap-1`,
+        `flex w-full items-center gap-1 rounded-lg border pl-1`,
         styles.inputBgColors,
         styles.inputBorderColors,
         styles.inputFocusColors,
@@ -52,9 +52,9 @@ export const ShoppingTags: Component<{ for: string; tags: string[]; setTags: Set
     >
       <For each={props.tags}>
         {(tag) => (
-          <div class="inline-flex text-xs items-center py-1 px-2 bg-gray-800 text-gray-200 select-none flex-nowrap whitespace-nowrap rounded-full">
+          <div class="inline-flex select-none flex-nowrap items-center whitespace-nowrap rounded-full bg-gray-800 py-1 px-2 text-xs text-gray-200">
             {tag}
-            <StopCircle role="button" class="ml-1 w-4 h-4 stroke-red-400" onClick={removeTag(tag)} />
+            <StopCircle role="button" class="ml-1 h-4 w-4 stroke-red-400" onClick={removeTag(tag)} />
           </div>
         )}
       </For>
@@ -62,7 +62,7 @@ export const ShoppingTags: Component<{ for: string; tags: string[]; setTags: Set
         onKeyDown={updateValue}
         onKeyPress={captureKey}
         onKeyUp={checkBackspace}
-        class={classes(styles.inputTextColors, `bg-transparent text-xs border-none w-full py-0 px-1 h-[30px]`)}
+        class={classes(styles.inputTextColors, `h-[30px] w-full border-none bg-transparent py-0 px-1 text-xs`)}
         id={props.for}
         type="text"
         placeholder="Add a tag..."

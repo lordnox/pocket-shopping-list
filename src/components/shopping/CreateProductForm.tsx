@@ -37,7 +37,7 @@ export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => vo
   }
 
   return (
-    <form class="flex flex-col gap-2 m-2">
+    <form class="m-2 flex flex-col gap-2">
       <Row>
         <Item class="place-self-end">
           <InputField for="name" label="Name" placeholder="Name" ref={nameInputElement!} required />
@@ -45,7 +45,7 @@ export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => vo
         <Item class="place-self-end">
           <InputField for="price" label="Preis" placeholder="Preis" ref={priceInputElement!} required type="number" />
         </Item>
-        <Item class="grid grid-cols-[1fr_28px_28px_28px] min-w-[165px] max-w-[180px]">
+        <Item class="grid min-w-[165px] max-w-[180px] grid-cols-[1fr_28px_28px_28px]">
           <AmountInput
             amountType={amountType}
             setAmountType={setAmountType}
@@ -58,7 +58,7 @@ export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => vo
           <ShoppingTags for="tags" tags={tags()} setTags={setTags} />
         </Item>
         <button
-          class="text-white text-sm place-self-end h-8 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          class="h-8 place-self-end rounded-lg bg-blue-700 px-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           type="submit"
           onClick={enterItem}
         >

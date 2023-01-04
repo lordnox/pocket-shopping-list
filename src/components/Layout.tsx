@@ -14,8 +14,8 @@ const NavItem: Component<{
       : 'border-transparent dark:text-gray-400 dark:hover:text-white'
 
   return (
-    <div class={`transition border-b-2 ${active(props.href)} mx-1.5 sm:mx-6`}>
-      <A class="w-full h-full block" href={props.href}>
+    <div class={`border-b-2 transition ${active(props.href)} mx-1.5 sm:mx-6`}>
+      <A class="block h-full w-full" href={props.href}>
         {props.title}
       </A>
     </div>
@@ -23,7 +23,7 @@ const NavItem: Component<{
 }
 
 const LoginButton = () => (
-  <button class="transition mr-4 ml-auto dark:text-gray-400 dark:hover:text-white " onClick={() => signIn()}>
+  <button class="mr-4 ml-auto transition dark:text-gray-400 dark:hover:text-white " onClick={() => signIn()}>
     Login
   </button>
 )
@@ -35,16 +35,16 @@ const UserMenu = () => {
     <>
       <button
         type="button"
-        class="ml-auto text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm text-center inline-flex items-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800"
+        class="ml-auto inline-flex items-center rounded-full border border-blue-700 text-center text-sm font-medium text-blue-700 hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800"
         onClick={() => setOpen((open) => !open)}
       >
-        <img class="w-10 h-10 rounded-full" src={sessionData()?.user?.image ?? ''} alt="Rounded avatar" />
+        <img class="h-10 w-10 rounded-full" src={sessionData()?.user?.image ?? ''} alt="Rounded avatar" />
       </button>
 
       <div
         class={`${
           open() ? 'fixed' : 'hidden'
-        } right-16 top-14 z-30 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700`}
+        } right-16 top-14 z-30 w-44 divide-y divide-gray-100 rounded bg-white shadow dark:bg-gray-700`}
       >
         <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault">
           <li>
@@ -61,8 +61,8 @@ const UserMenu = () => {
 const Navigation = () => {
   const session = useSession()
   return (
-    <nav class="z-20 fixed w-full bg-white border-gray-200 px-2 sm:px-4 dark:bg-gray-900 shadow-lg">
-      <div class="container p-4 flex flex-wrap items-center justify-between mx-auto">
+    <nav class="fixed z-20 w-full border-gray-200 bg-white px-2 shadow-lg dark:bg-gray-900 sm:px-4">
+      <div class="container mx-auto flex flex-wrap items-center justify-between p-4">
         <NavItem href="/" title="Home" />
         <NavItem href="/about" title="About" />
 

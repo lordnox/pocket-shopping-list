@@ -1,9 +1,9 @@
 .buttonContainer {
-  @apply w-full flex justify-center place-items-center gap-2;
+  @apply flex w-full place-items-center justify-center gap-2;
 }
 
 .updateContainer {
-  @apply w-full
-  flex
+  @apply flex
+  w-full
   justify-between;
 }

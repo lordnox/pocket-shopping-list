@@ -19,6 +19,7 @@ specifiers:
   octokit: ^2.0.10
   postcss: ^8.4.20
   prettier: ^2.8.1
+  prettier-plugin-tailwindcss: ^0.2.1
   prisma: ^4.8.0
   solid-js: ^1.6.6
   solid-start: ^0.2.8
@@ -58,6 +59,7 @@ devDependencies:
   autoprefixer: 10.4.13_postcss@8.4.20
   postcss: 8.4.20
   prettier: 2.8.1
+  prettier-plugin-tailwindcss: 0.2.1_prettier@2.8.1
   prisma: 4.8.0
   solid-start-node: 0.2.8_orexwshzq2wnnlc5vfg7enkwhq
   tailwindcss: 3.2.4_postcss@8.4.20
@@ -3168,6 +3170,15 @@ packages:
   /preact/10.11.3:
     resolution: {integrity: sha512-eY93IVpod/zG3uMF22Unl8h9KkrcKIRs2EGar8hwLZZDU1lkjph303V9HZBwufh2s736U6VXuhD109LYqPoffg==}
     dev: false
+
+  /prettier-plugin-tailwindcss/0.2.1_prettier@2.8.1:
+    resolution: {integrity: sha512-aIO8IguumORyRsmT+E7JfJ3A9FEoyhqZR7Au7TBOege3VZkgMvHJMkufeYp4zjnDK2iq4ktkvGMNOQR9T8lisQ==}
+    engines: {node: '>=12.17.0'}
+    peerDependencies:
+      prettier: '>=2.2.0'
+    dependencies:
+      prettier: 2.8.1
+    dev: true
 
   /prettier/2.8.1:
     resolution: {integrity: sha512-lqGoSJBQNJidqCHE80vqZJHWHRFoNYsSpP9AjFhlhi9ODCJA541svILes/+/1GM3VaL/abZi7cpFzOpdR9UPKg==}

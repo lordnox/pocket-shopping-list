@@ -84,12 +84,12 @@ const ProductMidiContent: Component = () => {
   return (
     <div class="flex justify-between">
       <InputPrice
-        class="font-mono items-center text-base font-semibold text-gray-900 dark:text-white"
+        class="items-center font-mono text-base font-semibold text-gray-900 dark:text-white"
         price={context.product.prices[0]}
         type={context.product.type}
       />
       <AveragePrice
-        class="text-lg font-mono place-self-end"
+        class="place-self-end font-mono text-lg"
         price={context.product.prices[0]}
         type={context.product.type}
       />
@@ -153,7 +153,7 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
         }}
       >
         <header
-          class="w-full flex"
+          class="flex w-full"
           onClick={() =>
             context.setState((state) => {
               if (state === 'mini') return 'midi'
@@ -163,7 +163,7 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
           }
         >
           <h4
-            class="w-full truncate text-gray-900 dark:text-white transition-all"
+            class="w-full truncate text-gray-900 transition-all dark:text-white"
             classList={{
               italic: context.product.optimistic,
 

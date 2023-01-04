@@ -16,16 +16,16 @@ const BottomElement: ParentComponent = (props) => {
   const [open, setOpen] = createSignal(false)
   return (
     <div
-      class="z-20 left-0 border-t border-gray-500 bg-gray-900 fixed w-full bottom-0 transition"
+      class="fixed left-0 bottom-0 z-20 w-full border-t border-gray-500 bg-gray-900 transition"
       classList={{
         'opacity-70 translate-y-[calc(100%-1px)]': !open(),
         'opacity-100 translate-y-0': open(),
       }}
     >
-      <div class="w-full container m-auto">
-        <div class="flex justify-center relative -top-14">
+      <div class="container m-auto w-full">
+        <div class="relative -top-14 flex justify-center">
           <button
-            class="w-16 h-14 p-2 bg-gray-900 rounded-t-full border border-b-0 border-gray-500 text-white absolute"
+            class="absolute h-14 w-16 rounded-t-full border border-b-0 border-gray-500 bg-gray-900 p-2 text-white"
             onClick={() => setOpen((open) => !open)}
           >
             <ChevronUp
@@ -113,9 +113,9 @@ export default () => {
   }
 
   return (
-    <main class="container text-center mx-auto text-gray-700 p-4">
+    <main class="container mx-auto p-4 text-center text-gray-700">
       <Title>Shopping</Title>
-      <h1 class="max-6-xs text-6xl text-sky-700 font-thin uppercase mt-4 mb-8">Shopping</h1>
+      <h1 class="max-6-xs mt-4 mb-8 text-6xl font-thin uppercase text-sky-700">Shopping</h1>
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
       <ProductList items={sortedItems()} hasActions={hasActions()} onUpdate={onEnter} />
       <Show when={session()}>
