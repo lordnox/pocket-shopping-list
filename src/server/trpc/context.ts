@@ -1,13 +1,10 @@
 import type { inferAsyncReturnType } from '@trpc/server'
-import { isServer } from 'solid-js/web'
 import type { createSolidAPIHandlerContext } from 'solid-start-trpc'
 import { sessionFromRequest } from '~/env/solid-auth.config'
 import { prisma } from '~/server/db/client'
 
 const fetchUserFromRequest = async (request: Request) => {
   const session = await sessionFromRequest(request)
-  console.log(request.url, session, isServer)
-  console.log((request as any).cookies)
 
   if (!session?.user?.email) return
 
