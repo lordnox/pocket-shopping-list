@@ -11,6 +11,7 @@ import { ChevronUp } from '~/components/icons/chevron-up'
 import { cacheDefined } from '~/utils/cache-signal'
 import { CompareFn, updateCurrentItemList } from '~/utils/list-comparison'
 import { useDrag } from '~/utils/use-drag'
+import { H1, Main } from '~/components/Basics'
 
 const BottomElement: ParentComponent = (props) => {
   let containerElement: HTMLDivElement
@@ -171,9 +172,8 @@ export default () => {
   }
 
   return (
-    <main class="container mx-auto p-4 text-center text-gray-700">
-      <Title>Shopping</Title>
-      <h1 class="max-6-xs mt-4 mb-8 text-6xl font-thin uppercase text-sky-700">Shopping</h1>
+    <Main>
+      <H1>Shopping</H1>
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
       <ProductList items={sortedItems()} hasActions={hasActions()} onUpdate={onEnter} />
       <Show when={session()}>
@@ -181,6 +181,6 @@ export default () => {
           <CreateProductForm onEnter={onEnter} />
         </BottomElement>
       </Show>
-    </main>
+    </Main>
   )
 }

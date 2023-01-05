@@ -11,7 +11,7 @@
   }
 
   body {
-    @apply bg-gray-900;
+    @apply bg-[conic-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-gray-900 via-purple-900 to-violet-600;
   }
 
   .layout {
