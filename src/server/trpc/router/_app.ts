@@ -1,6 +1,6 @@
 import { t } from '../utils'
-import shoppingRouter from './products'
+import productRouter from './products'
 
-export const appRouter = t.mergeRouters(shoppingRouter)
+export const appRouter = t.mergeRouters(productRouter)
 
 export type AppRouter = typeof appRouter

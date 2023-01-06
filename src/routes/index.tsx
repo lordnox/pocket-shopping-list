@@ -1,10 +1,8 @@
-import { Title } from 'solid-start'
-
 import { RouterOutput, trpc, useQuery } from '~/utils/trpc-client'
 import { createSignal, ParentComponent, Show } from 'solid-js'
-import { ShoppingSearch } from '~/components/shopping/SearchFilter'
-import { CreateProductForm } from '~/components/shopping/CreateProductForm'
-import { ProductList } from '~/components/shopping/ProductList'
+import { ShoppingSearch } from '~/components/product/SearchFilter'
+import { CreateProductForm } from '~/components/product/CreateProductForm'
+import { ProductList } from '~/components/product/ProductList'
 import { CreateProduct, Product, Product as ShoppingItemType } from '~/types/product-types'
 import { session } from '~/utils/auth'
 import { ChevronUp } from '~/components/icons/chevron-up'
