@@ -1,6 +1,7 @@
-import { Component, createEffect, JSX, Match, onMount, splitProps, Switch } from 'solid-js'
+import { Component, createEffect, For, JSX, Match, onMount, splitProps, Switch } from 'solid-js'
 import { useAutoAnimate } from '~/utils/auto-animate'
 import { Button } from '../inputs/Button'
+import { Tag } from '../Tag'
 import { AveragePrice, InputPrice } from './Price'
 import { ProductState, useProductContext } from './ProductContext'
 
@@ -62,10 +63,25 @@ const maxiHeadlineCss = `
   font-bold
 `
 
+const ThinProductTags = () => {
+  const context = useProductContext()
+
+  return (
+    <div class="flex justify-center gap-1">
+      <For each={context.product.tags}>
+        {(tag) => <Tag class="bg-purple-900 px-1 text-[8px] font-normal text-gray-200">{tag.name}</Tag>}
+      </For>
+    </div>
+  )
+}
+
 const ProductMiniHeader: Component = () => {
   const context = useProductContext()
   return (
-    <AveragePrice class="whitespace-nowrap text-xs" price={context.product.prices[0]} type={context.product.type} />
+    <div class="flex justify-end gap-1">
+      <ThinProductTags />
+      <AveragePrice class="whitespace-nowrap text-xs" price={context.product.prices[0]} type={context.product.type} />
+    </div>
   )
 }
 
@@ -82,14 +98,15 @@ const ProductMaxiHeader: Component = () => {
 const ProductMidiContent: Component = () => {
   const context = useProductContext()
   return (
-    <div class="flex justify-between">
+    <div class="flex items-center justify-start gap-2 ">
       <InputPrice
         class="items-center font-mono text-base font-semibold text-gray-900 dark:text-white"
         price={context.product.prices[0]}
         type={context.product.type}
       />
+      <ThinProductTags />
       <AveragePrice
-        class="place-self-end font-mono text-lg"
+        class="flex  flex-1 justify-end font-mono text-lg"
         price={context.product.prices[0]}
         type={context.product.type}
       />

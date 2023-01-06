@@ -2,6 +2,7 @@ import { Component, For, JSX, Setter } from 'solid-js'
 import { classes } from '~/utils/classes'
 import { StopCircle } from '../icons/stop-circle'
 import styles from '~/styles/input.module.css'
+import { capitalize, Tag } from '../Tag'
 
 const keyframes: Keyframe[] = [{ background: 'rgb(239 68 68 / var(--tw-bg-opacity))' }]
 const flash = (element: HTMLElement) => {
@@ -12,8 +13,6 @@ const flash = (element: HTMLElement) => {
   })
 }
 
-export const UCase = (str: string) => str[0].toLocaleUpperCase() + str.slice(1).toLocaleLowerCase()
-
 export const TagInput: Component<{ for: string; tags: string[]; setTags: Setter<string[]> }> = (props) => {
   let label: HTMLLabelElement
 
@@ -22,7 +21,7 @@ export const TagInput: Component<{ for: string; tags: string[]; setTags: Setter<
       const value = event.currentTarget.value
       if (value === '') return
       event.preventDefault()
-      const tag = UCase(value.trim())
+      const tag = capitalize(value.trim())
       if (props.tags.includes(tag)) return flash(label)
       props.setTags([...props.tags, tag])
       event.currentTarget.value = ''
@@ -55,10 +54,9 @@ export const TagInput: Component<{ for: string; tags: string[]; setTags: Setter<
     >
       <For each={props.tags}>
         {(tag) => (
-          <div class="inline-flex select-none flex-nowrap items-center whitespace-nowrap rounded-full bg-gray-800 py-1 px-2 text-[10px] font-normal text-gray-200">
-            {UCase(tag)}
-            <StopCircle role="button" class="ml-1 h-4 w-4 stroke-red-400" onClick={removeTag(tag)} />
-          </div>
+          <Tag class="bg-gray-800 py-1 px-2 text-[10px] font-normal text-gray-200" onClick={removeTag(tag)}>
+            {tag}
+          </Tag>
         )}
       </For>
       <input
