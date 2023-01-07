@@ -103,7 +103,7 @@ export const longPress = (
     const currentUserSelect = element.style.userSelect
     element.style.userSelect = 'none'
 
-    const disableTimeout = requestTimeout(finish(event), DEFAULT_LONGPRESS_TIMEOUT)
+    const disableTimeout = requestTimeout(finish(event), timeout)
 
     clear = () => {
       disableTimeout()
