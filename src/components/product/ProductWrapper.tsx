@@ -78,7 +78,7 @@ export const ProductWrapper: Component<{
         setTimeout(() => setState('maxi'))
       },
       {
-        timeout: 500,
+        timeout: 300,
         // connect to capture the pressed state
         onCancel: () => setPressed(false),
         onStart: () => setPressed(true),
