@@ -1,0 +1,140 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Product {
+  id String [pk]
+  userId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  name String [unique, not null]
+  type ItemType [not null, default: 'kilogram']
+  prices ProductPrice [not null]
+  createdBy User [not null]
+  tags Tag [not null]
+}
+
+Table ProductPrice {
+  id String [pk]
+  userId String [not null]
+  itemId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  price Int [not null]
+  normalizedPrice Int [not null]
+  amount Int [not null, default: 1000]
+  sourceId String
+  source Source
+  item Product [not null]
+  createdBy User [not null]
+}
+
+Table Tag {
+  id String [pk]
+  name String [unique, not null]
+  items Product [not null]
+}
+
+Table Account {
+  id String [pk]
+  userId String [not null]
+  type ProviderType [not null]
+  provider String [not null]
+  providerAccountId String [not null]
+  refresh_token String
+  access_token String
+  expires_at Int
+  token_type String
+  scope String
+  id_token String
+  session_state String
+  user User [not null]
+
+  indexes {
+    (provider, providerAccountId) [unique]
+  }
+}
+
+Table Session {
+  id String [pk]
+  sessionToken String [unique, not null]
+  userId String [not null]
+  expires DateTime [not null]
+  user User [not null]
+}
+
+Table User {
+  id String [pk]
+  name String
+  email String [unique, not null]
+  emailVerified DateTime
+  image String
+  accounts Account [not null]
+  sessions Session [not null]
+  items Product [not null]
+  ProductPrice ProductPrice [not null]
+}
+
+Table VerificationToken {
+  identifier String [not null]
+  token String [unique, not null]
+  expires DateTime [not null]
+
+  indexes {
+    (identifier, token) [unique]
+  }
+}
+
+Table Source {
+  id String [pk]
+  geoLocationId String
+  GeoLocation GeoLocationSource
+  WebShop WebShopSource
+  webShopId String
+  ProductPrice ProductPrice [not null]
+}
+
+Table GeoLocationSource {
+  id String [pk]
+  lat Int [not null]
+  long Int [not null]
+  Source Source [not null]
+}
+
+Table WebShopSource {
+  id String [pk]
+  url String [not null]
+  Source Source [not null]
+}
+
+Table ProductToProductTag {
+  tagsId String [ref: > Tag.id]
+  itemsId String [ref: > Product.id]
+}
+
+Enum ProviderType {
+  oidc
+  oauth
+  email
+  credentials
+}
+
+Enum ItemType {
+  kilogram
+  liter
+  piece
+}
+
+Ref: Product.userId > User.id [delete: Cascade]
+
+Ref: ProductPrice.sourceId > Source.id
+
+Ref: ProductPrice.itemId > Product.id [delete: Cascade]
+
+Ref: ProductPrice.userId > User.id [delete: Cascade]
+
+Ref: Account.userId > User.id [delete: Cascade]
+
+Ref: Session.userId > User.id [delete: Cascade]
+
+Ref: Source.geoLocationId > GeoLocationSource.id
+
+Ref: Source.webShopId > WebShopSource.id

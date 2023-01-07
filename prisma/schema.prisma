@@ -1,5 +1,10 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+// diagram: https://dbdiagram.io/d/63b915cc7d39e42284e974d5
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
 
 generator client {
   provider = "prisma-client-js"
@@ -24,17 +29,17 @@ model Product {
 
 // contains the price of a shopping item
 model ProductPrice {
-  id              String       @id @default(cuid())
+  id              String   @id @default(cuid())
   userId          String
   itemId          String
-  createdAt       DateTime     @default(now())
+  createdAt       DateTime @default(now())
   price           Int
   normalizedPrice Int
-  amount          Int          @default(1000)
-  locationId      String?
-  location        GeoLocation? @relation(fields: [locationId], references: [id])
-  item            Product      @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  createdBy       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount          Int      @default(1000)
+  sourceId        String?
+  source          Source?  @relation(fields: [sourceId], references: [id])
+  item            Product  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  createdBy       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ProductTag {
@@ -92,11 +97,26 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model GeoLocation {
-  id        String         @id @default(cuid())
-  lat       Int
-  long      Int
-  ItemPrice ProductPrice[]
+model Source {
+  id            String             @id @default(cuid())
+  geoLocationId String?
+  GeoLocation   GeoLocationSource? @relation(fields: [geoLocationId], references: [id])
+  WebShop       WebShopSource?     @relation(fields: [webShopId], references: [id])
+  webShopId     String?
+  ProductPrice  ProductPrice[]
+}
+
+model GeoLocationSource {
+  id     String   @id @default(cuid())
+  lat    Int
+  long   Int
+  Source Source[]
+}
+
+model WebShopSource {
+  id     String   @id @default(cuid())
+  url    String
+  Source Source[]
 }
 
 enum ProviderType {
