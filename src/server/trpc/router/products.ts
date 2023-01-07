@@ -5,9 +5,27 @@ import { amountTypes } from '~/types/amount'
 export default router({
   productList: procedure.query(({ ctx: { prisma } }) =>
     prisma.product.findMany({
-      include: {
+      select: {
+        id: true,
+        name: true,
+        type: true,
         tags: true,
         prices: {
+          select: {
+            amount: true,
+            normalizedPrice: true,
+            price: true,
+            source: {
+              select: {
+                GeoLocation: {
+                  select: { lat: true, long: true },
+                },
+                WebShop: {
+                  select: { url: true },
+                },
+              },
+            },
+          },
           orderBy: {
             createdAt: 'desc',
           },
@@ -25,6 +43,21 @@ export default router({
         amount: z.number(),
         type: z.enum(['kilogram', 'liter', 'piece']),
         tags: z.array(z.string()),
+        source: z
+          .union([
+            z.object({
+              webShop: z.object({
+                url: z.string(),
+              }),
+            }),
+            z.object({
+              location: z.object({
+                lat: z.number(),
+                long: z.number(),
+              }),
+            }),
+          ])
+          .optional(),
       }),
     )
     .mutation(async ({ input, ctx: { prisma, user } }) => {

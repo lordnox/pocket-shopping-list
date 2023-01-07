@@ -147,13 +147,9 @@ export default () => {
         prices: [
           {
             amount: createItem.amount,
-            id: '',
-            createdAt: '',
-            itemId: '',
             price: createItem.price,
-            locationId: null,
+            source: null,
             normalizedPrice: (createItem.price / createItem.amount) * 1000,
-            userId: data[index]?.userId ?? '',
           },
           ...(data[index]?.prices ?? []),
         ],
