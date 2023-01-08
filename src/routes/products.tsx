@@ -53,7 +53,7 @@ export default () => {
 
   return (
     <Main>
-      <H1>Shopping</H1>
+      <H1>Produkte</H1>
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
       <ProductList items={sortedItems()} actionsEnabled={isAuthenticated()} onUpdate={onEnter} />
       <Show when={session()}>

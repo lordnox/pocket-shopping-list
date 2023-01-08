@@ -23,3 +23,15 @@ export const H2: ParentComponent<JSX.HTMLAttributes<HTMLHeadingElement>> = (prop
 export const P: ParentComponent<JSX.HTMLAttributes<HTMLParagraphElement>> = (props) => (
   <p {...props} class={classes(props.class, 'text-md text-left font-thin text-sky-600')} />
 )
+
+export const Section: ParentComponent<JSX.HTMLAttributes<HTMLElement>> = (props) => (
+  <section
+    {...props}
+    class={classes(
+      props.class,
+      `w-full py-4 text-sky-600 odd:bg-gray-200 even:bg-gray-100 hover:bg-gray-50 odd:dark:bg-gray-800 even:dark:bg-gray-700 hover:dark:bg-gray-600`,
+    )}
+  >
+    <div class="container mx-auto px-4">{props.children}</div>
+  </section>
+)
