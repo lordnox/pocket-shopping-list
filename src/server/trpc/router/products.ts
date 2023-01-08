@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { router, protectedProcedure, procedure } from '../utils'
 import { amountTypes } from '~/types/amount'
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 const sourceInput = z
   .union([
