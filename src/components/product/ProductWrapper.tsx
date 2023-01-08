@@ -79,7 +79,7 @@ export const ProductWrapper: Component<{
   const isLeft = () => (isPending() || dragging()) && displacement() < 0
   const isRight = () => (isPending() || dragging()) && displacement() > 0
 
-  createEffect(() => !isActive() && reset())
+  createEffect(() => !dragging() && !isActive() && reset())
 
   onMount(() => {
     const currentElement = element()
