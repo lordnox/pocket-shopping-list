@@ -28,6 +28,15 @@ export const ProductWrapper: Component<{
   const [displacement, setDisplacement] = createSignal(0)
   const [dragging, setDragging] = createSignal(false)
 
+  const reset = (element: HTMLDivElement) => {
+    if (element) element.style.transform = ''
+  }
+
+  const cleanupDrag = (element: HTMLDivElement) => {
+    setDragging(false)
+    if (element) element.style.transition = 'transform .2s'
+    reset(element)
+  }
   const element = useDrag<HTMLDivElement>({
     onStart: (element) => {
       element.style.transition = 'none'
@@ -39,16 +48,9 @@ export const ProductWrapper: Component<{
       setLocked(() => state.lockedAt !== 0)
       setDisplacement(state.displacement)
     },
-    onCancel: (element, state) => {
-      setDragging(false)
-      if (element) element.style.transition = 'transform .2s'
-      reset()
-    },
+    onCancel: cleanupDrag,
     onFinished: (element, state) => {
-      setDragging(false)
-      if (element) element.style.transition = 'transform .2s'
-      reset()
-
+      cleanupDrag(element)
       context.setAction((action) => {
         if (state.lockedAt !== 0) return props.item.id
         if (action === props.item.id) return ''
@@ -69,26 +71,19 @@ export const ProductWrapper: Component<{
     },
   })
 
-  const reset = () => {
-    const currentElement = element()
-    if (currentElement) currentElement.style.transform = ''
-  }
-
   const isPending = () => context.isActionPending(props.item.id)
   const isActive = () => locked() && isPending()
   const isLeft = () => (isPending() || dragging()) && displacement() < 0
   const isRight = () => (isPending() || dragging()) && displacement() > 0
 
-  createEffect(() => !dragging() && !isActive() && reset())
+  createEffect(() => !dragging() && !isActive() && reset(element()))
 
   onMount(() => {
     const currentElement = element()
     longPress(
       currentElement,
       () => {
-        setDragging(false)
-        if (element()) element().style.transition = 'transform .2s'
-        reset()
+        cleanupDrag(element())
         setPressed(false)
         vibrate(250)
         setTimeout(() => setState('maxi'))
