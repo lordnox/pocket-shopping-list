@@ -180,7 +180,7 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
           }
         >
           <h4
-            class="w-full truncate text-gray-900 transition-all dark:text-white"
+            class="flex w-full items-center truncate text-gray-900 transition-all dark:text-white"
             classList={{
               italic: context.product.optimistic,
 

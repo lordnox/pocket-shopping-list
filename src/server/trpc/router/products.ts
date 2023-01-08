@@ -100,8 +100,10 @@ export default router({
         sourceId,
       }
 
-      const tagsData = input.tags.map((tag) => ({
-        name: tag.toLocaleUpperCase(),
+      const tags = input.tags.map((tag) => tag.toLocaleUpperCase())
+
+      const tagsData = tags.map((tag) => ({
+        name: tag,
       }))
 
       await prisma.productTag.createMany({
@@ -109,17 +111,17 @@ export default router({
         skipDuplicates: true,
       })
 
-      const tagIds = await prisma.productTag.findMany({
-        where: {
-          name: {
-            in: input.tags.map((tag) => tag.toLocaleUpperCase()),
+      const tagIds = (
+        await prisma.productTag.findMany({
+          where: {
+            name: {
+              in: tags,
+            },
           },
-        },
-      })
+        })
+      ).map((tag) => tag.id)
 
-      console.log(tagIds)
-
-      const upsert: Parameters<typeof prisma.product.upsert>[0] = {
+      const product = await prisma.product.upsert({
         create: {
           name: input.name,
           userId: user.id,
@@ -140,19 +142,29 @@ export default router({
             connect: tagsData,
           },
         },
-      }
-      // const product = await prisma.product.upsert(upsert)
-      // prisma.productTag.deleteMany({
-      //   where: {
-      //     AND: {
-      //       items: {
-      //         every: {
-      //           id
-      //         }
-      //       }
-      //     }
-      //   }
-      // })
+        include: {
+          tags: true,
+        },
+      })
+
+      const tagsToBeRemoved = product.tags.filter((tag) => !tagIds.includes(tag.id))
+
+      console.log(tagIds, product.tags, tagsToBeRemoved)
+
+      await Promise.all(
+        tagsToBeRemoved.map((tag) =>
+          prisma.product.update({
+            data: {
+              tags: {
+                disconnect: {
+                  id: tag.id,
+                },
+              },
+            },
+            where: { id: product.id },
+          }),
+        ),
+      )
 
       return {
         hint: 'created item',
