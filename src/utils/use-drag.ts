@@ -35,6 +35,7 @@ type DragHandler<Element extends HTMLElement> = (element: Element, state: DragSt
 
 export interface UseDragProps<Element extends HTMLElement> {
   onStart?: DragHandler<Element>
+  onCancel?: DragHandler<Element>
   onChange?: DragHandler<Element>
   onFinished?: DragHandler<Element>
   onLocked?: DragHandler<Element>
@@ -49,6 +50,7 @@ const getElementMaxHeight = (element: HTMLElement) => element.getBoundingClientR
 
 export const useDrag = <Element extends HTMLElement>({
   onStart,
+  onCancel,
   onChange,
   onFinished,
   onLocked,
@@ -97,10 +99,14 @@ export const useDrag = <Element extends HTMLElement>({
 
     gesture = new DragGesture(
       element,
-      ({ movement, first, last }) => {
+      ({ movement, first, last, canceled, cancel }) => {
         // if not enabled, just reset
-        if (!enabled()) return
+        if (canceled || !enabled()) {
+          if (!canceled) cancel()
+          return trigger(context(), onCancel)
+        }
         const displacement = movement[config.axis === 'x' ? 0 : 1]
+
         if (first) return trigger(context(), onStart)
 
         if (last) return trigger(context(), onFinished)

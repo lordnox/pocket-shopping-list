@@ -26,9 +26,9 @@ const Children: ParentComponent = (props) => {
   return (
     <div
       class={`
+        x-transition
         w-full
         origin-top
-        transition
       `}
       classList={{
         'scale-y-0': !init(),

@@ -80,7 +80,11 @@ const ProductMiniHeader: Component = () => {
   return (
     <div class="flex justify-end gap-1">
       <ThinProductTags />
-      <AveragePrice class="whitespace-nowrap text-xs" price={context.product.prices[0]} type={context.product.type} />
+      <AveragePrice
+        class="flex items-center whitespace-nowrap text-xs"
+        price={context.product.prices[0]}
+        type={context.product.type}
+      />
     </div>
   )
 }
@@ -106,7 +110,7 @@ const ProductMidiContent: Component = () => {
       />
       <ThinProductTags />
       <AveragePrice
-        class="flex  flex-1 justify-end font-mono text-lg"
+        class="flex flex-1 items-center justify-end font-mono text-lg"
         price={context.product.prices[0]}
         type={context.product.type}
       />
@@ -180,7 +184,7 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
           }
         >
           <h4
-            class="flex w-full items-center truncate text-gray-900 transition-all dark:text-white"
+            class="x-transition-all flex w-full items-center truncate text-gray-900 dark:text-white"
             classList={{
               italic: context.product.optimistic,
 

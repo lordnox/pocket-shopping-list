@@ -6,6 +6,7 @@ export type ProductState = 'mini' | 'midi' | 'maxi'
 export const ProductContext = createContext<{
   setState: Setter<ProductState>
   state: Accessor<ProductState>
+  activeAnimation: Accessor<boolean>
   product: Product
 }>()
 

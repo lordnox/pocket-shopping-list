@@ -39,6 +39,11 @@ export const ProductWrapper: Component<{
       setLocked(() => state.lockedAt !== 0)
       setDisplacement(state.displacement)
     },
+    onCancel: (element, state) => {
+      setDragging(false)
+      if (element) element.style.transition = 'transform .2s'
+      reset()
+    },
     onFinished: (element, state) => {
       setDragging(false)
       if (element) element.style.transition = 'transform .2s'
@@ -53,6 +58,14 @@ export const ProductWrapper: Component<{
     enabled: () => state() !== 'maxi',
     config: {
       axis: 'x',
+      factors: {
+        lockInFactor: 0.1,
+        lockInMax: 50,
+        lockInMin: 50,
+        lockOffFactor: 0.1,
+        lockOffMax: 50,
+        lockOffMin: 50,
+      },
     },
   })
 
@@ -73,6 +86,9 @@ export const ProductWrapper: Component<{
     longPress(
       currentElement,
       () => {
+        setDragging(false)
+        if (element()) element().style.transition = 'transform .2s'
+        reset()
         setPressed(false)
         vibrate(250)
         setTimeout(() => setState('maxi'))
@@ -92,6 +108,7 @@ export const ProductWrapper: Component<{
     <>
       <ProductContext.Provider
         value={{
+          activeAnimation: () => !dragging(),
           setState,
           state,
           product: props.item,
@@ -137,8 +154,8 @@ export const ProductWrapper: Component<{
           <Product
             ref={element}
             classList={{
-              'translate-x-full': isRight() && isActive(),
-              '-translate-x-full': isLeft() && isActive(),
+              'translate-x-full': !dragging() && isRight() && isActive(),
+              '-translate-x-full': !dragging() && isLeft() && isActive(),
             }}
           />
         </div>
