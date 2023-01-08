@@ -3,14 +3,15 @@ import { createSignal, ParentComponent, Show } from 'solid-js'
 import { ShoppingSearch } from '~/components/product/SearchFilter'
 import { CreateProductForm } from '~/components/product/CreateProductForm'
 import { ProductList } from '~/components/product/ProductList'
-import { CreateProduct, Product } from '~/types/product-types'
+import { CreateProduct, Product, productCompare } from '~/types/product-types'
 import { isAuthenticated, session } from '~/utils/auth'
 import { ChevronUp } from '~/components/icons/chevron-up'
-import { cacheDefined } from '~/utils/cache-signal'
+import { cacheDefined, compareCache, createFilter, createSorter } from '~/utils/signal-functions'
 import { CompareFn, updateCurrentItemList } from '~/utils/list-comparison'
 import { useDrag } from '~/utils/use-drag'
 import { H1, Main } from '~/components/Basics'
 import { geolocation } from '~/utils/geolocation'
+import { Accessor } from 'solid-js'
 
 const BottomElement: ParentComponent = (props) => {
   let containerElement: HTMLDivElement
@@ -28,27 +29,20 @@ const BottomElement: ParentComponent = (props) => {
   }
 
   const dragElement = useDrag({
-    onStart: (element, state) => {
+    onStart: () => {
       setDragging(true)
-      console.log('onStart')
     },
-    onChange(element, state) {
+    onChange(_, state) {
       const [displacement, rotate] = calculateDisplacement(state.displacement)
       containerElement.style.transform = `translateY(${displacement}px)`
       svgElement.style.transform = `rotate(${180 - rotate * 180}deg)`
     },
-    onFinished(element, state) {
+    onFinished(_, state) {
       setDragging(false)
       console.log('onFinished', state)
       containerElement.style.transform = ''
       svgElement.style.transform = ''
       state.lockedAt && setOpen((open) => !open)
-    },
-    onLocked(element, state) {
-      console.log('onLocked')
-    },
-    onUnlocked(element, state) {
-      console.log('onUnlocked')
     },
     config: {
       axis: 'y',
@@ -70,14 +64,14 @@ const BottomElement: ParentComponent = (props) => {
       class="fixed left-0 bottom-0 z-20 w-full border-t border-gray-500 bg-gray-900"
       classList={{
         transition: !dragging(),
-        'opacity-70 translate-y-[calc(100%-1px)]': !open(),
-        'opacity-100 translate-y-0': open(),
+        'opacity-70 translate-y-[calc(100%-1px)]': !dragging() && !open(),
+        'opacity-100 translate-y-0': dragging() || open(),
       }}
     >
       <div class="container m-auto w-full">
         <div class="relative -top-14 flex justify-center" ref={dragElement}>
           <button
-            class="absolute  h-14 w-16 touch-none rounded-t-full border border-b-0 border-gray-500 bg-gray-900 p-2 text-white"
+            class="absolute h-14 w-16 touch-none rounded-t-full border border-b-0 border-gray-500 bg-gray-900 p-2 text-white"
             onClick={() => !dragging() && setOpen((open) => !open)}
           >
             <ChevronUp
@@ -96,58 +90,24 @@ const BottomElement: ParentComponent = (props) => {
   )
 }
 
-const productCompare: CompareFn<Product> = (a, b) => {
-  if (a.id !== b.id) return -1
-  if (a.name !== b.name) return -1
-  if (a.prices.length !== b.prices.length) return -1
-  if (a.tags.length !== b.tags.length) return -1
-  if (a.type !== b.type) return -1
-  return 0
-}
-
 export default () => {
   const upsertItem = trpc.createOrUpdateProduct.mutate
-  const [items, refetch, setItems] = useQuery('productList')
   const [searchKey, setSearchKey] = createSignal<string>()
-
-  const cacheItems = cacheDefined('products', items)
-
-  let lastItems: Product[] | undefined = undefined
-  const mergedItems = () => {
-    const currentItems = cacheItems()
-    if (!lastItems || !currentItems) return (lastItems = currentItems) as Product[]
-    return (lastItems = updateCurrentItemList(lastItems, currentItems, productCompare))
-  }
-
-  const filteredItems = () => {
-    const currentItems = mergedItems()
-    const key = searchKey()?.toLowerCase()
-    if (!key) return currentItems
-    return currentItems?.filter((item) => item.name.toLowerCase().includes(key)) ?? []
-  }
-
-  const sortedItems = () => {
-    const currentItems = filteredItems()
-    if (!currentItems) return currentItems
-    currentItems.sort((a, b) => a.name.localeCompare(b.name))
-    return currentItems
-  }
+  // fetch all products
+  const [products, refetch, setProducts] = useQuery('productList')
+  // put the products into storage
+  const storageCachedProducts = cacheDefined('products', products as Accessor<Product[]>)
+  // create a list compare cache, only update the parts of the list that change
+  const comparedItems = compareCache(storageCachedProducts, productCompare)
+  // activate client based filtering
+  const key = () => searchKey()?.toLowerCase()
+  const filteredItems = createFilter(comparedItems, (item) => (key() ? item.name.toLowerCase().includes(key()!) : true))
+  // sort items
+  const sortedItems = createSorter(filteredItems, (a, b) => a.name.localeCompare(b.name))
 
   const onEnter = async (createItem: CreateProduct) => {
-    const location = await geolocation.location(false)
-    console.log(location)
-    const source = location?.coords
-      ? {
-          location: {
-            accuracy: location.coords.accuracy,
-            longitude: location.coords.longitude,
-            latitude: location.coords.latitude,
-          },
-        }
-      : undefined
-    console.log(source)
     // optimistic update:
-    setItems((data) => {
+    setProducts((data) => {
       if (!data) return data
       const index = data.findIndex((entry) => entry.name === createItem.name)
       const newItem: Product = {
@@ -172,6 +132,18 @@ export default () => {
 
       return index !== -1 ? [...data.slice(0, index), newItem, ...data.slice(index + 1)] : [...data, newItem]
     })
+
+    const location = await geolocation.location(false)
+    const source = location?.coords
+      ? {
+          location: {
+            accuracy: location.coords.accuracy,
+            longitude: location.coords.longitude,
+            latitude: location.coords.latitude,
+          },
+        }
+      : undefined
+
     await upsertItem({ ...createItem, source })
     await refetch()
   }
