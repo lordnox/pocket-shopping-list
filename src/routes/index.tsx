@@ -1,15 +1,16 @@
-import { RouterOutput, trpc, useQuery } from '~/utils/trpc-client'
+import { trpc, useQuery } from '~/utils/trpc-client'
 import { createSignal, ParentComponent, Show } from 'solid-js'
 import { ShoppingSearch } from '~/components/product/SearchFilter'
 import { CreateProductForm } from '~/components/product/CreateProductForm'
 import { ProductList } from '~/components/product/ProductList'
-import { CreateProduct, Product, Product as ShoppingItemType } from '~/types/product-types'
+import { CreateProduct, Product } from '~/types/product-types'
 import { session } from '~/utils/auth'
 import { ChevronUp } from '~/components/icons/chevron-up'
 import { cacheDefined } from '~/utils/cache-signal'
 import { CompareFn, updateCurrentItemList } from '~/utils/list-comparison'
 import { useDrag } from '~/utils/use-drag'
 import { H1, Main } from '~/components/Basics'
+import { geolocation } from '~/utils/geolocation'
 
 const BottomElement: ParentComponent = (props) => {
   let containerElement: HTMLDivElement
@@ -113,33 +114,45 @@ export default () => {
 
   const cacheItems = cacheDefined('products', items)
 
-  let lastItems: RouterOutput['productList'] | undefined = undefined
+  let lastItems: Product[] | undefined = undefined
   const mergedItems = () => {
     const currentItems = cacheItems()
-    if (!lastItems || !currentItems) return (lastItems = currentItems)
+    if (!lastItems || !currentItems) return (lastItems = currentItems) as Product[]
     return (lastItems = updateCurrentItemList(lastItems, currentItems, productCompare))
   }
 
   const filteredItems = () => {
-    const currentItems = mergedItems() as ShoppingItemType[]
+    const currentItems = mergedItems()
     const key = searchKey()?.toLowerCase()
     if (!key) return currentItems
-    return currentItems.filter((item) => item.name.toLowerCase().includes(key))
+    return currentItems?.filter((item) => item.name.toLowerCase().includes(key)) ?? []
   }
 
   const sortedItems = () => {
-    const currentItems = filteredItems() as ShoppingItemType[]
+    const currentItems = filteredItems()
     if (!currentItems) return currentItems
     currentItems.sort((a, b) => a.name.localeCompare(b.name))
     return currentItems
   }
 
   const onEnter = async (createItem: CreateProduct) => {
+    const location = await geolocation.location(false)
+    console.log(location)
+    const source = location?.coords
+      ? {
+          location: {
+            accuracy: location.coords.accuracy,
+            longitude: location.coords.longitude,
+            latitude: location.coords.latitude,
+          },
+        }
+      : undefined
+    console.log(source)
     // optimistic update:
     setItems((data) => {
       if (!data) return data
       const index = data.findIndex((entry) => entry.name === createItem.name)
-      const newItem: ShoppingItemType = {
+      const newItem: Product = {
         ...data[index],
         optimistic: true,
         type: createItem.type,
@@ -161,7 +174,7 @@ export default () => {
 
       return index !== -1 ? [...data.slice(0, index), newItem, ...data.slice(index + 1)] : [...data, newItem]
     })
-    await upsertItem(createItem)
+    await upsertItem({ ...createItem, source })
     await refetch()
   }
 

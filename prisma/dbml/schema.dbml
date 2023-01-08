@@ -90,19 +90,23 @@ Table Source {
   WebShop WebShopSource
   webShopId String
   ProductPrice ProductPrice [not null]
+  createdAt DateTime [default: `now()`, not null]
 }
 
 Table GeoLocationSource {
   id String [pk]
-  lat Int [not null]
-  long Int [not null]
+  accuracy Float [not null]
+  latitude Float [not null]
+  longitude Float [not null]
   Source Source [not null]
+  createdAt DateTime [default: `now()`, not null]
 }
 
 Table WebShopSource {
   id String [pk]
   url String [not null]
   Source Source [not null]
+  createdAt DateTime [default: `now()`, not null]
 }
 
 Table ProductToProductTag {

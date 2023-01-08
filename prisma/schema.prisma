@@ -104,19 +104,23 @@ model Source {
   WebShop       WebShopSource?     @relation(fields: [webShopId], references: [id])
   webShopId     String?
   ProductPrice  ProductPrice[]
+  createdAt     DateTime           @default(now())
 }
 
 model GeoLocationSource {
-  id     String   @id @default(cuid())
-  lat    Int
-  long   Int
-  Source Source[]
+  id        String   @id @default(cuid())
+  accuracy  Float
+  latitude  Float
+  longitude Float
+  Source    Source[]
+  createdAt DateTime @default(now())
 }
 
 model WebShopSource {
-  id     String   @id @default(cuid())
-  url    String
-  Source Source[]
+  id        String   @id @default(cuid())
+  url       String
+  Source    Source[]
+  createdAt DateTime @default(now())
 }
 
 enum ProviderType {

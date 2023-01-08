@@ -1,13 +1,13 @@
 import { Component, For } from 'solid-js'
 import { ProductWrapper } from './ProductWrapper'
-import { CreateProduct, Product as ShoppingItemType } from '~/types/product-types'
+import { CreateProduct, Product } from '~/types/product-types'
 import { createSignal } from 'solid-js'
 import { ProductListContext } from './ProductContext'
 import styles from './styles.module.css'
-import { useAutoAnimate } from '~/utils/auto-animate'
+import { useAutoAnimate } from '~/hooks/auto-animate'
 
 export const ProductList: Component<{
-  items: ShoppingItemType[]
+  items: Product[]
   hasActions?: boolean
   onUpdate: (data: CreateProduct) => void
 }> = (props) => {

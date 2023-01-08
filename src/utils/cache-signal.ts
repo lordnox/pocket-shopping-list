@@ -1,4 +1,4 @@
-import { Accessor, createEffect, createSignal, onMount } from 'solid-js'
+import { Accessor, createEffect, createRenderEffect, createSignal, onMount } from 'solid-js'
 import { isServer } from 'solid-js/web'
 
 const readStorage = (key: string) => {
@@ -9,13 +9,7 @@ const readStorage = (key: string) => {
   }
 }
 
-const writeStorage = (key: string, value: any) => {
-  try {
-    return localStorage.setItem(key, JSON.stringify(value))
-  } catch (e) {
-    return undefined
-  }
-}
+const writeStorage = (key: string, value: any) => localStorage.setItem(key, JSON.stringify(value))
 
 export const cacheDefined = <Type>(key: string, getter: Accessor<Type>): Accessor<Type> => {
   if (isServer) return getter

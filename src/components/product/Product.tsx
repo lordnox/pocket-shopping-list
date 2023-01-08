@@ -1,5 +1,5 @@
 import { Component, createEffect, For, JSX, Match, onMount, splitProps, Switch } from 'solid-js'
-import { useAutoAnimate } from '~/utils/auto-animate'
+import { useAutoAnimate } from '~/hooks/auto-animate'
 import { Button } from '../inputs/Button'
 import { Tag } from '../Tag'
 import { AveragePrice, InputPrice } from './Price'
