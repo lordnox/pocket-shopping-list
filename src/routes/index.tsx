@@ -1,94 +1,15 @@
 import { trpc, useQuery } from '~/utils/trpc-client'
-import { createSignal, ParentComponent, Show } from 'solid-js'
+import { createSignal, Show } from 'solid-js'
 import { ShoppingSearch } from '~/components/product/SearchFilter'
 import { CreateProductForm } from '~/components/product/CreateProductForm'
 import { ProductList } from '~/components/product/ProductList'
-import { CreateProduct, Product, productCompare } from '~/types/product-types'
+import { CreateProduct, Product, productCompare, updateProduct } from '~/types/product-types'
 import { isAuthenticated, session } from '~/utils/auth'
-import { ChevronUp } from '~/components/icons/chevron-up'
 import { cacheDefined, compareCache, createFilter, createSorter } from '~/utils/signal-functions'
-import { CompareFn, updateCurrentItemList } from '~/utils/list-comparison'
-import { useDrag } from '~/utils/use-drag'
 import { H1, Main } from '~/components/Basics'
 import { geolocation } from '~/utils/geolocation'
 import { Accessor } from 'solid-js'
-
-const BottomElement: ParentComponent = (props) => {
-  let containerElement: HTMLDivElement
-  let svgElement: SVGSVGElement
-
-  const [open, setOpen] = createSignal(false)
-  const [dragging, setDragging] = createSignal(false)
-
-  const calculateDisplacement = (value: number) => {
-    const height = containerElement.getBoundingClientRect().height
-    const displacement = open()
-      ? Math.max(0, Math.min(value, height))
-      : Math.min(height, Math.max(value + height - 1, 0))
-    return [displacement, displacement / height] as const
-  }
-
-  const dragElement = useDrag({
-    onStart: () => {
-      setDragging(true)
-    },
-    onChange(_, state) {
-      const [displacement, rotate] = calculateDisplacement(state.displacement)
-      containerElement.style.transform = `translateY(${displacement}px)`
-      svgElement.style.transform = `rotate(${180 - rotate * 180}deg)`
-    },
-    onFinished(_, state) {
-      setDragging(false)
-      console.log('onFinished', state)
-      containerElement.style.transform = ''
-      svgElement.style.transform = ''
-      state.lockedAt && setOpen((open) => !open)
-    },
-    config: {
-      axis: 'y',
-      factors: {
-        lockInFactor: 0.5,
-        lockInMin: 10,
-        lockInMax: 1000,
-        lockOffFactor: 0.5,
-        lockOffMin: 10,
-        lockOffMax: 1000,
-      },
-    },
-    getElementMaxDistance: () => containerElement.getBoundingClientRect().height,
-  })
-
-  return (
-    <div
-      ref={containerElement!}
-      class="fixed left-0 bottom-0 z-20 w-full border-t border-gray-500 bg-gray-900"
-      classList={{
-        transition: !dragging(),
-        'opacity-70 translate-y-[calc(100%-1px)]': !dragging() && !open(),
-        'opacity-100 translate-y-0': dragging() || open(),
-      }}
-    >
-      <div class="container m-auto w-full">
-        <div class="relative -top-14 flex justify-center" ref={dragElement}>
-          <button
-            class="absolute h-14 w-16 touch-none rounded-t-full border border-b-0 border-gray-500 bg-gray-900 p-2 text-white"
-            onClick={() => !dragging() && setOpen((open) => !open)}
-          >
-            <ChevronUp
-              ref={svgElement!}
-              class="pointer-events-none"
-              classList={{
-                transition: !dragging(),
-                'rotate-180': open(),
-              }}
-            />
-          </button>
-        </div>
-        <div class="pb-8">{props.children}</div>
-      </div>
-    </div>
-  )
-}
+import { DragUpElement } from '~/components/navigation/DragUpElement'
 
 export default () => {
   const upsertItem = trpc.createOrUpdateProduct.mutate
@@ -110,26 +31,7 @@ export default () => {
     setProducts((data) => {
       if (!data) return data
       const index = data.findIndex((entry) => entry.name === createItem.name)
-      const newItem: Product = {
-        ...data[index],
-        optimistic: true,
-        type: createItem.type,
-        name: createItem.name,
-        prices: [
-          {
-            amount: createItem.amount,
-            price: createItem.price,
-            source: null,
-            normalizedPrice: (createItem.price / createItem.amount) * 1000,
-          },
-          ...(data[index]?.prices ?? []),
-        ],
-        tags: createItem.tags.map((tag) => ({
-          id: '',
-          name: tag,
-        })),
-      }
-
+      const newItem = updateProduct(data[index], createItem)
       return index !== -1 ? [...data.slice(0, index), newItem, ...data.slice(index + 1)] : [...data, newItem]
     })
 
@@ -154,9 +56,9 @@ export default () => {
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
       <ProductList items={sortedItems()} actionsEnabled={isAuthenticated()} onUpdate={onEnter} />
       <Show when={session()}>
-        <BottomElement>
+        <DragUpElement>
           <CreateProductForm onEnter={onEnter} />
-        </BottomElement>
+        </DragUpElement>
       </Show>
     </Main>
   )
