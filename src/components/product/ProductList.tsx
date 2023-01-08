@@ -8,7 +8,7 @@ import { useAutoAnimate } from '~/hooks/auto-animate'
 
 export const ProductList: Component<{
   items: Product[]
-  hasActions?: boolean
+  actionsEnabled?: boolean
   onUpdate: (data: CreateProduct) => void
 }> = (props) => {
   const [actionPending, setActionPending] = createSignal<string | undefined>()
@@ -25,7 +25,7 @@ export const ProductList: Component<{
       <div class="relative w-full shadow-md sm:rounded-lg">
         <div class={styles.productList} ref={useAutoAnimate()}>
           <For each={props.items}>
-            {(item) => <ProductWrapper item={item} hasActions={props.hasActions} onUpdate={props.onUpdate} />}
+            {(item) => <ProductWrapper item={item} hasActions={props.actionsEnabled} onUpdate={props.onUpdate} />}
           </For>
         </div>
       </div>

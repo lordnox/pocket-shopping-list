@@ -4,7 +4,7 @@ import { ShoppingSearch } from '~/components/product/SearchFilter'
 import { CreateProductForm } from '~/components/product/CreateProductForm'
 import { ProductList } from '~/components/product/ProductList'
 import { CreateProduct, Product } from '~/types/product-types'
-import { session } from '~/utils/auth'
+import { isAuthenticated, session } from '~/utils/auth'
 import { ChevronUp } from '~/components/icons/chevron-up'
 import { cacheDefined } from '~/utils/cache-signal'
 import { CompareFn, updateCurrentItemList } from '~/utils/list-comparison'
@@ -110,8 +110,6 @@ export default () => {
   const [items, refetch, setItems] = useQuery('productList')
   const [searchKey, setSearchKey] = createSignal<string>()
 
-  const hasActions = () => !!session()
-
   const cacheItems = cacheDefined('products', items)
 
   let lastItems: Product[] | undefined = undefined
@@ -182,7 +180,7 @@ export default () => {
     <Main>
       <H1>Shopping</H1>
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
-      <ProductList items={sortedItems()} hasActions={hasActions()} onUpdate={onEnter} />
+      <ProductList items={sortedItems()} actionsEnabled={isAuthenticated()} onUpdate={onEnter} />
       <Show when={session()}>
         <BottomElement>
           <CreateProductForm onEnter={onEnter} />

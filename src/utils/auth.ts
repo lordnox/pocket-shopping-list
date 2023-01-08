@@ -38,3 +38,4 @@ export const useSession = () => {
 }
 
 export const session = () => (currentSession() as LOADED_STATE)?.data
+export const isAuthenticated = () => !!(currentSession() as LOADED_STATE)?.data
