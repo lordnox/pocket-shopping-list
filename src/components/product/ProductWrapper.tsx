@@ -60,14 +60,6 @@ export const ProductWrapper: Component<{
     enabled: () => state() !== 'maxi',
     config: {
       axis: 'x',
-      factors: {
-        lockInFactor: 0.1,
-        lockInMax: 50,
-        lockInMin: 50,
-        lockOffFactor: 0.1,
-        lockOffMax: 50,
-        lockOffMin: 50,
-      },
     },
   })
 
@@ -76,6 +68,7 @@ export const ProductWrapper: Component<{
   const isLeft = () => (isPending() || dragging()) && displacement() < 0
   const isRight = () => (isPending() || dragging()) && displacement() > 0
 
+  // reset when this product is not active anymore, exept when we are currently dragging
   createEffect(() => !dragging() && !isActive() && reset(element()))
 
   onMount(() => {
