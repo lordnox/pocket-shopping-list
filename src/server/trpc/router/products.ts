@@ -82,8 +82,10 @@ export default router({
       }),
     )
     .mutation(async ({ input, ctx: { prisma, user } }) => {
+      // --- build source - depending on input
       const source = await createSource(input.source)
 
+      // --- write source to database
       const sourceId = source
         ? (
             await prisma.source.create({
@@ -106,11 +108,13 @@ export default router({
         name: tag,
       }))
 
+      // --- create tags - if not exists
       await prisma.productTag.createMany({
         data: tagsData,
         skipDuplicates: true,
       })
 
+      // --- fetch tag ids
       const tagIds = (
         await prisma.productTag.findMany({
           where: {
@@ -121,6 +125,7 @@ export default router({
         })
       ).map((tag) => tag.id)
 
+      // --- insert new product / update old product and connect correctly
       const product = await prisma.product.upsert({
         create: {
           name: input.name,
@@ -146,11 +151,10 @@ export default router({
           tags: true,
         },
       })
+      // --- end - insert
 
+      // --- remove tags from the product that were removed
       const tagsToBeRemoved = product.tags.filter((tag) => !tagIds.includes(tag.id))
-
-      console.log(tagIds, product.tags, tagsToBeRemoved)
-
       await Promise.all(
         tagsToBeRemoved.map((tag) =>
           prisma.product.update({
@@ -165,6 +169,7 @@ export default router({
           }),
         ),
       )
+      // --- end - remove
 
       return {
         hint: 'created item',
