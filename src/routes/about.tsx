@@ -1,9 +1,9 @@
-import { H1, H2, Main, P, Section } from '~/components/Basics'
+import { H1WithTitle, H2, Main, P, Section } from '~/components/Basics'
 
 export default function About() {
   return (
     <>
-      <H1>About</H1>
+      <H1WithTitle>About</H1WithTitle>
       <Section>
         <H2>Ziele des Projekts</H2>
         <P>

@@ -1,9 +1,9 @@
-import { children, JSX, ParentComponent } from 'solid-js'
+import { children, JSX, ParentComponent, splitProps } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import { Title } from 'solid-start'
 import { classes } from '~/utils/classes'
 
-const Element =
+export const createElement =
   <Key extends keyof JSX.IntrinsicElements>(
     tag: Key,
     classStyling: string,
@@ -21,38 +21,31 @@ const Element =
     )
   }
 
-export const Main = Element('main', 'mx-auto p-4 text-left text-primary-700')
-export const H1Only = Element('h1', 'max-6-xs my-8 text-center text-6xl font-thin uppercase text-secondary-500')
-export const H2 = Element('h2', 'max-2-xs my-4 text-left text-3xl font-thin uppercase text-secondary-500')
-export const P = Element('p', 'text-md text-left font-thin text-secondary-500')
-export const SectionOnly = Element(
+export const Main = createElement('main', `mx-auto p-4 text-left text-primary-70`)
+export const H1 = createElement('h1', `max-6-xs my-8 text-center text-6xl font-thin uppercase text-secondary-50`)
+export const H2 = createElement('h2', `max-2-xs my-4 text-left text-3xl font-thin uppercase text-secondary-50`)
+export const P = createElement('p', `text-md text-left font-thin text-secondary-50`)
+export const Container = createElement('div', `container mx-auto px-4`)
+
+const SectionOnly = createElement(
   'section',
   `w-full py-4 text-secondary-600 odd:bg-primary-200 even:bg-primary-100 hover:bg-primary-50 odd:dark:bg-primary-800 even:dark:bg-primary-700 hover:dark:bg-primary-600`,
 )
 
-export const H1: ParentComponent<JSX.HTMLAttributes<HTMLHeadingElement>> = (props) => {
+export const H1WithTitle: ParentComponent<JSX.HTMLAttributes<HTMLHeadingElement>> = (props) => {
   return (
     <>
       <Title>{props.children}</Title>
-      <H1Only
-        {...props}
-        class={classes(props.class, 'max-6-xs my-8 text-center text-6xl font-thin uppercase text-secondary-500')}
-      />
+      <H1 {...props} />
     </>
   )
 }
 
 export const Section: ParentComponent<JSX.HTMLAttributes<HTMLElement>> = (props) => {
-  const c = children(() => props.children)
+  const [, sectionProps] = splitProps(props, ['children'])
   return (
-    <SectionOnly
-      {...props}
-      class={classes(
-        props.class,
-        `w-full py-4 text-secondary-600 odd:bg-primary-200 even:bg-primary-100 hover:bg-primary-50 odd:dark:bg-primary-800 even:dark:bg-primary-700 hover:dark:bg-primary-600`,
-      )}
-    >
-      <div class="container mx-auto px-4">{c}</div>
+    <SectionOnly {...sectionProps}>
+      <Container children={props.children} />
     </SectionOnly>
   )
 }

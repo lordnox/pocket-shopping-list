@@ -6,7 +6,7 @@ import { ProductList } from '~/components/product/ProductList'
 import { CreateProduct, Product, productCompare, updateProduct } from '~/types/product-types'
 import { isAuthenticated, session } from '~/utils/auth'
 import { cacheDefined, compareCache, createFilter, createSorter } from '~/utils/signal-functions'
-import { H1, Main } from '~/components/Basics'
+import { H1WithTitle, Main } from '~/components/Basics'
 import { geolocation } from '~/utils/geolocation'
 import { Accessor } from 'solid-js'
 import { DragUpElement } from '~/components/navigation/DragUpElement'
@@ -53,7 +53,7 @@ export default () => {
 
   return (
     <Main>
-      <H1>Produkte</H1>
+      <H1WithTitle>Produkte</H1WithTitle>
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
       <ProductList items={sortedItems()} actionsEnabled={isAuthenticated()} onUpdate={onEnter} />
       <Show when={session()}>
