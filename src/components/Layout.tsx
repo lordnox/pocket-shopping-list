@@ -7,7 +7,7 @@ import { UserMenu } from './navigation/UserMenu'
 const Navigation = () => {
   const session = useSession()
   return (
-    <nav class="fixed z-20 w-full border-gray-200 bg-white px-2 shadow-lg dark:bg-gray-900 sm:px-4">
+    <nav class="fixed z-20 w-full border-primary-200 bg-white px-2 shadow-lg dark:bg-primary-900 sm:px-4">
       <div class="container mx-auto flex flex-wrap items-center justify-start p-4">
         <NavItem href="/" title="Home" />
         <NavItem href="/products" title="Produkte" />

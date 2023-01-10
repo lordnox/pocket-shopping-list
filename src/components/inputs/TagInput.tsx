@@ -54,7 +54,7 @@ export const TagInput: Component<{ for: string; tags: string[]; setTags: Setter<
     >
       <For each={props.tags}>
         {(tag) => (
-          <Tag class="bg-gray-800 py-1 px-2 text-[10px] font-normal text-gray-200" onClick={removeTag(tag)}>
+          <Tag class="bg-primary-800 py-1 px-2 text-[10px] font-normal text-primary-200" onClick={removeTag(tag)}>
             {tag}
           </Tag>
         )}

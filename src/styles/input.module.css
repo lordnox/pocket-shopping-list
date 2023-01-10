@@ -4,32 +4,32 @@
   text-left
   text-sm
   font-medium
-  text-gray-900
+  text-primary-900
   dark:text-white;
 }
 
 .inputBgColors {
-  @apply bg-gray-50
-  dark:bg-gray-700;
+  @apply bg-primary-50
+  dark:bg-primary-700;
 }
 
 .inputBorderColors {
-  @apply border-gray-300
-  dark:border-gray-600;
+  @apply border-primary-300
+  dark:border-primary-600;
 }
 
 .inputTextColors {
-  @apply text-gray-900
-  placeholder-gray-400
+  @apply text-primary-900
+  placeholder-primary-400
   dark:text-white
-  dark:placeholder-gray-400;
+  dark:placeholder-primary-400;
 }
 
 .inputFocusColors {
-  @apply focus:border-blue-500
-  focus:ring-blue-500
-  dark:focus:border-blue-500
-  dark:focus:ring-blue-500;
+  @apply focus:border-secondary-500
+  focus:ring-secondary-500
+  dark:focus:border-secondary-500
+  dark:focus:ring-secondary-500;
 }
 
 .input {

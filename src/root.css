@@ -8,7 +8,7 @@
 @layer base {
   html,
   body {
-    @apply min-h-screen bg-[conic-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-gray-900 via-purple-900 to-violet-600;
+    @apply min-h-screen bg-[conic-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-primary-900 via-additional-900 to-secondary-600;
   }
 }
 

@@ -12,38 +12,38 @@ const buttonGroupItemCss = `
   px-1
   text-sm
   font-medium
-  text-gray-900
+  text-primary-900
   first:rounded-l-lg
   last:rounded-r-md
   border-t
   border-b
   first:border
   last:border
-  border-gray-200
+  border-primary-200
   focus:z-10
-  hover:text-blue-700
+  hover:text-secondary-700
   focus:ring-2
-  focus:ring-blue-700
-  focus:text-blue-700
-  dark:border-gray-600
+  focus:ring-secondary-700
+  focus:text-secondary-700
+  dark:border-primary-600
   dark:text-white
   dark:hover:text-white
-  dark:focus:ring-blue-500
+  dark:focus:ring-secondary-500
   dark:focus:text-white
 `
 
 const inactiveButtonGroupItemCss = `
   bg-white
-  hover:bg-gray-100
-  dark:bg-gray-700
-  dark:hover:bg-gray-600
+  hover:bg-primary-100
+  dark:bg-primary-700
+  dark:hover:bg-primary-600
 `
 
 const activeButtonGroupItemCss = `
-  bg-gray-200
-  hover:bg-gray-300
-  dark:bg-gray-600
-  dark:hover:bg-gray-500
+  bg-primary-200
+  hover:bg-primary-300
+  dark:bg-primary-600
+  dark:hover:bg-primary-500
 `
 
 export const ButtonGroupItems = <Choices extends Record<string, any>>(props: ButtonGroupProps<Choices>) => {

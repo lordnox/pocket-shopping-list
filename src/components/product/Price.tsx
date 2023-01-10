@@ -14,10 +14,10 @@ export const InputPrice: Component<{ price: ProductPrice; type: ProductType } & 
   const [, divProps] = splitProps(props, ['price'])
   return (
     <div {...divProps}>
-      <div class="truncate text-sm font-medium text-gray-900 dark:text-white">
+      <div class="truncate text-sm font-medium text-primary-900 dark:text-white">
         {priceString(props.price.price, props.type)}
       </div>
-      <div class="truncate border-t text-xs text-gray-500 dark:text-gray-400">
+      <div class="truncate border-t text-xs text-primary-500 dark:text-primary-400">
         {amountString(props.price.amount, props.type)}
       </div>
     </div>

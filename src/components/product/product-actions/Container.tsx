@@ -90,10 +90,10 @@ export const LeftActionContainer: ParentComponent<TransientContainerProps> = (pr
     class="justify-end"
     bgColor="bg-green-300"
     bgLockedColor="bg-green-500"
-    bgActiveColor="bg-gray-900"
+    bgActiveColor="bg-primary-900"
   />
 )
 
 export const RightActionContainer: ParentComponent<TransientContainerProps> = (props) => (
-  <Container {...props} bgColor="bg-orange-300" bgLockedColor="bg-orange-500" bgActiveColor="bg-gray-900" />
+  <Container {...props} bgColor="bg-orange-300" bgLockedColor="bg-orange-500" bgActiveColor="bg-primary-900" />
 )

@@ -1,8 +1,11 @@
-import { createRoot } from 'solid-js'
+import { createRoot, createSignal, onMount } from 'solid-js'
 
 export const geolocation = createRoot(() => {
+  const [hasPermission, setHasPermission] = createSignal<'unknown' | PermissionState>('unknown')
+
   const getPermission = async () => {
     const permission = await navigator.permissions.query({ name: 'geolocation' })
+    setHasPermission(permission.state)
     return permission.state
   }
 
@@ -21,9 +24,12 @@ export const geolocation = createRoot(() => {
     return getCurrentPosition()
   }
 
+  onMount(getPermission)
+
   return {
     position: getCurrentPosition,
     location: getGeoLocation,
     permission: getPermission,
+    hasPermission,
   }
 })

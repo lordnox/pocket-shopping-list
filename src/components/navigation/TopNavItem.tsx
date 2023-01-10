@@ -8,8 +8,8 @@ export const NavItem: Component<{
   const location = useLocation()
   const active = (path: string) =>
     path == location.pathname
-      ? 'border-sky-600 dark:text-white'
-      : 'border-transparent dark:text-gray-400 dark:hover:text-white'
+      ? 'border-secondary-600 dark:text-white'
+      : 'border-transparent dark:text-primary-400 dark:hover:text-white'
 
   return (
     <div class={`border-b-2 transition ${active(props.href)} mx-1.5 sm:mx-6`}>

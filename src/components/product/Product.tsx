@@ -18,12 +18,12 @@ const miniMidiContainer = `
   touch-pan-y
 `
 const miniMidiColors = `
-  group-even/product:bg-gray-100
-  group-even/product:dark:bg-gray-700
-  group-odd/product:bg-gray-200
-  group-odd/product:dark:bg-gray-800
-  group-hover/product:bg-gray-50
-  group-hover/product:dark:bg-gray-600
+  group-even/product:bg-primary-100
+  group-even/product:dark:bg-primary-700
+  group-odd/product:bg-primary-200
+  group-odd/product:dark:bg-primary-800
+  group-hover/product:bg-primary-50
+  group-hover/product:dark:bg-primary-600
 `
 const miniContainer = `
   ${miniMidiContainer}
@@ -48,7 +48,7 @@ const maxiContainer = `
   m-2
   p-4
 
-  bg-gray-700
+  bg-primary-700
 `
 
 const miniHeadlineCss = `
@@ -69,7 +69,7 @@ const ThinProductTags = () => {
   return (
     <div class="flex justify-center gap-1">
       <For each={context.product.tags}>
-        {(tag) => <Tag class="bg-purple-900 px-1 text-[8px] font-normal text-gray-200">{tag.name}</Tag>}
+        {(tag) => <Tag class="bg-additional-900 px-1 text-[8px] font-normal text-primary-200">{tag.name}</Tag>}
       </For>
     </div>
   )
@@ -104,11 +104,12 @@ const ProductMidiContent: Component = () => {
   return (
     <div class="flex items-center justify-start gap-2 ">
       <InputPrice
-        class="items-center font-mono text-base font-semibold text-gray-900 dark:text-white"
+        class="items-center font-mono text-base font-semibold text-primary-900 dark:text-white"
         price={context.product.prices[0]}
         type={context.product.type}
       />
       <ThinProductTags />
+      <div>{context.product.prices[0].source?.GeoLocation?.accuracy}</div>
       <AveragePrice
         class="flex flex-1 items-center justify-end font-mono text-lg"
         price={context.product.prices[0]}
@@ -184,7 +185,7 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
           }
         >
           <h4
-            class="x-transition-all flex w-full items-center truncate text-gray-900 dark:text-white"
+            class="x-transition-all flex w-full items-center truncate text-primary-900 dark:text-white"
             classList={{
               italic: context.product.optimistic,
 

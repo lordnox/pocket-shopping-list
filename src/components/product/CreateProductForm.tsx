@@ -58,7 +58,7 @@ export const CreateProductForm: Component<{ onEnter: (data: CreateProduct) => vo
           <TagInput for="tags" tags={tags()} setTags={setTags} />
         </Item>
         <button
-          class="h-8 place-self-end rounded-lg bg-blue-700 px-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          class="h-8 place-self-end rounded-lg bg-secondary-700 px-2 text-sm font-medium text-white hover:bg-secondary-800 focus:outline-none focus:ring-4 focus:ring-secondary-300 dark:bg-secondary-600 dark:hover:bg-secondary-700 dark:focus:ring-secondary-800"
           type="submit"
           onClick={enterItem}
         >

@@ -47,7 +47,7 @@ export const DragUpElement: ParentComponent = (props) => {
   return (
     <div
       ref={containerElement!}
-      class="fixed left-0 bottom-0 z-20 w-full border-t border-gray-500 bg-gray-900"
+      class="fixed left-0 bottom-0 z-20 w-full border-t border-primary-500 bg-primary-900"
       classList={{
         transition: !dragging(),
         'opacity-70 translate-y-[calc(100%-1px)]': !dragging() && !open(),
@@ -57,7 +57,7 @@ export const DragUpElement: ParentComponent = (props) => {
       <div class="container m-auto w-full">
         <div class="relative -top-14 flex justify-center" ref={dragElement}>
           <button
-            class="absolute h-14 w-16 touch-none rounded-t-full border border-b-0 border-gray-500 bg-gray-900 p-2 text-white"
+            class="absolute h-14 w-16 touch-none rounded-t-full border border-b-0 border-primary-500 bg-primary-900 p-2 text-white"
             onClick={() => !dragging() && setOpen((open) => !open)}
           >
             <ChevronUp
