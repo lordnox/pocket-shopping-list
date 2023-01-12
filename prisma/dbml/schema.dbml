@@ -11,6 +11,8 @@ Table Product {
   prices ProductPrice [not null]
   createdBy User [not null]
   tags Tag [not null]
+  StockList StockList
+  stockListId String
 }
 
 Table ProductPrice {
@@ -31,6 +33,27 @@ Table Tag {
   id String [pk]
   name String [unique, not null]
   items Product [not null]
+}
+
+Table StockList {
+  id String [pk]
+  name String [unique, not null]
+  products Product [not null]
+  userId String [not null]
+  createdBy User [not null]
+}
+
+Table User {
+  id String [pk]
+  name String
+  email String [unique, not null]
+  emailVerified DateTime
+  image String
+  accounts Account [not null]
+  sessions Session [not null]
+  items Product [not null]
+  ProductPrice ProductPrice [not null]
+  StockList StockList [not null]
 }
 
 Table Account {
@@ -59,18 +82,6 @@ Table Session {
   userId String [not null]
   expires DateTime [not null]
   user User [not null]
-}
-
-Table User {
-  id String [pk]
-  name String
-  email String [unique, not null]
-  emailVerified DateTime
-  image String
-  accounts Account [not null]
-  sessions Session [not null]
-  items Product [not null]
-  ProductPrice ProductPrice [not null]
 }
 
 Table VerificationToken {
@@ -129,11 +140,15 @@ Enum ItemType {
 
 Ref: Product.userId > User.id [delete: Cascade]
 
+Ref: Product.stockListId > StockList.id
+
 Ref: ProductPrice.sourceId > Source.id
 
 Ref: ProductPrice.itemId > Product.id [delete: Cascade]
 
 Ref: ProductPrice.userId > User.id [delete: Cascade]
+
+Ref: StockList.userId > User.id [delete: Cascade]
 
 Ref: Account.userId > User.id [delete: Cascade]
 

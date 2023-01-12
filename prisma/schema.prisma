@@ -17,14 +17,16 @@ datasource db {
 
 // defines an item purchasable in a shop
 model Product {
-  id        String         @id @default(cuid())
-  userId    String
-  createdAt DateTime       @default(now())
-  name      String         @unique()
-  type      ItemType       @default(kilogram)
-  prices    ProductPrice[]
-  createdBy User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tags      ProductTag[]
+  id          String         @id @default(cuid())
+  userId      String
+  createdAt   DateTime       @default(now())
+  name        String         @unique()
+  type        ItemType       @default(kilogram)
+  prices      ProductPrice[]
+  createdBy   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags        ProductTag[]
+  StockList   StockList?     @relation(fields: [stockListId], references: [id])
+  stockListId String?
 }
 
 // contains the price of a shopping item
@@ -50,7 +52,28 @@ model ProductTag {
   @@map("Tag")
 }
 
-// Necessary for Next auth
+model StockList {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  products  Product[]
+  userId    String
+  createdBy User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String         @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  items         Product[]
+  ProductPrice  ProductPrice[]
+  StockList     StockList[]
+}
+
+// --- Auth: Necessary for Next auth
 model Account {
   id                String       @id @default(cuid())
   userId            String
@@ -77,18 +100,6 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model User {
-  id            String         @id @default(cuid())
-  name          String?
-  email         String         @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  items         Product[]
-  ProductPrice  ProductPrice[]
-}
-
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -97,6 +108,9 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+// --- Auth
+
+// --- Source: Where something is from
 model Source {
   id            String             @id @default(cuid())
   geoLocationId String?
@@ -122,6 +136,10 @@ model WebShopSource {
   Source    Source[]
   createdAt DateTime @default(now())
 }
+
+// --- Source
+
+// --- Enums
 
 enum ProviderType {
   oidc
