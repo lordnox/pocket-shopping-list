@@ -3,12 +3,20 @@ import { Product } from '~/types/product-types'
 
 export type ProductState = 'mini' | 'midi' | 'maxi'
 
-export const ProductContext = createContext<{
+export interface FilterScore {
+  filterScore: Accessor<number>
+  setFilterScore: Setter<number>
+}
+export type WrappedProduct = Product & FilterScore
+
+export interface ProductContext {
   setState: Setter<ProductState>
   state: Accessor<ProductState>
   activeAnimation: Accessor<boolean>
-  product: Product
-}>()
+  product: WrappedProduct
+}
+
+export const ProductContext = createContext<ProductContext>()
 
 export const useProductContext = () => {
   const context = useContext(ProductContext)

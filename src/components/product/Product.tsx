@@ -194,7 +194,7 @@ export const Product: Component<ProductProps & Omit<JSX.HTMLAttributes<HTMLDivEl
               [maxiHeadlineCss]: context.state() === 'maxi',
             }}
           >
-            {context.product.name}
+            {context.product.name} | {context.product.filterScore().toFixed(3)}
           </h4>
           <Switch>
             <Match when={context.state() === 'mini'}>

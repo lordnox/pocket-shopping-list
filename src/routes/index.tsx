@@ -55,7 +55,7 @@ export default () => {
     <Main>
       <H1WithTitle>Shopping</H1WithTitle>
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
-      <ProductList items={sortedItems()} actionsEnabled={isAuthenticated()} onUpdate={onEnter} />
+      <ProductList products={sortedItems()} actionsEnabled={isAuthenticated()} onUpdate={onEnter} />
       <Show when={session()}>
         <DragUpElement>
           <CreateProductForm onEnter={onEnter} />

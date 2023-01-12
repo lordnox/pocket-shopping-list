@@ -8,18 +8,19 @@ import { StopCircle } from '../icons/stop-circle'
 import { classes } from '~/utils/classes'
 import buttonStyles from '~/styles/button.module.css'
 import styles from './product-actions/action.module.css'
-import { Product as ProductType } from '~/types/product-types'
 import { Product } from './Product'
 import { longPress } from '~/utils/long-press-event'
 import { vibrate } from '~/utils/vibrate'
 import { Button } from '../inputs/Button'
 import { TagsProductForm } from './TagsProductForm'
 
-export const ProductWrapper: Component<{
+export interface ProductWrapperProps {
   onUpdate: (data: CreateProduct) => void
   hasActions?: boolean
-  item: ProductType
-}> = (props) => {
+  product: ProductContext['product']
+}
+
+export const ProductWrapper: Component<ProductWrapperProps> = (props) => {
   const context = useProductListContext()
 
   const [pressed, setPressed] = createSignal(false)
@@ -52,8 +53,8 @@ export const ProductWrapper: Component<{
     onFinished: (element, state) => {
       cleanupDrag(element)
       context.setAction((action) => {
-        if (state.lockedAt !== 0) return props.item.id
-        if (action === props.item.id) return ''
+        if (state.lockedAt !== 0) return props.product.id
+        if (action === props.product.id) return ''
         return action
       })
     },
@@ -63,7 +64,7 @@ export const ProductWrapper: Component<{
     },
   })
 
-  const isPending = () => context.isActionPending(props.item.id)
+  const isPending = () => context.isActionPending(props.product.id)
   const isActive = () => locked() && isPending()
   const isLeft = () => (isPending() || dragging()) && displacement() < 0
   const isRight = () => (isPending() || dragging()) && displacement() > 0
@@ -99,7 +100,7 @@ export const ProductWrapper: Component<{
           activeAnimation: () => !dragging(),
           setState,
           state,
-          product: props.item,
+          product: props.product,
         }}
       >
         <div
@@ -119,7 +120,7 @@ export const ProductWrapper: Component<{
             fallback={<label>Tags</label>}
           >
             <div class={classes(styles.updateContainer, 'gap-2')}>
-              <TagsProductForm item={props.item} onEnter={props.onUpdate} />
+              <TagsProductForm item={props.product} onEnter={props.onUpdate} />
               <Button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
                 <StopCircle />
               </Button>
@@ -132,7 +133,7 @@ export const ProductWrapper: Component<{
             fallback={<label>Update</label>}
           >
             <div class={classes(styles.updateContainer, 'gap-2')}>
-              <UpdateProductForm item={props.item} onEnter={props.onUpdate} />
+              <UpdateProductForm item={props.product} onEnter={props.onUpdate} />
               <Button class={classes(buttonStyles.button, buttonStyles.abortColors)} onClick={context.cancelAction}>
                 <StopCircle />
               </Button>
