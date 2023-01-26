@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@auth/core': ^0.1.4
-  '@formkit/auto-animate': 1.0.0-beta.5
+  '@formkit/auto-animate': 1.0.0-beta.6
   '@prisma/client': ^4.8.1
   '@solid-auth/next': ^0.0.19
   '@solidjs/meta': ^0.28.2
@@ -32,7 +32,7 @@ specifiers:
 
 dependencies:
   '@auth/core': 0.1.4
-  '@formkit/auto-animate': 1.0.0-beta.5
+  '@formkit/auto-animate': 1.0.0-beta.6
   '@prisma/client': 4.8.1_prisma@4.8.1
   '@solid-auth/next': 0.0.19_ovpwmzjwpbvfkoebnub4xofdci
   '@solidjs/meta': 0.28.2_solid-js@1.6.6
@@ -1360,8 +1360,8 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@formkit/auto-animate/1.0.0-beta.5:
-    resolution: {integrity: sha512-WoSwyhAZPOe6RB/IgicOtCHtrWwEpfKIZ/H/nxpKfnZL9CB6hhhBGU5bCdMRw7YpAUF2CDlQa+WWh+gCqz5lDg==}
+  /@formkit/auto-animate/1.0.0-beta.6:
+    resolution: {integrity: sha512-PVDhLAlr+B4Xb7e+1wozBUWmXa6BFU8xUPR/W/E+TsQhPS1qkAdAsJ25keEnFrcePSnXHrOsh3tiFbEToOzV9w==}
     dev: false
 
   /@hapi/hoek/9.3.0:
