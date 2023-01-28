@@ -10,7 +10,7 @@ import { H1WithTitle, Main } from '~/components/Basics'
 import { geolocation } from '~/utils/geolocation'
 import { Accessor } from 'solid-js'
 import { DragUpElement } from '~/components/navigation/DragUpElement'
-import { productsRoot } from '~/components/roots/products'
+import { productsRoot } from '~/roots/products'
 
 import { WrappedProduct } from '~/components/product/ProductContext'
 import { distance } from 'fastest-levenshtein'

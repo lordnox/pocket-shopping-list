@@ -24,6 +24,11 @@ export const H1 = createElement('h1', `max-6-xs my-8 text-center text-6xl font-t
 export const H2 = createElement('h2', `max-2-xs my-4 text-left text-3xl font-thin uppercase text-secondary-50`)
 export const P = createElement('p', `text-md text-left font-thin text-secondary-50`)
 export const Container = createElement('div', `container mx-auto px-4`)
+export const FAB = createElement(
+  'button',
+  `@apply flex items-center justify-center text-center h-10 w-10 rounded-full border-2 p-0 text-center focus:outline-none focus:ring-4;`,
+)
+export const Code = createElement('pre', ' text-secondary-50')
 
 const SectionWrapper = createElement(
   'section',
