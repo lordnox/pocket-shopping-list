@@ -26,9 +26,9 @@ export const P = createElement('p', `text-md text-left font-thin text-secondary-
 export const Container = createElement('div', `container mx-auto px-4`)
 export const FAB = createElement(
   'button',
-  `@apply flex items-center justify-center text-center h-10 w-10 rounded-full border-2 p-0 text-center focus:outline-none focus:ring-4;`,
+  `flex items-center justify-center text-center h-10 w-10 rounded-full border-2 p-0 text-center focus:outline-none focus:ring-4`,
 )
-export const Code = createElement('pre', ' text-secondary-50')
+export const Code = createElement('pre', 'text-secondary-50')
 
 const SectionWrapper = createElement(
   'section',

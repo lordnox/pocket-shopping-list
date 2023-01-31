@@ -59,7 +59,7 @@ export const StocklistChooser: Component<{
   })
 
   return (
-    <div class="container mx-auto overflow-y-hidden overflow-x-scroll">
+    <div class="container mx-auto">
       <div
         ref={useAutoAnimate()}
         class="grid w-full grid-cols-[40px_auto_40px] gap-4"
