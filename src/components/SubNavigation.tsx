@@ -1,10 +1,10 @@
 import { Component, createMemo, Show, For, createSignal, createEffect } from 'solid-js'
 import { useAutoAnimate } from '~/hooks/auto-animate'
 import { StockList, updateStockList } from '~/types/stock-types'
-import { FAB } from '../Basics'
-import { StockIcons, Add, Settings } from '../icons/icons'
-import { stockRoot } from '../../roots/stock'
-import { CreateStockForm, CreateStockFormProps } from './CreateStockForm'
+import { FAB } from './Basics'
+import { StockIcons, Add, Settings } from './icons/icons'
+import { stockRoot } from '../roots/stock'
+import { CreateStockForm, CreateStockFormProps } from './stock/CreateStockForm'
 
 const StockListEntry: Component<{ stocklist: StockList; onClick: VoidFunction }> = (props) => {
   const icon = createMemo(() => {
@@ -26,7 +26,7 @@ const StockListEntry: Component<{ stocklist: StockList; onClick: VoidFunction }>
   )
 }
 
-export const StocklistChooser: Component<{
+export const SubNavigation: Component<{
   setStocklist: (stocklist: StockList) => void
   createStocklist: (stocklist: { name: string; icon: string }) => Promise<StockList>
   currentStocklist?: StockList
@@ -59,8 +59,8 @@ export const StocklistChooser: Component<{
   })
 
   return (
-    <div class="container mx-auto">
-      <div
+    <section class="container mx-auto px-4 pb-3">
+      <nav
         ref={useAutoAnimate()}
         class="grid w-full grid-cols-[40px_auto_40px] gap-4"
         classList={{
@@ -70,7 +70,7 @@ export const StocklistChooser: Component<{
       >
         <Show when={mode() !== 'editStockList'}>
           <FAB
-            class={`border-secondary-600 text-secondary-600 transition`}
+            class={`m-1 border-secondary-600 text-secondary-600 transition`}
             classList={{
               'rotate-45': mode() === 'createStockList',
             }}
@@ -84,7 +84,7 @@ export const StocklistChooser: Component<{
           <CreateStockForm onEnter={onEnter} />
         </Show>
         <Show when={mode() === 'none'}>
-          <div ref={useAutoAnimate()} class="inline-flex items-center gap-4 overflow-scroll pb-4">
+          <div ref={useAutoAnimate()} class="inline-flex items-center gap-4 overflow-scroll p-1">
             <For each={stocklists()}>
               {(stocklist) => <StockListEntry stocklist={stocklist} onClick={() => props.setStocklist(stocklist)} />}
             </For>
@@ -92,13 +92,13 @@ export const StocklistChooser: Component<{
         </Show>
         <Show when={props.currentStocklist && mode() !== 'createStockList'}>
           <FAB
-            class={`border-secondary-600 text-secondary-600 transition`}
+            class="m-1 border-secondary-600 text-secondary-600 transition"
             onClick={() => setMode((currentMode) => (currentMode !== 'editStockList' ? 'editStockList' : 'none'))}
           >
             <Settings class="h-[66%] w-[66%]" />
           </FAB>
         </Show>
-      </div>
-    </div>
+      </nav>
+    </section>
   )
 }

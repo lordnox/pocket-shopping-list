@@ -1,22 +1,29 @@
 import { createRoot, createSignal, JSX, onCleanup, onMount } from 'solid-js'
+import { LinkOrButton } from '~/components/Basics'
 
 export const navigation = createRoot(() => {
-  const [homeAction, setHomeAction] = createSignal<JSX.EventHandlerUnion<HTMLAnchorElement, MouseEvent>>()
+  const [homeAction, setHomeAction] = createSignal<{
+    content: JSX.Element
+    props: LinkOrButton
+  }>()
+  const [title, setTitle] = createSignal<string>('Application')
   return {
     homeAction,
     setHomeAction,
+    title,
+    setTitle,
   }
 })
 
-export const useHomeLink = (handler: JSX.EventHandlerUnion<HTMLAnchorElement, MouseEvent>) => {
+export const useHomeLink = (content: JSX.Element, props: LinkOrButton) => {
   onMount(() => {
-    navigation.setHomeAction((currentValue) => {
-      if (currentValue) throw new Error('Somehow the current home link is not correctly reset!')
-      return handler
+    navigation.setHomeAction({
+      content,
+      props,
     })
   })
 
   onCleanup(() => {
-    navigation.setHomeAction()
+    navigation.setHomeAction(undefined)
   })
 }

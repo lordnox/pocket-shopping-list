@@ -14,6 +14,7 @@ import { productsRoot } from '~/roots/products'
 
 import { WrappedProduct } from '~/components/product/ProductContext'
 import { distance } from 'fastest-levenshtein'
+import { Title } from '~/components/Layout'
 
 type Scorer<Type = string> = (value: Type) => number
 
@@ -113,7 +114,7 @@ export default () => {
 
   return (
     <Main>
-      <H1WithTitle>Produkte</H1WithTitle>
+      <Title>Produkte</Title>
       <ShoppingSearch debounce={50} label="Filter" placeholder="Name" buttonText="Filter" onSearch={setSearchKey} />
       <ProductList products={sortedItems()} actionsEnabled={isAuthenticated()} onUpdate={onEnter} />
       <Show when={session()}>

@@ -18,7 +18,7 @@ export default (pageParams: { stocklist?: StockList }) => {
     setStocklist(stocklist)
   }
 
-  useHomeLink('🛒', { href: '/list' })
+  useHomeLink('🛒', { href: '/' })
 
   return (
     <Main>

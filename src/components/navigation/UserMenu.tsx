@@ -1,37 +1,135 @@
-import { signOut } from '@solid-auth/next/client'
-import { createSignal } from 'solid-js'
+import { signIn, signOut } from '@solid-auth/next/client'
+import { AnchorProps, Link } from '@solidjs/router'
+import { Accessor, Component, createEffect, createSignal, For, JSX } from 'solid-js'
+import { Portal } from 'solid-js/web'
 import { session } from '~/utils/auth'
-import { geolocation } from '~/utils/geolocation'
+import { classes } from '~/utils/classes'
+import { Avatar, createElement } from '../Basics'
 
-const dropdownClass =
-  'block py-2 px-4 hover:bg-primary-100 dark:hover:bg-primary-600 dark:hover:text-white w-full text-left'
-export const UserMenu = () => {
-  const [open, setOpen] = createSignal(false)
+type Position = readonly [number, number]
+interface DropdownContext {
+  anchor: JSX.Element | undefined
+  position: Position
+}
+
+type DropdownOpenEventHandler = JSX.EventHandlerUnion<HTMLButtonElement, MouseEvent>
+const userDropdownContext = () => {
+  const [context, setContext] = createSignal<DropdownContext>({
+    anchor: undefined,
+    position: [0, 0],
+  })
+
+  const closePoint = ({ position }: DropdownContext) => ({
+    anchor: undefined,
+    position,
+  })
+
+  const close = () => setContext(closePoint)
+
+  const open: DropdownOpenEventHandler = (event) =>
+    setContext((context) => {
+      const { target } = event
+      const position = [event.clientX, event.clientY] as const
+      if (context.anchor === target) return closePoint(context)
+      return {
+        anchor: target,
+        position,
+      }
+    })
+
+  return [open, context, close] as const
+}
+
+const calculateOpeningPosition = (position: Position, { width, height }: DOMRect): Position => {
+  let [x, y] = position
+  const bounding = document.body.getBoundingClientRect()
+  if (x + width > bounding.width) x -= width
+  if (y + height > bounding.height) y -= height
+  return [x, y]
+}
+
+const DropdownItem = createElement(
+  'button',
+  'w-full py-2 px-4 text-left hover:bg-primary-100 dark:hover:bg-primary-600 dark:hover:text-white block ',
+)
+const DropdownLink: Component<AnchorProps> = (props) => (
+  <Link
+    {...props}
+    class={classes(
+      'block w-full py-2 px-4 text-left hover:bg-primary-100 dark:hover:bg-primary-600 dark:hover:text-white',
+      props.class,
+    )}
+  />
+)
+
+const DropdownElement = createElement('li', 'border-b last:border-b-0')
+
+const Dropdown: Component<{ children: JSX.Element[]; context: Accessor<DropdownContext>; onClose?: VoidFunction }> = (
+  props,
+) => {
+  let element: HTMLDivElement
+
+  const open = () => {
+    return !!props.context().anchor
+  }
+
+  createEffect(() => {
+    const [left, top] = calculateOpeningPosition(props.context().position, element.getBoundingClientRect())
+    element.style.top = `${top}px`
+    element.style.left = `${left}px`
+  })
 
   return (
-    <>
-      <div>{geolocation.hasPermission()}</div>
-      <button
-        type="button"
-        class="ml-auto inline-flex items-center rounded-full border border-secondary-700 text-center text-sm font-medium text-secondary-700 hover:bg-secondary-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-secondary-300 dark:border-secondary-500 dark:text-secondary-500 dark:hover:text-white dark:focus:ring-secondary-800"
-        onClick={() => setOpen((open) => !open)}
-      >
-        <img class="h-10 w-10 rounded-full" src={session()?.user?.image ?? ''} alt="Rounded avatar" />
-      </button>
-
+    <Portal>
       <div
-        class={`${
-          open() ? 'fixed' : 'hidden'
-        } right-16 top-14 z-30 w-44 divide-y divide-primary-100 rounded bg-white shadow dark:bg-primary-700`}
+        class="fixed top-0 left-0 right-0 bottom-0 z-30 backdrop-blur-sm transition"
+        classList={{
+          'pointer-events-none opacity-0': !open(),
+        }}
+        onClick={props.onClose}
       >
-        <ul class="py-1 text-sm text-primary-700 dark:text-primary-200" aria-labelledby="dropdownDefault">
-          <li>
-            <button onClick={signOut} class={dropdownClass}>
-              Sign out
-            </button>
-          </li>
-        </ul>
+        <div
+          ref={element!}
+          class="fixed w-44 divide-y divide-primary-100 rounded bg-white opacity-100 shadow transition-opacity delay-150 dark:bg-primary-700"
+          classList={{
+            'pointer-events-none opacity-0': !open(),
+          }}
+        >
+          <ul class="py-1 text-sm text-primary-700 dark:text-primary-200" aria-labelledby="dropdownDefault">
+            <For each={props.children}>{(child) => <DropdownElement>{child}</DropdownElement>}</For>
+          </ul>
+        </div>
       </div>
+    </Portal>
+  )
+}
+
+export const UserMenu = () => {
+  const [open, context, close] = userDropdownContext()
+  return (
+    <>
+      <Avatar type="button" onClick={open}>
+        <img class="h-full w-full" src={session()?.user?.image ?? ''} alt="Rounded avatar" />
+      </Avatar>
+
+      <Dropdown context={context} onClose={close}>
+        <DropdownItem onClick={signOut}>Sign out</DropdownItem>
+        <DropdownLink href="/products">Produkte</DropdownLink>
+      </Dropdown>
     </>
+  )
+}
+
+export const LoginButton: Component = () => {
+  return (
+    <button
+      class="mr-4 ml-auto transition dark:text-primary-400 dark:hover:text-white "
+      onClick={(event) => {
+        console.log('login!', event)
+        signIn()
+      }}
+    >
+      Login
+    </button>
   )
 }
