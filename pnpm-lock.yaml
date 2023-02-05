@@ -4,7 +4,7 @@ specifiers:
   '@auth/core': ^0.1.4
   '@formkit/auto-animate': 1.0.0-beta.6
   '@prisma/client': ^4.8.1
-  '@solid-auth/next': ^0.0.19
+  '@solid-auth/next': ^0.0.23
   '@solidjs/meta': ^0.28.2
   '@solidjs/router': ^0.7.0
   '@tailwindcss/container-queries': ^0.1.0
@@ -35,7 +35,7 @@ dependencies:
   '@auth/core': 0.1.4
   '@formkit/auto-animate': 1.0.0-beta.6
   '@prisma/client': 4.8.1_prisma@4.8.1
-  '@solid-auth/next': 0.0.19_ovpwmzjwpbvfkoebnub4xofdci
+  '@solid-auth/next': 0.0.23_ovpwmzjwpbvfkoebnub4xofdci
   '@solidjs/meta': 0.28.2_solid-js@1.6.6
   '@solidjs/router': 0.7.0_solid-js@1.6.6
   '@trpc/client': 10.7.0_@trpc+server@10.7.0
@@ -1704,10 +1704,11 @@ packages:
   /@sideway/pinpoint/2.0.0:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
 
-  /@solid-auth/next/0.0.19_ovpwmzjwpbvfkoebnub4xofdci:
-    resolution: {integrity: sha512-aGcEePidVKh6iYS5JHghv/MFKh1mE0PQUmD8+dHiRRWcnVOF38fyHTz5L5PQCmrl8xE9J8rK3ymVlt0lzw2dQg==}
+  /@solid-auth/next/0.0.23_ovpwmzjwpbvfkoebnub4xofdci:
+    resolution: {integrity: sha512-1fClfQNn7MHoHGt8RoKLBnoJUgG4gAY5YjtpvtHxoysLG4WIKj9XdN3tx6r3/vJ4Aon8YgcCT5cnJRsY6wGe7A==}
+    deprecated: Use @auth/solid-start instead
     peerDependencies:
-      '@auth/core': ~0.1.4 || ^0.1.4
+      '@auth/core': ^0.2.2 || ~0.2.2
       solid-js: ^1.5.7
       solid-start: ^0.2.1
     dependencies:

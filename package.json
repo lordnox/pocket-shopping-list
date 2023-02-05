@@ -31,7 +31,7 @@
     "@auth/core": "^0.1.4",
     "@formkit/auto-animate": "1.0.0-beta.6",
     "@prisma/client": "^4.8.1",
-    "@solid-auth/next": "^0.0.19",
+    "@solid-auth/next": "^0.0.23",
     "@solidjs/meta": "^0.28.2",
     "@solidjs/router": "^0.7.0",
     "@trpc/client": "^10.7.0",
