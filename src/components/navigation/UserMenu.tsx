@@ -12,9 +12,9 @@ export const UserMenu = () => {
         <img class="h-full w-full" src={session()?.user?.image ?? ''} alt="Rounded avatar" />
       </Avatar>
 
-      <Dropdown context={context} onClose={close}>
-        <DropdownItem onClick={signOut}>Sign out</DropdownItem>
+      <Dropdown context={context} onClose={close} title="Aktivitäten">
         <DropdownLink href="/products">Produkte</DropdownLink>
+        <DropdownItem onClick={signOut}>Abmelden</DropdownItem>
       </Dropdown>
     </>
   )

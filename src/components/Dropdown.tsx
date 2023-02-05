@@ -1,5 +1,5 @@
 import { AnchorProps, Link } from '@solidjs/router'
-import { JSX, createSignal, Component, Accessor, createEffect, For } from 'solid-js'
+import { JSX, createSignal, Component, Accessor, createEffect, For, Show } from 'solid-js'
 import { classes } from '~/utils/classes'
 import { Backdrop } from './Backdrop'
 import { createElement } from './Basics'
@@ -63,6 +63,7 @@ export const DropdownLink: Component<AnchorProps> = (props) => (
 const DropdownElement = createElement('li', 'border-b last:border-b-0')
 
 export const Dropdown: Component<{
+  title?: string
   children: JSX.Element[]
   context: Accessor<DropdownContext>
   onClose?: VoidFunction
@@ -85,9 +86,12 @@ export const Dropdown: Component<{
         ref={element!}
         class="fixed w-44 divide-y divide-primary-100 rounded bg-white opacity-100 shadow transition-opacity delay-150 dark:bg-primary-700"
         classList={{
-          'pointer-events-none opacity-0': !open(),
+          'opacity-0': !open(),
         }}
       >
+        <Show when={props.title}>
+          <div class="flex justify-center text-sm font-bold text-primary-200">{props.title}</div>
+        </Show>
         <ul class="py-1 text-sm text-primary-700 dark:text-primary-200" aria-labelledby="dropdownDefault">
           <For each={props.children}>{(child) => <DropdownElement>{child}</DropdownElement>}</For>
         </ul>
