@@ -6,13 +6,13 @@ Table Product {
   id String [pk]
   userId String [not null]
   createdAt DateTime [default: `now()`, not null]
+  icon String
   name String [unique, not null]
   type ItemType [not null, default: 'kilogram']
   prices ProductPrice [not null]
   createdBy User [not null]
   tags Tag [not null]
-  StockList StockList
-  stockListId String
+  StockListItem StockListItem [not null]
 }
 
 Table ProductPrice {
@@ -35,12 +35,24 @@ Table Tag {
   items Product [not null]
 }
 
+Table StockListItem {
+  id String [pk]
+  name String [not null]
+  StockList StockList
+  stockListId String
+  product Product
+  productId String
+  createdAt DateTime [default: `now()`, not null]
+}
+
 Table StockList {
   id String [pk]
-  name String [unique, not null]
-  products Product [not null]
+  name String [not null]
+  icon String
+  products StockListItem [not null]
   userId String [not null]
   createdBy User [not null]
+  createdAt DateTime [default: `now()`, not null]
 }
 
 Table User {
@@ -49,6 +61,7 @@ Table User {
   email String [unique, not null]
   emailVerified DateTime
   image String
+  role UserRole [not null, default: 'user']
   accounts Account [not null]
   sessions Session [not null]
   items Product [not null]
@@ -138,15 +151,22 @@ Enum ItemType {
   piece
 }
 
-Ref: Product.userId > User.id [delete: Cascade]
+Enum UserRole {
+  admin
+  user
+}
 
-Ref: Product.stockListId > StockList.id
+Ref: Product.userId > User.id [delete: Cascade]
 
 Ref: ProductPrice.sourceId > Source.id
 
 Ref: ProductPrice.itemId > Product.id [delete: Cascade]
 
 Ref: ProductPrice.userId > User.id [delete: Cascade]
+
+Ref: StockListItem.stockListId > StockList.id
+
+Ref: StockListItem.productId > Product.id
 
 Ref: StockList.userId > User.id [delete: Cascade]
 

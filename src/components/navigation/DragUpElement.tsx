@@ -1,13 +1,31 @@
-import { createSignal, ParentComponent } from 'solid-js'
-import { ChevronUp } from '~/components/icons/chevron-up'
+import { createSignal, onMount, ParentComponent } from 'solid-js'
 import { useDrag } from '~/utils/use-drag'
+
+const HANDLE_HEIGHT = '32px'
 
 export const DragUpElement: ParentComponent = (props) => {
   let containerElement: HTMLDivElement
-  let svgElement: SVGSVGElement
 
   const [open, setOpen] = createSignal(false)
-  const [dragging, setDragging] = createSignal(false)
+  const [dragging, setDragging] = createSignal(true)
+
+  const toggleOpen = () =>
+    setOpen((open) => {
+      setContainerElementStyles(containerElement, open ? 1 : 0)
+      return !open
+    })
+
+  const setContainerElementStyles = (element: HTMLElement, percent: number) => {
+    console.log(percent)
+    const height = containerElement.getBoundingClientRect().height
+    const displacement = height * percent
+    element.style.transform = `translateY(${displacement}px)`
+    element.style.opacity = `${1 - percent * 0.4}`
+  }
+
+  const resetContainerElementStyles = () => {
+    setContainerElementStyles(containerElement, open() ? 0 : 1)
+  }
 
   const calculateDisplacement = (value: number) => {
     const height = containerElement.getBoundingClientRect().height
@@ -20,15 +38,14 @@ export const DragUpElement: ParentComponent = (props) => {
   const dragElement = useDrag({
     onStart: () => setDragging(true),
     onChange(_, state) {
-      const [displacement, rotate] = calculateDisplacement(state.displacement)
-      containerElement.style.transform = `translateY(${displacement}px)`
-      svgElement.style.transform = `rotate(${180 - rotate * 180}deg)`
+      const [, percent] = calculateDisplacement(state.displacement)
+      setContainerElementStyles(containerElement, percent)
     },
     onFinished(_, state) {
       setDragging(false)
-      containerElement.style.transform = ''
-      svgElement.style.transform = ''
-      state.lockedAt && setOpen((open) => !open)
+      if (state.lockedAt) {
+        toggleOpen()
+      } else resetContainerElementStyles()
     },
     config: {
       axis: 'y',
@@ -44,30 +61,36 @@ export const DragUpElement: ParentComponent = (props) => {
     getElementMaxDistance: () => containerElement.getBoundingClientRect().height,
   })
 
+  onMount(() => {
+    resetContainerElementStyles()
+    setDragging(false)
+  })
+
   return (
     <div
       ref={containerElement!}
-      class="fixed left-0 bottom-0 z-20 w-full border-t border-primary-500 bg-primary-900"
+      class="fixed left-0 bottom-0 z-40 w-full border-primary-500 bg-primary-900"
       classList={{
         transition: !dragging(),
-        'opacity-70 translate-y-[calc(100%-1px)]': !dragging() && !open(),
-        'opacity-100 translate-y-0': dragging() || open(),
       }}
     >
       <div class="container m-auto w-full">
-        <div class="relative -top-14 flex justify-center" ref={dragElement}>
+        <div
+          class="absolute top-0 flex w-full justify-center"
+          ref={dragElement}
+          style={{
+            transform: `translateY(-${HANDLE_HEIGHT})`,
+          }}
+        >
           <button
-            class="absolute h-14 w-16 touch-none rounded-t-full border border-b-0 border-primary-500 bg-primary-900 p-2 text-white"
-            onClick={() => !dragging() && setOpen((open) => !open)}
+            class="flex w-full touch-none items-center justify-center border-t border-primary-500 bg-primary-900 p-2 text-white"
+            style={{
+              height: `${HANDLE_HEIGHT}`,
+            }}
+            type="button"
+            onClick={() => !dragging() && toggleOpen()}
           >
-            <ChevronUp
-              ref={svgElement!}
-              class="pointer-events-none"
-              classList={{
-                transition: !dragging(),
-                'rotate-180': open(),
-              }}
-            />
+            <div class="h-[4px] w-[32px] rounded-full bg-white px-1" />
           </button>
         </div>
         <div class="pb-8">{props.children}</div>

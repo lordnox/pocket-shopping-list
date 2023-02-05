@@ -17,16 +17,16 @@ datasource db {
 
 // defines an item purchasable in a shop
 model Product {
-  id          String         @id @default(cuid())
-  userId      String
-  createdAt   DateTime       @default(now())
-  name        String         @unique()
-  type        ItemType       @default(kilogram)
-  prices      ProductPrice[]
-  createdBy   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tags        ProductTag[]
-  StockList   StockList?     @relation(fields: [stockListId], references: [id])
-  stockListId String?
+  id            String          @id @default(cuid())
+  userId        String
+  createdAt     DateTime        @default(now())
+  icon          String?
+  name          String          @unique()
+  type          ItemType        @default(kilogram)
+  prices        ProductPrice[]
+  createdBy     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags          ProductTag[]
+  StockListItem StockListItem[]
 }
 
 // contains the price of a shopping item
@@ -52,12 +52,24 @@ model ProductTag {
   @@map("Tag")
 }
 
+model StockListItem {
+  id          String     @id @default(cuid())
+  name        String
+  StockList   StockList? @relation(fields: [stockListId], references: [id])
+  stockListId String?
+  product     Product?   @relation(fields: [productId], references: [id])
+  productId   String?
+  createdAt   DateTime   @default(now())
+}
+
 model StockList {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  products  Product[]
+  id        String          @id @default(cuid())
+  name      String
+  icon      String?
+  products  StockListItem[]
   userId    String
-  createdBy User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdBy User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime        @default(now())
 }
 
 model User {
@@ -66,6 +78,7 @@ model User {
   email         String         @unique
   emailVerified DateTime?
   image         String?
+  role          UserRole       @default(user)
   accounts      Account[]
   sessions      Session[]
   items         Product[]
@@ -152,4 +165,9 @@ enum ItemType {
   kilogram
   liter
   piece
+}
+
+enum UserRole {
+  admin
+  user
 }

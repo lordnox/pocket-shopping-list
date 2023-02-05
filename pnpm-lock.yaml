@@ -20,6 +20,7 @@ specifiers:
   prettier-plugin-tailwindcss: ^0.2.1
   prisma: ^4.8.1
   prisma-dbml-generator: ^0.10.0
+  solid-icons: ^1.0.4
   solid-js: ^1.6.6
   solid-start: ^0.2.8
   solid-start-node: ^0.2.8
@@ -42,6 +43,7 @@ dependencies:
   '@use-gesture/vanilla': 10.2.23
   dotenv: 16.0.3
   fastest-levenshtein: 1.0.16
+  solid-icons: 1.0.4_solid-js@1.6.6
   solid-js: 1.6.6
   solid-start: 0.2.8_m5bcqx2tluzydesbr25vqe2z7m
   solid-start-trpc: 0.0.16_spx4ahigp2oe3v3vcgbubcw2oi
@@ -3949,6 +3951,15 @@ packages:
       astral-regex: 2.0.0
       is-fullwidth-code-point: 3.0.0
     dev: true
+
+  /solid-icons/1.0.4_solid-js@1.6.6:
+    resolution: {integrity: sha512-gJTp4in3+OYCs9WvDkSLt4Los2unR3Uoder8wjh15GsfP20xiNOLfPTJllXmn+fI8+k3x7bRYtLGIgWd9fUQug==}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      solid-js: '*'
+    dependencies:
+      solid-js: 1.6.6
+    dev: false
 
   /solid-js/1.6.6:
     resolution: {integrity: sha512-5x33mEbPI8QLuywvFjQP4krjWDr8xiYFgZx9KCBH7b0ZzypQCHaUubob7bK6i+1u6nhaAqhWtvXS587Kb8DShA==}

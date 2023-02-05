@@ -1,9 +1,3 @@
-import { H1WithTitle, Main } from '~/components/Basics'
+import { StockListPage } from '~/pages/stocklist'
 
-export default () => {
-  return (
-    <Main>
-      <H1WithTitle>Vorrat</H1WithTitle>
-    </Main>
-  )
-}
+export default () => <StockListPage />
