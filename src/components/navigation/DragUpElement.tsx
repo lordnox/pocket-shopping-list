@@ -69,7 +69,7 @@ export const DragUpElement: ParentComponent = (props) => {
   return (
     <div
       ref={containerElement!}
-      class="fixed left-0 bottom-0 z-20 w-full border-primary-500 bg-primary-900"
+      class="fixed left-0 bottom-0 z-40 w-full border-primary-500 bg-primary-900"
       classList={{
         transition: !dragging(),
       }}
