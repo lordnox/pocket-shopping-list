@@ -1,13 +1,13 @@
 import { createSignal, Show } from 'solid-js'
 import { RouteDataArgs, useRouteData } from 'solid-start'
-import { StockListPage } from '~/pages/stocklist'
+import { ShoppingListPage } from '~/pages/shoppinglist'
 import { StockList } from '~/types/stock-types'
 import { trpc } from '~/utils/trpc-client'
 
-export const routeData = (params: RouteDataArgs<{ stockId: string }>) => {
+export const routeData = (params: RouteDataArgs<{ shoppingListId: string }>) => {
   const [stocklist, setStocklist] = createSignal<StockList>()
 
-  trpc.stockList.query(params.params.stockId).then(setStocklist)
+  trpc.stockList.query(params.params.shoppingListId).then(setStocklist)
 
   return { stocklist, params }
 }
@@ -17,7 +17,7 @@ export default () => {
 
   return (
     <Show when={stocklist()}>
-      <StockListPage stocklist={stocklist()} />
+      <ShoppingListPage stocklist={stocklist()} />
     </Show>
   )
 }

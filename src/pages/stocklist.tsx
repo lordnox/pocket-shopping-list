@@ -6,8 +6,10 @@ import { trpc } from '~/utils/trpc-client'
 import { SubNavigation } from '~/components/SubNavigation'
 import { useHomeLink } from '~/roots/navigation'
 import { Title } from '~/components/Layout'
+import { DragUpElement } from '~/components/navigation/DragUpElement'
+import { ShoppingSearch } from '~/components/product/SearchFilter'
 
-export default (pageParams: { stocklist?: StockList }) => {
+export const StockListPage = (pageParams: { stocklist?: StockList }) => {
   console.log('Rendering Stocklist from scratch!')
 
   const [stocklist, setStocklist] = createSignal<StockList | undefined>(pageParams.stocklist)
@@ -29,6 +31,11 @@ export default (pageParams: { stocklist?: StockList }) => {
           <div ref={useAutoAnimate()}>
             <Code>{JSON.stringify(stocklist(), null, 2)}</Code>
           </div>
+          <DragUpElement>
+            <div class="h-[50vh] p-4">
+              <ShoppingSearch label="Suche" onSearch={console.log} placeholder="Eingabe" />
+            </div>
+          </DragUpElement>
         </Show>
       </Container>
     </Main>

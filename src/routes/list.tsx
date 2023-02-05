@@ -1,3 +1,3 @@
-import ShoppingList from '~/pages/shoppinglist'
+import { ShoppingListPage } from '~/pages/shoppinglist'
 
-export default () => <ShoppingList />
+export default () => <ShoppingListPage />

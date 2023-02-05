@@ -28,11 +28,13 @@ const StockListEntry: Component<{ stocklist: StockList; onClick: VoidFunction }>
 
 export const SubNavigation: Component<{
   setStocklist: (stocklist: StockList) => void
-  createStocklist: (stocklist: { name: string; icon: string }) => Promise<StockList>
+  createStocklist?: (stocklist: { name: string; icon: string }) => Promise<StockList>
   currentStocklist?: StockList
 }> = (props) => {
   const [mode, setMode] = createSignal<'none' | 'createStockList' | 'editStockList'>('none')
   const [stocklists, refetch, setStocklists] = stockRoot
+
+  const isCreateModeAvailable = () => typeof props.createStocklist === 'function'
 
   const onEnter: CreateStockFormProps['onEnter'] = async (createStockListFormResult) => {
     const icon = Math.floor(Math.random() * StockIcons.length)
@@ -49,7 +51,7 @@ export const SubNavigation: Component<{
     })
 
     setMode('none')
-    const stocklist = await props.createStocklist({ ...createItem })
+    const stocklist = await props.createStocklist!({ ...createItem })
     await refetch()
     props.setStocklist(stocklist)
   }
@@ -62,13 +64,15 @@ export const SubNavigation: Component<{
     <section class="container mx-auto px-4 pb-3">
       <nav
         ref={useAutoAnimate()}
-        class="grid w-full grid-cols-[40px_auto_40px] gap-4"
+        class="grid w-full gap-4"
         classList={{
           'items-start': mode() !== 'createStockList',
           'items-center': mode() === 'createStockList',
+          'grid-cols-[40px_auto_40px]': isCreateModeAvailable(),
+          'grid-cols-[auto_40px]': !isCreateModeAvailable(),
         }}
       >
-        <Show when={mode() !== 'editStockList'}>
+        <Show when={isCreateModeAvailable() && mode() !== 'editStockList'}>
           <FAB
             class={`m-1 border-secondary-600 text-secondary-600 transition`}
             classList={{

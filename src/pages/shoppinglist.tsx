@@ -7,23 +7,23 @@ import { SubNavigation } from '~/components/SubNavigation'
 import { useHomeLink } from '~/roots/navigation'
 import { Title } from '~/components/Layout'
 
-export default (pageParams: { stocklist?: StockList }) => {
-  console.log('Rendering Stocklist from scratch!')
+export const ShoppingListPage = (pageParams: { stocklist?: StockList }) => {
+  console.log('Rendering ShoppingListPage from scratch!')
 
   const [stocklist, setStocklist] = createSignal<StockList | undefined>(pageParams.stocklist)
 
   const goto = (stocklist: StockList) => {
     console.log('goto ' + stocklist.name)
-    history.pushState({}, '', `/stock/${stocklist.id}`)
+    history.pushState({}, '', `/list/${stocklist.id}`)
     setStocklist(stocklist)
   }
 
-  useHomeLink('🛒', { href: '/' })
+  useHomeLink('🗄️', { href: '/' })
 
   return (
     <Main>
       <Title>{stocklist() ? stocklist()?.name! : 'Vorrat'}</Title>
-      <SubNavigation currentStocklist={stocklist()} setStocklist={goto} createStocklist={trpc.createStockList.mutate} />
+      <SubNavigation currentStocklist={stocklist()} setStocklist={goto} />
       <Container ref={useAutoAnimate()}>
         <Show when={stocklist()}>
           <div ref={useAutoAnimate()}>

@@ -1,3 +1,3 @@
-import StocklistPage from '~/pages/stocklist'
+import { StockListPage } from '~/pages/stocklist'
 
-export default () => <StocklistPage />
+export default () => <StockListPage />
