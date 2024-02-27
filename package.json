@@ -41,7 +41,7 @@
     "fastest-levenshtein": "^1.0.16",
     "solid-icons": "^1.0.4",
     "solid-js": "^1.6.6",
-    "solid-start": "^0.2.8",
+    "solid-start": "^0.3.0",
     "solid-start-trpc": "^0.0.16",
     "solid-start-vercel": "^0.2.8",
     "zod": "^3.20.2"
