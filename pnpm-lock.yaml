@@ -54,8 +54,8 @@ dependencies:
     specifier: ^0.2.8
     version: 0.2.8(solid-start@0.2.8)(vite@4.0.3)
   zod:
-    specifier: ^3.20.2
-    version: 3.20.2
+    specifier: ^3.22.3
+    version: 3.22.3
 
 devDependencies:
   '@tailwindcss/container-queries':
@@ -4719,6 +4719,6 @@ packages:
       readable-stream: 3.6.0
     dev: true
 
-  /zod@3.20.2:
-    resolution: {integrity: sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==}
+  /zod@3.22.3:
+    resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
     dev: false
