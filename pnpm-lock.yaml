@@ -15,8 +15,8 @@ dependencies:
     specifier: ^4.8.1
     version: 4.8.1(prisma@4.8.1)
   '@solid-auth/next':
-    specifier: ^0.0.19
-    version: 0.0.19(@auth/core@0.1.4)(solid-js@1.6.6)(solid-start@0.2.8)
+    specifier: ^0.0.23
+    version: 0.0.23(@auth/core@0.1.4)(solid-js@1.6.6)(solid-start@0.2.8)
   '@solidjs/meta':
     specifier: ^0.28.2
     version: 0.28.2(solid-js@1.6.6)
@@ -1818,10 +1818,11 @@ packages:
   /@sideway/pinpoint@2.0.0:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
 
-  /@solid-auth/next@0.0.19(@auth/core@0.1.4)(solid-js@1.6.6)(solid-start@0.2.8):
-    resolution: {integrity: sha512-aGcEePidVKh6iYS5JHghv/MFKh1mE0PQUmD8+dHiRRWcnVOF38fyHTz5L5PQCmrl8xE9J8rK3ymVlt0lzw2dQg==}
+  /@solid-auth/next@0.0.23(@auth/core@0.1.4)(solid-js@1.6.6)(solid-start@0.2.8):
+    resolution: {integrity: sha512-1fClfQNn7MHoHGt8RoKLBnoJUgG4gAY5YjtpvtHxoysLG4WIKj9XdN3tx6r3/vJ4Aon8YgcCT5cnJRsY6wGe7A==}
+    deprecated: Use @auth/solid-start instead
     peerDependencies:
-      '@auth/core': ~0.1.4 || ^0.1.4
+      '@auth/core': ^0.2.2 || ~0.2.2
       solid-js: ^1.5.7
       solid-start: ^0.2.1
     dependencies:
