@@ -28,7 +28,7 @@
     "vite": "^4.0.3"
   },
   "dependencies": {
-    "@auth/core": "^0.1.4",
+    "@auth/core": "^0.28.0",
     "@formkit/auto-animate": "1.0.0-beta.6",
     "@prisma/client": "^4.8.1",
     "@solid-auth/next": "^0.0.19",
