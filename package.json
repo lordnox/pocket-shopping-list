@@ -33,7 +33,7 @@
     "@prisma/client": "^4.8.1",
     "@solid-auth/next": "^0.0.19",
     "@solidjs/meta": "^0.28.2",
-    "@solidjs/router": "^0.7.0",
+    "@solidjs/router": "^0.13.0",
     "@trpc/client": "^10.7.0",
     "@trpc/server": "^10.7.0",
     "@use-gesture/vanilla": "^10.2.23",
